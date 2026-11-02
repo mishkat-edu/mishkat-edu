@@ -886,3 +886,73 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     });
   });
 })();
+/* ===== 18) ملخصاتنا وتماريننا (ملخصات أساتذة / تمارين أساتذة) + بطاقة منصة همة في التمارين ===== */
+(function(){
+  var path=location.pathname;
+
+  function setWord(card,text){
+    var w=card.querySelector('.vword');
+    if(w) w.textContent=text;
+  }
+
+  /* صفحة الملخصات: «ملخصاتنا (ملخصات أساتذة)» */
+  if(/summaries\.html$/.test(path)){
+    document.querySelectorAll('.vcard').forEach(function(card){
+      var t=card.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('ملخصات منصة مشكاة')>-1){
+        setWord(card,'ملخصاتنا (ملخصات أساتذة)');
+      }
+    });
+  }
+
+  /* صفحة التمارين: «تماريننا (تمارين أساتذة)» + بطاقة منصة همة */
+  if(/sciex\.html$/.test(path)){
+    var grid=document.getElementById('grid');
+    if(!grid) return;
+
+    document.querySelectorAll('.vcard').forEach(function(card){
+      var t=card.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('تمارين منصتنا')>-1){
+        setWord(card,'تماريننا (تمارين أساتذة)');
+      }
+    });
+
+    if(!grid.querySelector('[data-himma]')){
+      var art=document.createElement('article');
+      art.className='vcard';
+      art.setAttribute('data-himma','1');
+
+      var tag=document.createElement('span');
+      tag.className='vtag';
+      tag.textContent='🌟 تمارين منصة همة';
+
+      var ico=document.createElement('div');
+      ico.className='vico';
+      ico.innerHTML='<span style="font-size:26px;line-height:1">⭐</span>';
+
+      var word=document.createElement('div');
+      word.className='vword';
+      word.textContent='همة';
+
+      var p=document.createElement('p');
+      p.textContent='تمارين منصة همة';
+
+      var box=document.createElement('div');
+      box.className='vact';
+      var a=document.createElement('a');
+      a.className='vgo';
+      a.href='https://himma-sigma.vercel.app/';
+      a.target='_blank';
+      a.rel='noopener';
+      a.textContent='فتح الموقع ←';
+      box.appendChild(a);
+
+      art.appendChild(tag);
+      art.appendChild(ico);
+      art.appendChild(word);
+      art.appendChild(p);
+      art.appendChild(box);
+      grid.appendChild(art);
+    }
+  }
+})();
