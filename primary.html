@@ -99,9 +99,7 @@ var PDFS={
   5:{lang:'lang5.pdf'}
 };
 
-/* ✏️ ملفات الاختبارات: المفتاح = السنة-المادة-الفصل ، والقيمة = اسم الملف
-   رموز المواد: math arabic science islam history english civic french
-   مثال:  '1-math-1':'exam-1-math-1.pdf'   (السنة الأولى، الرياضيات، الفصل الأول) */
+/* ✏️ ملفات الاختبارات: المفتاح = السنة-المادة-الفصل ، والقيمة = اسم الملف */
 var EXAMS={
 };
 
@@ -220,7 +218,6 @@ if(!Y){
 }else{
   var files=PDFS[Y]||{};
   g.appendChild(card('الاختبارات','📋','#8ee6a0',url({y:Y,s:S,k:'exams'})));
-  g.appendChild(card('الدروس','📖','#7fd3ff',null,function(){say('دروس «'+sb.n+'» قيد الإعداد ✨');}));
   if(S==='arabic'){
     g.appendChild(pdfCard('كتب الأنشطة','📒','#ffd54a',files.lang));
     g.appendChild(card('المحفوظات','🎵','#ffa6c9',null,function(){say('محفوظات «'+sb.n+'» قيد الإعداد ✨');}));
