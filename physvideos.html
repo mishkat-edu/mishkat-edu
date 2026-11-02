@@ -13,48 +13,43 @@ try{if(localStorage.getItem('mishkat_theme')==='dark')document.documentElement.s
 :root{--blue:#0a84ff;--ink:#101828;--muted:#667085;--card:#fff;--line:#eaeef3;--bgfrom:#e3f4ff;--bgmid:#f4fbff;--bgto:#fffbea;--shadow:rgba(10,132,255,.12);color-scheme:light;
 --c1:#0a7ba0;--c2:#0f9bbd;--gold1:#ffc233;--gold2:#ff9f1c;--goldink:#4a3000;--cglow:rgba(6,120,150,.38);--cdeep:#086a8c}
 :root[data-theme="dark"]{--ink:#f2f5f8;--muted:#9aa7b6;--card:#16212d;--line:#223041;--bgfrom:#0f2438;--bgmid:#0d141c;--bgto:#0d141c;--shadow:rgba(0,0,0,.35);color-scheme:dark}
-body{display:block;padding:40px 5%;min-height:100vh;background:linear-gradient(135deg,var(--bgfrom),var(--bgmid) 60%,var(--bgto));color:var(--ink)}
+body{display:block;padding:34px 5% 44px;min-height:100vh;background:linear-gradient(135deg,var(--bgfrom),var(--bgmid) 60%,var(--bgto));color:var(--ink)}
 .wrap{max-width:640px;margin:0 auto;text-align:center}
 .logo,h1{color:var(--ink)}
-h1{font-size:30px;margin-bottom:6px}
-.sub{color:var(--muted)}
+h1{font-size:26px;margin-bottom:4px}
+.sub{color:var(--muted);font-size:14px}
 
-/* البطاقات: بطاقتان في كل صف */
-.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:26px auto 0;max-width:640px}
-.vcard{display:flex;flex-direction:column;align-items:center;direction:rtl;text-align:center;padding:14px 10px 16px;border-radius:18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 12px 28px var(--cglow);transition:transform .25s}
-.vcard:hover{transform:translateY(-4px)}
-.vcard::before{content:"";position:absolute;left:-40px;bottom:-60px;width:140px;height:140px;border-radius:50%;background:rgba(255,255,255,.12)}
+/* بطاقات صغيرة */
+.vgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:20px auto 0;max-width:520px}
+.vcard{display:flex;flex-direction:column;align-items:center;direction:rtl;text-align:center;padding:10px 8px 12px;border-radius:14px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,var(--c1),var(--c2));box-shadow:0 8px 18px var(--cglow);transition:transform .2s;cursor:default}
+.vcard.clickable{cursor:pointer}
+.vcard:hover{transform:translateY(-3px)}
+.vcard::before{content:"";position:absolute;left:-30px;bottom:-45px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.12);pointer-events:none}
 .vcard>*{position:relative}
-.vtag{display:inline-block;max-width:100%;background:linear-gradient(135deg,var(--gold1),var(--gold2));color:var(--goldink);padding:5px 10px;border-radius:999px;font-weight:800;font-size:11.5px;line-height:1.5;box-shadow:0 6px 14px rgba(255,159,28,.4)}
-.vico{width:52px;height:52px;margin:10px auto 4px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
-.vico svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.vword{font-size:22px;font-weight:800;line-height:1.2;text-shadow:0 2px 4px rgba(0,60,80,.2)}
-.vcard p{color:#fff;font-size:11.5px;line-height:1.55;margin:4px 0 12px;font-weight:500;text-shadow:0 1px 2px rgba(0,60,80,.25);flex:1}
-.vact{display:flex;flex-wrap:wrap;justify-content:center;gap:6px}
-.vgo{display:inline-block;width:auto;margin:0;padding:7px 14px;border:0;border-radius:999px;background:#fff;color:var(--cdeep);font:inherit;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none;box-shadow:0 8px 18px rgba(0,60,80,.2)}
+.vtag{display:inline-block;max-width:100%;background:linear-gradient(135deg,var(--gold1),var(--gold2));color:var(--goldink);padding:3px 9px;border-radius:999px;font-weight:800;font-size:10.5px;line-height:1.5;box-shadow:0 4px 10px rgba(255,159,28,.4)}
+.vico{width:38px;height:38px;margin:6px auto 2px;border-radius:50%;background:rgba(255,255,255,.2);display:grid;place-items:center}
+.vico svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vword{font-size:16px;font-weight:800;line-height:1.2;text-shadow:0 2px 4px rgba(0,60,80,.2)}
+.vcard p{color:#fff;font-size:10.5px;line-height:1.5;margin:3px 0 8px;font-weight:500;text-shadow:0 1px 2px rgba(0,60,80,.25);flex:1}
+.vact{display:flex;flex-direction:column;align-items:stretch;justify-content:center;gap:5px;width:100%}
+.vgo{display:inline-block;width:auto;margin:0 auto;padding:6px 12px;border:0;border-radius:999px;background:#fff;color:var(--cdeep);font:inherit;font-size:11px;font-weight:800;cursor:pointer;text-decoration:none;box-shadow:0 6px 14px rgba(0,60,80,.2)}
 .vgo:hover,.vgo:focus-visible{background:#e8fbff}
-@media (min-width:600px){
-  .vgrid{gap:18px}
-  .vcard{padding:20px 18px 22px;border-radius:20px}
-  .vtag{font-size:13.5px;padding:6px 14px}
-  .vico{width:68px;height:68px;margin:14px auto 6px}
-  .vico svg{width:38px;height:38px}
-  .vword{font-size:30px}
-  .vcard p{font-size:13.5px;margin:6px 0 14px}
-  .vgo{padding:9px 24px;font-size:14px}
-}
+/* أزرار الفيديوهات الإضافية في الأسفل */
+.vsmall{display:flex;flex-wrap:wrap;justify-content:center;gap:5px;margin-top:2px}
+.vsm{display:inline-block;padding:5px 10px;border-radius:999px;background:rgba(255,255,255,.92);color:var(--cdeep);font-size:10.5px;font-weight:800;text-decoration:none;box-shadow:0 4px 10px rgba(0,60,80,.18);line-height:1.3}
+.vsm:hover,.vsm:focus-visible{background:#fff}
 
-.bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}
-.back,.mode{display:inline-block;width:auto;margin:0;padding:8px 20px;border:1.5px solid var(--blue);border-radius:999px;background:var(--card);color:var(--blue);font:inherit;font-size:14px;font-weight:700;cursor:pointer}
+.bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:24px}
+.back,.mode{display:inline-block;width:auto;margin:0;padding:7px 18px;border:1.5px solid var(--blue);border-radius:999px;background:var(--card);color:var(--blue);font:inherit;font-size:13px;font-weight:700;cursor:pointer;text-decoration:none}
 .back:hover,.back:focus-visible,.mode:hover,.mode:focus-visible{background:var(--blue);color:#fff}
-.mock{background:var(--card);border-radius:16px;padding:24px;margin:34px auto 0;max-width:420px;box-shadow:0 20px 50px var(--shadow)}
-.mock .l{height:10px;border-radius:6px;background:var(--line);margin-bottom:12px}
-.mock .g{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
-.mock .g div{height:110px;border-radius:12px}
+.mock{background:var(--card);border-radius:16px;padding:20px;margin:28px auto 0;max-width:380px;box-shadow:0 20px 50px var(--shadow)}
+.mock .l{height:9px;border-radius:6px;background:var(--line);margin-bottom:10px}
+.mock .g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:16px}
+.mock .g div{height:90px;border-radius:10px}
 .mock .g div:nth-child(1){background:#fff7d6}
 .mock .g div:nth-child(2){background:#dff6ff}
 .mock .g div:nth-child(3){background:#dcebff}
-.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);max-width:90vw;padding:12px 22px;border-radius:999px;background:var(--card);color:var(--ink);border:1.5px solid var(--blue);box-shadow:0 14px 34px var(--shadow);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:30;text-align:center}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);max-width:90vw;padding:10px 20px;border-radius:999px;background:var(--card);color:var(--ink);border:1.5px solid var(--blue);box-shadow:0 14px 34px var(--shadow);font-weight:700;font-size:13px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:30;text-align:center}
 .toast.on{opacity:1;transform:translate(-50%,0)}
 @media (prefers-reduced-motion:reduce){.vcard{transition:none}}
 </style>
@@ -107,7 +102,7 @@ h1{font-size:30px;margin-bottom:6px}
   </div>
 
   <div class="bar">
-    <a class="back" href="index.html">← العودة للرئيسية</a>
+    <a class="back" id="backb" href="index.html">← العودة للرئيسية</a>
     <button class="mode" id="mode" type="button">🌙 الوضع الليلي</button>
   </div>
 
@@ -135,11 +130,19 @@ modeBtn.onclick=()=>{
   paint();
 };
 
+const toast=document.getElementById('toast');
+let tm;
+function say(msg){
+  toast.textContent=msg;
+  toast.classList.add('on');
+  clearTimeout(tm);
+  tm=setTimeout(()=>toast.classList.remove('on'),2600);
+}
+
 const ch=localStorage.getItem('mishkat_chapter')||'';
 const br=localStorage.getItem('mishkat_branch')||'';
-const title=ch||'الفيزياء';
-document.getElementById('ttl').textContent=title;
-document.title=title+' - أكاديمية مشكاة';
+document.getElementById('ttl').textContent=ch||'الفيزياء';
+document.title=(ch||'الفيزياء')+' - أكاديمية مشكاة';
 let sub='فيديوهات مادة الفيزياء';
 if(br) sub+=' • شعبة '+br;
 document.getElementById('br').textContent=sub;
@@ -151,10 +154,17 @@ document.querySelectorAll('.pm').forEach(p=>{
   p.textContent=ch?'حل تمارين سلسلة الميزان لدرس «'+ch+'» بالفيديو':'حل تمارين سلسلة الميزان بالفيديو';
 });
 
-/* اسم الدرس الموحّد (الاسترة لها اسمان حسب الشعبة) */
 const key=(typeof PHYS_ALIAS!=='undefined'&&PHYS_ALIAS[ch])||ch;
 
-/* بطاقة الأستاذة أميرة شنوف: قائمة بطاقات الدرس */
+function ytId(u){
+  const m=(u||'').match(/(?:youtu\.be\/|[?&]v=)([A-Za-z0-9_-]{6,})/);
+  return m?m[1]:'';
+}
+function watchUrl(u,label){
+  return 'watch.html?v='+encodeURIComponent(ytId(u))+'&t='+encodeURIComponent(label);
+}
+
+/* الأستاذة أميرة شنوف: عدة فيديوهات تفتح صفحة الدروس، وفيديو واحد يفتح مباشرة */
 const L=(typeof PHYS_LINKS!=='undefined'&&PHYS_LINKS[ch])||[];
 const amCard=document.querySelector('.vcard[data-k="am"]');
 if(L.length&&amCard){
@@ -163,9 +173,7 @@ if(L.length&&amCard){
   const a=document.createElement('a');
   a.className='vgo';
   if(L.length===1){
-    a.href=L[0].u;
-    a.target='_blank';
-    a.rel='noopener';
+    a.href=watchUrl(L[0].u,'الأستاذة أميرة شنوف — '+ch);
   }else{
     a.href='physlessons.html';
     amCard.querySelector('.pl').textContent='دروس «'+ch+'» في '+L.length+' فيديوهات';
@@ -174,8 +182,40 @@ if(L.length&&amCard){
   box.appendChild(a);
 }
 
-/* بطاقات الأستاذة ليديا والأستاذ عبد الله وسلسلة الميزان: روابط مباشرة */
-function linkify(k,src){
+/* الأستاذة ليديا: البطاقة كلها تفتح الفيديو 1، وفي الأسفل الفيديوهات الأخرى */
+(function(){
+  const card=document.querySelector('.vcard[data-k="ly"]');
+  const arr=(typeof PHYS_LY!=='undefined'&&PHYS_LY[key])||[];
+  if(!card||!arr.length) return;
+  const box=card.querySelector('.vact');
+  box.innerHTML='';
+  card.classList.add('clickable');
+  const first=arr[0];
+  const go=()=>{location.href=watchUrl(first.u,'الأستاذة ليديا — '+first.t);};
+  card.addEventListener('click',go);
+
+  const main=document.createElement('span');
+  main.className='vgo';
+  main.textContent='شاهد الآن ←';
+  box.appendChild(main);
+
+  if(arr.length>1){
+    const row=document.createElement('div');
+    row.className='vsmall';
+    arr.slice(1).forEach(v=>{
+      const b=document.createElement('a');
+      b.className='vsm';
+      b.href=watchUrl(v.u,'الأستاذة ليديا — '+v.t);
+      b.textContent=v.t;
+      b.addEventListener('click',e=>e.stopPropagation());
+      row.appendChild(b);
+    });
+    box.appendChild(row);
+  }
+})();
+
+/* الأستاذ عبد الله وسلسلة الميزان: رابط مباشر */
+function linkify(k,src,label){
   const card=document.querySelector('.vcard[data-k="'+k+'"]');
   const arr=(src&&src[key])||[];
   if(!card||!arr.length) return;
@@ -184,27 +224,19 @@ function linkify(k,src){
   arr.forEach(l=>{
     const a=document.createElement('a');
     a.className='vgo';
-    a.href=l.u;
-    a.target='_blank';
-    a.rel='noopener';
+    a.href=watchUrl(l.u,label+' — '+ch);
     a.textContent=(l.t||'شاهد الآن')+' ←';
     box.appendChild(a);
   });
 }
-linkify('ly',typeof PHYS_LY!=='undefined'?PHYS_LY:null);
-linkify('ab',typeof PHYS_AB!=='undefined'?PHYS_AB:null);
-linkify('mz',typeof PHYS_MZ!=='undefined'?PHYS_MZ:null);
+linkify('ab',typeof PHYS_AB!=='undefined'?PHYS_AB:null,'الأستاذ عبد الله');
+linkify('mz',typeof PHYS_MZ!=='undefined'?PHYS_MZ:null,'تمارين سلسلة الميزان');
 
 /* الأزرار التي لا فيديو لها بعد */
-const toast=document.getElementById('toast');
-let tm;
 document.querySelectorAll('button.vgo').forEach(b=>{
   b.onclick=()=>{
     const who=b.dataset.t?(' لـ'+b.dataset.t):'';
-    toast.textContent='فيديوهات «'+b.dataset.n+'»'+who+' قيد الإعداد، وستُضاف قريباً ✨';
-    toast.classList.add('on');
-    clearTimeout(tm);
-    tm=setTimeout(()=>toast.classList.remove('on'),2800);
+    say('فيديوهات «'+b.dataset.n+'»'+who+' قيد الإعداد، وستُضاف قريباً ✨');
   };
 });
 </script>
