@@ -783,23 +783,22 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   document.addEventListener('touchstart',hint,{passive:true,capture:true});
   document.addEventListener('mouseover',hint,{passive:true,capture:true});
 })();
-/* ===== 16) العلوم: بطاقة التمارين تفتح صفحة (تمارين منصتنا + تمارين الأستاذة مروة) ===== */
+/* ===== 16) التمارين والتصحيح: تفتح صفحة التمارين للعلوم والرياضيات والفيزياء ===== */
 (function(){
   if(!/lesson\.html$/.test(location.pathname)) return;
-  if((localStorage.getItem('mishkat_subject')||'')!=='العلوم') return;
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  if(['العلوم','الرياضيات','الفيزياء'].indexOf(sj)===-1) return;
   var grid=document.querySelector('.wrap > .grid');
   if(!grid) return;
   var cards=[].slice.call(grid.children).filter(function(c){return c.classList.contains('b');});
   if(cards.length<4) return;
-
-  /* نسخة جديدة من البطاقة بلا أي حدث قديم */
   var n=cards[1].cloneNode(true);
   n.removeAttribute('data-t');
-  n.setAttribute('data-g','sciex');
+  n.setAttribute('data-g','exgo');
   cards[1].replaceWith(n);
   n.addEventListener('click',function(){location.href='sciex.html';});
 })();
-/* ===== 16) ملخصات العلوم الإسلامية: كتاب بوسعادي وشمس الدين لكل درس ===== */
+/* ===== 17) ملخصات العلوم الإسلامية: كتاب بوسعادي وشمس الدين لكل درس ===== */
 (function(){
   if(!/summaries\.html$/.test(location.pathname)) return;
   if((localStorage.getItem('mishkat_subject')||'')!=='العلوم الإسلامية') return;
