@@ -799,3 +799,91 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   cards[1].replaceWith(n);
   n.addEventListener('click',function(){location.href='sciex.html';});
 })();
+/* ===== 16) ملخصات العلوم الإسلامية: كتاب بوسعادي وشمس الدين لكل درس ===== */
+(function(){
+  if(!/summaries\.html$/.test(location.pathname)) return;
+  if((localStorage.getItem('mishkat_subject')||'')!=='العلوم الإسلامية') return;
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+
+  /* ترتيب الدروس كما في islamic.html (الرقم = اسم الملف بعد الصفر) */
+  var LESSONS=[
+    'العقيدة الإسلامية وأثرها على الفرد والمجتمع',
+    'وسائل القرآن الكريم في تثبيت العقيدة الإسلامية',
+    'الإسلام والرسالات السماوية',
+    'العقل في القرآن الكريم',
+    'مقاصد الشريعة الإسلامية',
+    'منهج الإسلام في محاربة الانحراف والجريمة',
+    'المساواة أمام أحكام الشريعة الإسلامية',
+    'الصحة النفسية والجسمية في القرآن الكريم',
+    'من مصادر التشريع الإسلامي: الإجماع',
+    'من مصادر التشريع الإسلامي: القياس',
+    'من مصادر التشريع الإسلامي: المصالح المرسلة',
+    'القيم في القرآن الكريم',
+    'الوقف في الإسلام',
+    'من أحكام الأسرة في الإسلام: مدخل إلى علم الميراث',
+    'من أحكام الأسرة في الإسلام: الورثة وطرق ميراثهم',
+    'الربا وأحكامه',
+    'من المعاملات المالية الجائزة: الصرف - المرابحة - التقسيط',
+    'الحرية الشخصية',
+    'من أحكام الأسرة في الإسلام: النسب - التبني - الكفالة',
+    'العلاقات الاجتماعية بين المسلمين وغيرهم',
+    'خطبة حجة الوداع'
+  ];
+
+  function norm(s){
+    return String(s||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  var idx=-1, n=norm(ch);
+  for(var i=0;i<LESSONS.length;i++){
+    if(norm(LESSONS[i])===n){idx=i;break;}
+  }
+  var num=idx>=0?('0'+(idx+1)).slice(-2):'';
+
+  /* الملفات المحتملة: الدرس أولاً، ثم الكتاب كاملاً */
+  var BOOKS={
+    'ملخصات (كتاب) الأستاذة بوسعادي':{pre:'bousaadi',all:'bousaadi.pdf',t:'كتاب الأستاذة بوسعادي'},
+    'ملخصات (كتاب) الأستاذ شمس الدين':{pre:'shams',all:'shams.pdf',t:'كتاب الأستاذ شمس الدين'}
+  };
+
+  function tryFiles(list,k,done){
+    if(k>=list.length){done('');return;}
+    fetch(list[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(r.ok) done(list[k]); else tryFiles(list,k+1,done);
+    }).catch(function(){tryFiles(list,k+1,done);});
+  }
+
+  document.querySelectorAll('.vcard').forEach(function(card){
+    var tag=card.querySelector('.vtag');
+    if(!tag) return;
+    var txt=tag.textContent;
+    var key=null;
+    Object.keys(BOOKS).forEach(function(k){if(txt.indexOf(k)>-1) key=k;});
+    if(txt.indexOf('ملخصات منصة مشكاة')>-1||txt.indexOf('منصة همة')>-1){
+      /* تبقى كما هي؛ اسطر إزالة الكتل الأخرى فوق هذا الكود */
+    }
+    if(!key) return;
+
+    var btn=card.querySelector('button.vgo');
+    if(!btn) return;
+    var book=BOOKS[key];
+    var list=[];
+    if(num) list.push(book.pre+'-'+num+'.pdf');
+    list.push(book.pre+'.pdf');
+    if(!num) list=[book.all];
+
+    tryFiles(list,0,function(found){
+      if(!found) return;
+      var a=document.createElement('a');
+      a.className='vgo';
+      a.href='pdfview.html?f='+encodeURIComponent(found)+'&t='+encodeURIComponent(book.t+' — '+ch);
+      a.textContent='تصفّح الملخصات ←';
+      btn.replaceWith(a);
+    });
+  });
+})();
