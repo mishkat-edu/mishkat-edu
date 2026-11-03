@@ -956,7 +956,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     }
   }
 })();
-/* ===== 17) بطاقة BAC STORY بالشعار، حواف زرقاء 25% ===== */
+/* ===== 17) بطاقة BAC STORY: الشعار في حافة زرقاء، والبطاقة بيضاء ===== */
 (function(){
   if(!/(branches|subjects)\.html$/.test(location.pathname)) return;
   var bar=document.querySelector('.wrap > .bar');
@@ -966,13 +966,11 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
 
   var st=document.createElement('style');
   st.textContent=''
-  +'.bs-card{position:relative;max-width:420px;margin:18px auto 0;padding:14px 16px;border-radius:16px;background:#fff;border:1.5px solid #d0d7e2;box-shadow:0 8px 20px rgba(16,24,40,.08);text-align:center;direction:rtl;overflow:hidden}'
-  +'.bs-card::before{content:"";position:absolute;left:0;right:0;bottom:0;height:25%;background:#0a84ff;pointer-events:none;z-index:0}'
-  +'.bs-card>*{position:relative;z-index:1}'
-  +'.bs-top{display:flex;align-items:center;justify-content:center;gap:10px}'
-  +'.bs-logo{width:44px;height:44px;border-radius:12px;object-fit:cover;flex:none;box-shadow:0 4px 10px rgba(10,132,255,.3)}'
-  +'.bs-note{font-size:13px;font-weight:700;line-height:1.7;color:#101828;margin:0}'
-  +'.bs-btn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 16px 7px 7px;border-radius:999px;background:#0a84ff;color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(10,132,255,.3)}'
+  +'.bs-card{position:relative;max-width:420px;margin:18px auto 0;padding:16px 16px 14px;border-radius:16px;background:#fff;border:1.5px solid #d0d7e2;box-shadow:0 8px 20px rgba(16,24,40,.08);text-align:center;direction:rtl}'
+  +'.bs-edge{position:absolute;left:0;right:0;bottom:0;height:26%;background:#0a84ff;border-radius:0 0 15px 15px;display:flex;align-items:center;justify-content:flex-end;padding:0 12px}'
+  +'.bs-edge img{width:38px;height:38px;border-radius:10px;object-fit:cover;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25)}'
+  +'.bs-note{font-size:13px;font-weight:700;line-height:1.7;color:#101828;margin:0 0 8px;padding-bottom:6px}'
+  +'.bs-btn{display:inline-flex;align-items:center;gap:8px;margin-top:4px;padding:7px 16px 7px 7px;border-radius:999px;background:#0a84ff;color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(10,132,255,.3)}'
   +'.bs-btn img{width:30px;height:30px;border-radius:8px;object-fit:cover;background:#fff}'
   +'.bs-btn:hover,.bs-btn:focus-visible{background:#0870d8}';
   document.head.appendChild(st);
@@ -980,7 +978,8 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   var card=document.createElement('div');
   card.id='bs-card';
   card.className='bs-card';
-  card.innerHTML='<div class="bs-top"><img class="bs-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'"><p class="bs-note">🚨 ملاحظة: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p></div>'
-    +'<a class="bs-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener"><img src="bac-story.jpg" alt="" onerror="this.style.display=\'none\'">تصفّح BAC STORY ←</a>';
+  card.innerHTML='<p class="bs-note">🚨 ملاحظة: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
+    +'<a class="bs-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener"><img src="bac-story.jpg" alt="" onerror="this.style.display=\'none\'">تصفّح BAC STORY ←</a>'
+    +'<div class="bs-edge"><img src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'"></div>';
   bar.insertAdjacentElement('afterend',card);
 })();
