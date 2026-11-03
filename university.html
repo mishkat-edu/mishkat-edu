@@ -31,7 +31,9 @@ h1{font-size:30px;margin:6px 0 4px}
 .subs.show,.sems.show{display:grid}
 .sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform .2s}
 .sb:hover,.sb:focus-visible{transform:translateY(-4px)}
-.sb-i{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#ffc233,#ff9f1c);display:grid;place-items:center;box-shadow:0 8px 18px rgba(255,159,28,.35);font-size:22px}
+.sb-i{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);display:grid;place-items:center;box-shadow:0 10px 20px rgba(10,132,255,.35),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
+.sb-i svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.sb-i .ar{font-family:'Tajawal',system-ui,sans-serif;font-size:15px;font-weight:800;line-height:1;direction:rtl}
 .subs .sb:last-child:nth-child(odd),.sems .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
 
 .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}
@@ -83,22 +85,41 @@ h1{font-size:30px;margin:6px 0 4px}
   var toast=$('toast'), tm;
   function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2400);}
 
-  /* المواد: الاسم، والأيقونة، وهل تتفرع إلى سداسيين */
+  /* الأيقونات: رسومات SVG موحدة، وما يُكتب كحروف يظهر نصاً */
+  var V='<svg viewBox="0 0 32 32" aria-hidden="true">';
+  var ICON={
+    math:V+'<rect x="7" y="4" width="18" height="24" rx="3"/><path d="M11 10h10M11 15h2M16 15h2M11 20h2M16 20h2M11 25h2M16 25h2"/></svg>',
+    physics:V+'<circle cx="16" cy="16" r="2.4" fill="#fff" stroke="none"/><ellipse cx="16" cy="16" rx="12" ry="4.6"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="12" ry="4.6" transform="rotate(-60 16 16)"/></svg>',
+    chem:V+'<path d="M12 4h8M13 4v8L6 25a2.5 2.5 0 0 0 2.2 3.5h13.6A2.5 2.5 0 0 0 26 25l-7-13V4"/><path d="M10.5 19h11"/></svg>',
+    it:V+'<rect x="4" y="6" width="24" height="16" rx="2.5"/><path d="M12 27h8M16 22v5"/><path d="M9 13l3 2-3 2M14 17h4"/></svg>',
+    rhetoric:V+'<path d="M6 8a3 3 0 0 1 3-3h14a3 3 0 0 1 3 3v10a3 3 0 0 1-3 3h-8l-6 4v-4H9a3 3 0 0 1-3-3z"/><path d="M11 12h10M11 16h6"/></svg>',
+    grammar:V+'<path d="M6 26l3-1 13-13a3 3 0 0 0-4-4L5 21z"/><path d="M19 9l4 4"/><path d="M6 30h20"/></svg>',
+    literature:V+'<path d="M8 5h14a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M12 11h8M12 15h8M12 19h5"/></svg>',
+    islam:V+'<path d="M6 28V16a10 10 0 0 1 20 0v12"/><path d="M4 28h24"/><path d="M16 6V3"/><path d="M14 11h4"/></svg>',
+    dictation:V+'<path d="M7 25l1-5L22 6a2.6 2.6 0 0 1 4 4L12 24z"/><path d="M19 9l4 4"/></svg>',
+    english:V+'<circle cx="16" cy="16" r="11"/><path d="M5 16h22M16 5c3 3.5 3 18.5 0 22M16 5c-3 3.5-3 18.5 0 22"/></svg>',
+    calligraphy:V+'<path d="M22 4c-6 4-10 10-12 18l-3 6 6-3c8-2 14-6 18-12-4-2-6-4-9-9z"/><path d="M10 22l-2 4"/></svg>',
+    writing:V+'<path d="M6 26h20"/><path d="M9 22l13-13 4 4-13 13H9z"/><path d="M20 9l4 4"/></svg>',
+    computer:V+'<rect x="5" y="6" width="22" height="15" rx="2"/><path d="M12 27h8M16 21v6"/></svg>',
+    s1:V+'<path d="M12 9l3-3v20"/></svg>',
+    s2:V+'<path d="M10 11a6 6 0 0 1 12 0c0 4-12 7-12 13h12"/></svg>'
+  };
+
   var SUBJECTS=[
-    {n:'الرياضيات',i:'📐',sem:true},
-    {n:'الفيزياء',i:'⚛️',sem:true},
-    {n:'الكيمياء',i:'🧪',sem:true},
-    {n:'تكنولوجيا الإعلام والاتصال',i:'💻',sem:true},
-    {n:'البلاغة',i:'🗣️',sem:false},
-    {n:'النحو',i:'📝',sem:false},
-    {n:'الصرف',i:'🔤',sem:false},
-    {n:'الأدب العربي قديماً وحديثاً',i:'📜',sem:true},
-    {n:'الإسلامية',i:'🕌',sem:true},
-    {n:'الإملاء',i:'✍️',sem:true},
-    {n:'الإنجليزية',i:'🇬🇧',sem:true},
-    {n:'الخط العربي',i:'🖋️',sem:false},
-    {n:'فنيات الكتابة والتعبير',i:'✒️',sem:false},
-    {n:'أعلام آلي',i:'🖥️',sem:false}
+    {n:'الرياضيات',ic:ICON.math,sem:true},
+    {n:'الفيزياء',ic:ICON.physics,sem:true},
+    {n:'الكيمياء',ic:ICON.chem,sem:true},
+    {n:'تكنولوجيا الإعلام والاتصال',ic:ICON.it,sem:true},
+    {n:'البلاغة',ic:ICON.rhetoric,sem:false},
+    {n:'النحو',ic:ICON.grammar,sem:false},
+    {n:'الصرف',ic:'<span class="ar">ٱ ب ت</span>',sem:false},
+    {n:'الأدب العربي قديماً وحديثاً',ic:ICON.literature,sem:true},
+    {n:'الإسلامية',ic:ICON.islam,sem:true},
+    {n:'الإملاء',ic:ICON.dictation,sem:true},
+    {n:'الإنجليزية',ic:ICON.english,sem:true},
+    {n:'الخط العربي',ic:ICON.calligraphy,sem:false},
+    {n:'فنيات الكتابة والتعبير',ic:ICON.writing,sem:false},
+    {n:'أعلام آلي',ic:ICON.computer,sem:false}
   ];
 
   var ens=$('ens'), subs=$('subs'), sems=$('sems'), back=$('backb');
@@ -108,20 +129,18 @@ h1{font-size:30px;margin:6px 0 4px}
     b.type='button';
     b.className='sb';
     b.innerHTML='<span class="sb-i"></span><span class="sb-t"></span>';
-    b.querySelector('.sb-i').textContent=icon;
+    b.querySelector('.sb-i').innerHTML=icon;
     b.querySelector('.sb-t').textContent=label;
     b.onclick=onclick;
     box.appendChild(b);
   }
 
-  /* بطاقات المواد */
   SUBJECTS.forEach(function(s){
-    card(subs,s.n,s.i,function(){
+    card(subs,s.n,s.ic,function(){
       if(!s.sem){say('«'+s.n+'» قيد الإعداد ✨');return;}
-      /* بطاقتا السداسيين */
       sems.innerHTML='';
-      card(sems,'S1 (السداسي الأول)','1️⃣',function(){say('«'+s.n+' — S1» قيد الإعداد ✨');});
-      card(sems,'S2 (السداسي الثاني)','2️⃣',function(){say('«'+s.n+' — S2» قيد الإعداد ✨');});
+      card(sems,'S1 (السداسي الأول)',ICON.s1,function(){say('«'+s.n+' — S1» قيد الإعداد ✨');});
+      card(sems,'S2 (السداسي الثاني)',ICON.s2,function(){say('«'+s.n+' — S2» قيد الإعداد ✨');});
       subs.classList.remove('show');
       sems.classList.add('show');
       back.textContent='← رجوع';
@@ -129,7 +148,6 @@ h1{font-size:30px;margin:6px 0 4px}
     });
   });
 
-  /* زر ابدأ الآن يعرض المواد */
   $('start').onclick=function(){
     ens.classList.remove('show');
     subs.classList.add('show');
@@ -137,7 +155,6 @@ h1{font-size:30px;margin:6px 0 4px}
     back.setAttribute('href','#');
   };
 
-  /* زر الرجوع: من السداسيات إلى المواد، ومن المواد إلى بطاقة ENS */
   back.addEventListener('click',function(e){
     if(sems.classList.contains('show')){
       e.preventDefault();
