@@ -956,7 +956,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     }
   }
 })();
-/* ===== 17) بطاقة BAC STORY: الشعار في حافة زرقاء، والبطاقة بيضاء ===== */
+/* ===== 19) بطاقة BAC STORY: الشعار في حافة زرقاء، والبطاقة بيضاء ===== */
 (function(){
   if(!/(branches|subjects)\.html$/.test(location.pathname)) return;
   var bar=document.querySelector('.wrap > .bar');
