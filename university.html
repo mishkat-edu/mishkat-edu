@@ -5,19 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>الجامعة - أكاديمية مشكاة</title>
 <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="auth.css">
 <script>try{if(localStorage.getItem('mishkat_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
 <style>
 :root{--blue:#0a84ff;--ink:#101828;--muted:#667085;--card:#fff;--line:#eaeef3;--bgfrom:#e3f4ff;--bgmid:#f4fbff;--bgto:#fffbea;--shadow:rgba(10,132,255,.12);color-scheme:light}
 :root[data-theme="dark"]{--ink:#f2f5f8;--muted:#9aa7b6;--card:#16212d;--line:#223041;--bgfrom:#0f2438;--bgmid:#0d141c;--bgto:#0d141c;--shadow:rgba(0,0,0,.35);color-scheme:dark}
-body{display:block;padding:40px 5%;min-height:100vh;background:linear-gradient(135deg,var(--bgfrom),var(--bgmid) 60%,var(--bgto));color:var(--ink)}
-.wrap{max-width:640px;margin:0 auto;text-align:center}
-.logo,h1{color:var(--ink)}
-h1{font-size:30px;margin-bottom:6px}
-.sub{color:var(--muted)}
-
-.pill{max-width:560px;margin:26px auto 0;padding:20px 24px;border-radius:46px;background:var(--card);border:3px solid #ffc233;box-shadow:0 0 20px rgba(255,194,51,.35)}
-.pill .logo{margin-bottom:4px}
+*{box-sizing:border-box}
+body{margin:0;font-family:'Tajawal',system-ui,sans-serif;min-height:100vh;padding:40px 5%;background:linear-gradient(135deg,var(--bgfrom),var(--bgmid) 60%,var(--bgto));color:var(--ink);text-align:center}
+.wrap{max-width:640px;margin:0 auto}
+.pill{max-width:560px;margin:0 auto;padding:20px 24px;border-radius:46px;background:var(--card);border:3px solid #ffc233;box-shadow:0 0 20px rgba(255,194,51,.35)}
+.logo{font-weight:800;font-size:18px}
+h1{font-size:30px;margin:6px 0 4px}
+.sub{color:var(--muted);margin:0}
 
 /* بطاقة ENS */
 .ens{display:none;max-width:460px;margin:26px auto 0;border-radius:24px;padding:28px 24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28)}
@@ -27,20 +25,20 @@ h1{font-size:30px;margin-bottom:6px}
 .ens-t{font-size:24px;font-weight:800;margin-bottom:10px}
 .ens-d{color:var(--muted);font-size:15px;line-height:1.9}
 .orange-btn{display:inline-block;margin-top:20px;padding:12px 34px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(255,159,28,.35)}
-.orange-btn:hover,.orange-btn:focus-visible{filter:brightness(1.05)}
 
-/* بطاقات المواد: بنفس شكل بطاقة ENS */
-.subs{display:none;grid-template-columns:1fr 1fr;gap:12px;margin:26px auto 0;max-width:560px}
-.subs.show{display:grid}
-.sb{display:flex;align-items:center;justify-content:center;min-height:72px;padding:12px 10px;border-radius:18px;background:var(--card);border:2px solid #ffc233;box-shadow:0 8px 20px rgba(255,194,51,.2);color:var(--ink);font:inherit;font-size:15px;font-weight:800;line-height:1.35;cursor:pointer;transition:transform .2s}
-.sb:hover,.sb:focus-visible{transform:translateY(-3px)}
-.subs .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 6px)}
+/* بطاقات المواد والسداسيات */
+.subs,.sems{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
+.subs.show,.sems.show{display:grid}
+.sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform .2s}
+.sb:hover,.sb:focus-visible{transform:translateY(-4px)}
+.sb-i{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#ffc233,#ff9f1c);display:grid;place-items:center;box-shadow:0 8px 18px rgba(255,159,28,.35);font-size:22px}
+.subs .sb:last-child:nth-child(odd),.sems .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
 
 .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}
 .back,.mode{display:inline-block;padding:8px 20px;border:1.5px solid var(--blue);border-radius:999px;background:var(--card);color:var(--blue);font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
 .back:hover,.mode:hover{background:var(--blue);color:#fff}
-.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);max-width:90vw;padding:12px 22px;border-radius:999px;background:var(--card);color:var(--ink);border:1.5px solid #ffc233;box-shadow:0 14px 34px var(--shadow);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:30;text-align:center}
-.toast.on{opacity:1;transform:translate(-50%,0)}
+.toast{position:fixed;left:50%;bottom:26px;transform:translate(-50%,20px);max-width:90vw;padding:12px 22px;border-radius:999px;background:var(--card);color:var(--ink);border:1.5px solid #ffc233;box-shadow:0 14px 34px var(--shadow);font-weight:700;font-size:14px;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;z-index:30}
+.toast.on{opacity:1;transform:translate(0,0)}
 </style>
 </head>
 <body>
@@ -59,6 +57,7 @@ h1{font-size:30px;margin-bottom:6px}
   </div>
 
   <div class="subs" id="subs"></div>
+  <div class="sems" id="sems"></div>
 
   <div class="bar">
     <a class="back" id="backb" href="index.html">← العودة للرئيسية</a>
@@ -68,48 +67,93 @@ h1{font-size:30px;margin-bottom:6px}
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
-var $=function(i){return document.getElementById(i);};
-var root=document.documentElement, modeBtn=$('mode');
-function paint(){modeBtn.textContent=root.getAttribute('data-theme')==='dark'?'☀️ الوضع النهاري':'🌙 الوضع الليلي';}
-paint();
-modeBtn.onclick=function(){
-  var d=root.getAttribute('data-theme')==='dark';
-  if(d){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme','dark');}
-  try{localStorage.setItem('mishkat_theme',d?'light':'dark');}catch(e){}
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var root=document.documentElement, modeBtn=$('mode');
+
+  function paint(){modeBtn.textContent=root.getAttribute('data-theme')==='dark'?'☀️ الوضع النهاري':'🌙 الوضع الليلي';}
   paint();
-};
+  modeBtn.onclick=function(){
+    var d=root.getAttribute('data-theme')==='dark';
+    if(d){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme','dark');}
+    try{localStorage.setItem('mishkat_theme',d?'light':'dark');}catch(e){}
+    paint();
+  };
 
-var toast=$('toast'), tm;
-function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2400);}
+  var toast=$('toast'), tm;
+  function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2400);}
 
-var SUBJECTS=['الرياضيات','الفيزياء','الكيمياء','تكنولوجيا الإعلام والاتصال','البلاغة','النحو','الصرف','الأدب العربي قديماً وحديثاً','الإسلامية','الإملاء','الإنجليزية'];
-var box=$('subs');
-SUBJECTS.forEach(function(s){
-  var b=document.createElement('button');
-  b.type='button';
-  b.className='sb';
-  b.textContent=s;
-  b.onclick=function(){say('«'+s+'» قيد الإعداد ✨');};
-  box.appendChild(b);
-});
+  /* المواد: الاسم، والأيقونة، وهل تتفرع إلى سداسيين */
+  var SUBJECTS=[
+    {n:'الرياضيات',i:'📐',sem:true},
+    {n:'الفيزياء',i:'⚛️',sem:true},
+    {n:'الكيمياء',i:'🧪',sem:true},
+    {n:'تكنولوجيا الإعلام والاتصال',i:'💻',sem:true},
+    {n:'البلاغة',i:'🗣️',sem:false},
+    {n:'النحو',i:'📝',sem:false},
+    {n:'الصرف',i:'🔤',sem:false},
+    {n:'الأدب العربي قديماً وحديثاً',i:'📜',sem:true},
+    {n:'الإسلامية',i:'🕌',sem:true},
+    {n:'الإملاء',i:'✍️',sem:true},
+    {n:'الإنجليزية',i:'🇬🇧',sem:true},
+    {n:'الخط العربي',i:'🖋️',sem:false},
+    {n:'فنيات الكتابة والتعبير',i:'✒️',sem:false},
+    {n:'أعلام آلي',i:'🖥️',sem:false}
+  ];
 
-var ens=$('ens'), back=$('backb');
-$('start').onclick=function(){
-  ens.classList.remove('show');
-  box.classList.add('show');
-  back.textContent='← رجوع';
-  back.href='#';
-};
-back.addEventListener('click',function(e){
-  if(box.classList.contains('show')){
-    e.preventDefault();
-    box.classList.remove('show');
-    ens.classList.add('show');
-    back.textContent='← العودة للرئيسية';
-    back.href='index.html';
+  var ens=$('ens'), subs=$('subs'), sems=$('sems'), back=$('backb');
+
+  function card(box,label,icon,onclick){
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='sb';
+    b.innerHTML='<span class="sb-i"></span><span class="sb-t"></span>';
+    b.querySelector('.sb-i').textContent=icon;
+    b.querySelector('.sb-t').textContent=label;
+    b.onclick=onclick;
+    box.appendChild(b);
   }
-});
+
+  /* بطاقات المواد */
+  SUBJECTS.forEach(function(s){
+    card(subs,s.n,s.i,function(){
+      if(!s.sem){say('«'+s.n+'» قيد الإعداد ✨');return;}
+      /* بطاقتا السداسيين */
+      sems.innerHTML='';
+      card(sems,'S1 (السداسي الأول)','1️⃣',function(){say('«'+s.n+' — S1» قيد الإعداد ✨');});
+      card(sems,'S2 (السداسي الثاني)','2️⃣',function(){say('«'+s.n+' — S2» قيد الإعداد ✨');});
+      subs.classList.remove('show');
+      sems.classList.add('show');
+      back.textContent='← رجوع';
+      back.setAttribute('href','#');
+    });
+  });
+
+  /* زر ابدأ الآن يعرض المواد */
+  $('start').onclick=function(){
+    ens.classList.remove('show');
+    subs.classList.add('show');
+    back.textContent='← رجوع';
+    back.setAttribute('href','#');
+  };
+
+  /* زر الرجوع: من السداسيات إلى المواد، ومن المواد إلى بطاقة ENS */
+  back.addEventListener('click',function(e){
+    if(sems.classList.contains('show')){
+      e.preventDefault();
+      sems.classList.remove('show');
+      subs.classList.add('show');
+      return;
+    }
+    if(subs.classList.contains('show')){
+      e.preventDefault();
+      subs.classList.remove('show');
+      ens.classList.add('show');
+      back.textContent='← العودة للرئيسية';
+      back.setAttribute('href','index.html');
+    }
+  });
+})();
 </script>
-<script src="about.js"></script>
 </body>
 </html>
