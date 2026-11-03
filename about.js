@@ -956,3 +956,24 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     }
   }
 })();
+/* ===== 17) بطاقة BAC STORY أسفل زرّي العودة والوضع الليلي في صفحتي الشعب والمواد ===== */
+(function(){
+  if(!/(branches|subjects)\.html$/.test(location.pathname)) return;
+  var bar=document.querySelector('.wrap > .bar');
+  if(!bar||document.getElementById('bs-card')) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.bs-card{max-width:420px;margin:18px auto 0;padding:14px 16px;border-radius:16px;background:#fff;border:1.5px solid #d0d7e2;box-shadow:0 8px 20px rgba(16,24,40,.08);text-align:center;direction:rtl}'
+  +'.bs-note{font-size:13px;font-weight:700;line-height:1.7;color:#101828;margin:0}'
+  +'.bs-btn{display:inline-block;margin-top:10px;padding:7px 18px;border-radius:999px;background:#0a84ff;color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(10,132,255,.3)}'
+  +'.bs-btn:hover,.bs-btn:focus-visible{background:#0870d8}';
+  document.head.appendChild(st);
+
+  var card=document.createElement('div');
+  card.id='bs-card';
+  card.className='bs-card';
+  card.innerHTML='<p class="bs-note">🚨 ملاحظة: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
+    +'<a class="bs-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener">تصفّح BAC STORY ←</a>';
+  bar.insertAdjacentElement('afterend',card);
+})();
