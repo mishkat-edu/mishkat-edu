@@ -26,15 +26,18 @@ h1{font-size:30px;margin:6px 0 4px}
 .ens-d{color:var(--muted);font-size:15px;line-height:1.9}
 .orange-btn{display:inline-block;margin-top:20px;padding:12px 34px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(255,159,28,.35)}
 
-/* بطاقات المواد والسداسيات */
-.subs,.sems{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
-.subs.show,.sems.show{display:grid}
-.sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.4;cursor:pointer;transition:transform .2s}
+/* البطاقات */
+.subs,.tops,.acts{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
+.subs.show,.tops.show,.acts.show{display:grid}
+.sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.5;cursor:pointer;transition:transform .2s}
 .sb:hover,.sb:focus-visible{transform:translateY(-4px)}
 .sb-i{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);display:grid;place-items:center;box-shadow:0 10px 20px rgba(10,132,255,.35),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
 .sb-i svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .sb-i .ar{font-family:'Tajawal',system-ui,sans-serif;font-size:15px;font-weight:800;line-height:1;direction:rtl}
-.subs .sb:last-child:nth-child(odd),.sems .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
+.tops .sb{min-height:118px;font-size:15px;padding:16px 12px;gap:8px}
+.tops .sb-i{width:42px;height:42px}
+.tops .sb-i .ar{font-size:18px}
+.subs .sb:last-child:nth-child(odd),.tops .sb:last-child:nth-child(odd),.acts .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
 
 .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}
 .back,.mode{display:inline-block;padding:8px 20px;border:1.5px solid var(--blue);border-radius:999px;background:var(--card);color:var(--blue);font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
@@ -59,7 +62,8 @@ h1{font-size:30px;margin:6px 0 4px}
   </div>
 
   <div class="subs" id="subs"></div>
-  <div class="sems" id="sems"></div>
+  <div class="tops" id="tops"></div>
+  <div class="acts" id="acts"></div>
 
   <div class="bar">
     <a class="back" id="backb" href="index.html">← العودة للرئيسية</a>
@@ -85,7 +89,6 @@ h1{font-size:30px;margin:6px 0 4px}
   var toast=$('toast'), tm;
   function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2400);}
 
-  /* الأيقونات: رسومات SVG موحدة، وما يُكتب كحروف يظهر نصاً */
   var V='<svg viewBox="0 0 32 32" aria-hidden="true">';
   var ICON={
     math:V+'<rect x="7" y="4" width="18" height="24" rx="3"/><path d="M11 10h10M11 15h2M16 15h2M11 20h2M16 20h2M11 25h2M16 25h2"/></svg>',
@@ -101,74 +104,83 @@ h1{font-size:30px;margin:6px 0 4px}
     calligraphy:V+'<path d="M22 4c-6 4-10 10-12 18l-3 6 6-3c8-2 14-6 18-12-4-2-6-4-9-9z"/><path d="M10 22l-2 4"/></svg>',
     writing:V+'<path d="M6 26h20"/><path d="M9 22l13-13 4 4-13 13H9z"/><path d="M20 9l4 4"/></svg>',
     computer:V+'<rect x="5" y="6" width="22" height="15" rx="2"/><path d="M12 27h8M16 21v6"/></svg>',
-    s1:V+'<path d="M12 9l3-3v20"/></svg>',
-    s2:V+'<path d="M10 11a6 6 0 0 1 12 0c0 4-12 7-12 13h12"/></svg>'
+    notes:V+'<path d="M8 5h14a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M11 11h8M11 15h8M11 19h5"/></svg>',
+    exam:V+'<circle cx="16" cy="16" r="11"/><path d="M11 16l3.5 3.5L21 12"/></svg>'
   };
 
   var SUBJECTS=[
-    {n:'الرياضيات',ic:ICON.math,sem:true},
-    {n:'الفيزياء',ic:ICON.physics,sem:true},
-    {n:'الكيمياء',ic:ICON.chem,sem:true},
-    {n:'تكنولوجيا الإعلام والاتصال',ic:ICON.it,sem:true},
-    {n:'البلاغة',ic:ICON.rhetoric,sem:false},
-    {n:'النحو',ic:ICON.grammar,sem:false},
-    {n:'الصرف',ic:'<span class="ar">ٱ ب ت</span>',sem:false},
-    {n:'الأدب العربي قديماً وحديثاً',ic:ICON.literature,sem:true},
-    {n:'الإسلامية',ic:ICON.islam,sem:true},
-    {n:'الإملاء',ic:ICON.dictation,sem:true},
-    {n:'الإنجليزية',ic:ICON.english,sem:true},
-    {n:'الخط العربي',ic:ICON.calligraphy,sem:false},
-    {n:'فنيات الكتابة والتعبير',ic:ICON.writing,sem:false},
-    {n:'أعلام آلي',ic:ICON.computer,sem:false}
+    {n:'الرياضيات',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
+    {n:'الفيزياء',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
+    {n:'الكيمياء',ic:ICON.chem,topics:null},
+    {n:'تكنولوجيا الإعلام والاتصال',ic:ICON.it,topics:['المحور الأول: ماهية تكنولوجيا الإعلام والاتصال','المحور الثالث: بعض تطبيقات تكنولوجيا الإعلام والاتصال','المحور الرابع: انعكاسات التكنولوجيا على الإعلام والاتصال']},
+    {n:'البلاغة',ic:ICON.rhetoric,topics:['الموضوع الأول: مدخل إلى علم البلاغة','الموضوع الثاني: أقسام علم البلاغة','الموضوع الثالث: الحقيقة والمجاز','الموضوع الرابع: التشبيه وأركانه','الموضوع الخامس: الاستعارة وأنواعها']},
+    {n:'النحو',ic:ICON.grammar,topics:['الموضوع الأول: تعريف النحو وأهميته','الموضوع الثاني: أقسام الكلام','الموضوع الثالث: الإعراب والبناء في الأسماء']},
+    {n:'الصرف',ic:'<span class="ar">ٱ ب ت</span>',topics:['الموضوع الأول: معنى الصرف وميدانه','الموضوع الثاني: الميزان الصرفي','الموضوع الثالث: الصحيح والمعتل في الأفعال','الموضوع الرابع: المجرد والمزيد','الموضوع الخامس: إسناد الفعل الصحيح إلى الضمائر']},
+    {n:'الأدب العربي قديماً وحديثاً',ic:ICON.literature,topics:null},
+    {n:'الإسلامية',ic:ICON.islam,topics:['الموضوع الأول: الأديان','الموضوع الثاني: مدخل إلى العقيدة الإسلامية','الموضوع الثالث: أركان الإيمان','الموضوع الرابع: الإيمان بالله تعالى','الموضوع الخامس: الإيمان بالملائكة']},
+    {n:'الإملاء',ic:ICON.dictation,topics:['اهمية الاملاء واهدافها','العلاقة بين الملاء والكتابة','أنواع الهمزة في أول الكلمة','التاء المفتوحة والمربوطة في الأسماء والأفعال','الحروف المزيدة والمحذوفة','كتابة العدد','علامات الترقيم','الأخطاء الشائعة في الكتابة']},
+    {n:'الإنجليزية',ic:ICON.english,topics:['Unit (1): Ethics (أخلاق مهنية)','Unit (2): The world of work and its conflict (عالم العمل وصراعاته)','Unit (3): social media (وسائل التواصل الاجتماعي)','Unit (4): digital marketing (التسويق الرقمي)']},
+    {n:'الخط العربي',ic:ICON.calligraphy,topics:null},
+    {n:'فنيات الكتابة والتعبير',ic:ICON.writing,topics:['تعريف مقياس فنيات الكتابة والتعبير وتحديد أهم مصطلحاته','خطوات تحرير موضوع','تقنيات كتابة التقرير الكتابي','تقنيات كتابة التقرير الإداري','التعبير الشفهي','قراءة نصوص عربية وفك رموزها','فنيات كتابة المقال وأساليب الكتابة الإيضاحية والإقناعية']},
+    {n:'أعلام آلي',ic:ICON.computer,topics:null}
   ];
 
-  var ens=$('ens'), subs=$('subs'), sems=$('sems'), back=$('backb');
+  var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), back=$('backb');
+  var view='ens';
 
-  function card(box,label,icon,onclick){
+  function show(v){
+    view=v;
+    ens.classList.toggle('show',v==='ens');
+    subs.classList.toggle('show',v==='subs');
+    tops.classList.toggle('show',v==='topics');
+    acts.classList.toggle('show',v==='acts');
+    if(v==='ens'){back.textContent='← العودة للرئيسية';back.setAttribute('href','index.html');}
+    else{back.textContent='← رجوع';back.setAttribute('href','#');}
+  }
+
+  function card(box,label,icon,num,onclick){
     var b=document.createElement('button');
     b.type='button';
     b.className='sb';
-    b.innerHTML='<span class="sb-i"></span><span class="sb-t"></span>';
-    b.querySelector('.sb-i').innerHTML=icon;
-    b.querySelector('.sb-t').textContent=label;
+    var i=document.createElement('span');
+    i.className='sb-i';
+    if(num){i.innerHTML='<span class="ar">'+num+'</span>';}else{i.innerHTML=icon;}
+    var t=document.createElement('span');
+    t.textContent=label;
+    b.appendChild(i);
+    b.appendChild(t);
     b.onclick=onclick;
     box.appendChild(b);
   }
 
+  /* بطاقات المواد */
   SUBJECTS.forEach(function(s){
-    card(subs,s.n,s.ic,function(){
-      if(!s.sem){say('«'+s.n+'» قيد الإعداد ✨');return;}
-      sems.innerHTML='';
-      card(sems,'S1 (السداسي الأول)',ICON.s1,function(){say('«'+s.n+' — S1» قيد الإعداد ✨');});
-      card(sems,'S2 (السداسي الثاني)',ICON.s2,function(){say('«'+s.n+' — S2» قيد الإعداد ✨');});
-      subs.classList.remove('show');
-      sems.classList.add('show');
-      back.textContent='← رجوع';
-      back.setAttribute('href','#');
+    card(subs,s.n,s.ic,null,function(){
+      tops.innerHTML='';
+      if(!s.topics){
+        card(tops,'قيد الإعداد',ICON.calligraphy,null,function(){say('«'+s.n+'» قيد الإعداد ✨');});
+      }else{
+        s.topics.forEach(function(t,k){
+          card(tops,t,null,String(k+1),function(){
+            /* بطاقتا الملخصات والتمارين للمحور */
+            acts.innerHTML='';
+            card(acts,'الملخصات',ICON.notes,null,function(){say('ملخصات «'+t+'» قيد الإعداد ✨');});
+            card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){say('التمارين والتصحيح لـ«'+t+'» قيد الإعداد ✨');});
+            show('acts');
+          });
+        });
+      }
+      show('topics');
     });
   });
 
-  $('start').onclick=function(){
-    ens.classList.remove('show');
-    subs.classList.add('show');
-    back.textContent='← رجوع';
-    back.setAttribute('href','#');
-  };
+  $('start').onclick=function(){show('subs');};
 
+  /* الرجوع: من بطاقتي المحور إلى المحاور، ومن المحاور إلى المواد، ومن المواد إلى بطاقة ENS */
   back.addEventListener('click',function(e){
-    if(sems.classList.contains('show')){
-      e.preventDefault();
-      sems.classList.remove('show');
-      subs.classList.add('show');
-      return;
-    }
-    if(subs.classList.contains('show')){
-      e.preventDefault();
-      subs.classList.remove('show');
-      ens.classList.add('show');
-      back.textContent='← العودة للرئيسية';
-      back.setAttribute('href','index.html');
-    }
+    if(view==='acts'){e.preventDefault();show('topics');return;}
+    if(view==='topics'){e.preventDefault();show('subs');return;}
+    if(view==='subs'){e.preventDefault();show('ens');}
   });
 })();
 </script>
