@@ -1082,3 +1082,76 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     document.head.appendChild(st);
   }
 })();
+/* ===== 22) صفحة التمارين: كل ملفات الفصل تظهر كأزرار (التمرين 1، 2، 3) ===== */
+(function(){
+  if(!/sciex\.html$/.test(location.pathname)) return;
+  var SUBJ=localStorage.getItem('mishkat_subject')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+
+  var MAT={
+    'العلوم':{p:'ex-sci',codes:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]},
+    'الرياضيات':{p:'ex-math',codes:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']]},
+    'الفيزياء':{p:'ex-phys',codes:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']]}
+  };
+  var M=MAT[SUBJ];
+  if(!M) return;
+
+  function norm(s){
+    return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
+  }
+  var n=norm(ch), code='';
+  for(var i=0;i<M.codes.length;i++){
+    if(n.indexOf(M.codes[i][1])>-1){code=M.codes[i][0];break;}
+  }
+  if(!code) return;
+
+  var card=null;
+  document.querySelectorAll('.vcard').forEach(function(c){
+    var t=c.querySelector('.vtag');
+    if(t&&t.textContent.indexOf('تمارين منصتنا')>-1) card=c;
+  });
+  if(!card) return;
+  var box=card.querySelector('.vact');
+  if(!box) return;
+  box.innerHTML='';
+
+  var base=M.p+'-'+code;
+  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf'];
+  var found=[];
+  var toast=document.getElementById('toast'), tm;
+
+  function say(msg){
+    if(!toast) return;
+    toast.textContent=msg;
+    toast.classList.add('on');
+    clearTimeout(tm);
+    tm=setTimeout(function(){toast.classList.remove('on');},2600);
+  }
+
+  function render(){
+    if(!found.length){
+      var b=document.createElement('button');
+      b.type='button';
+      b.className='vgo';
+      b.textContent='تصفّح التمارين ←';
+      b.onclick=function(){say('تمارين «'+ch+'» قيد الإعداد ✨');};
+      box.appendChild(b);
+      return;
+    }
+    found.forEach(function(f,k){
+      var a=document.createElement('a');
+      a.className='vgo';
+      a.href='pdfview.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent('تمارين '+ch+' — التمرين '+(k+1));
+      a.textContent='التمرين '+(k+1)+' ←';
+      box.appendChild(a);
+    });
+  }
+
+  (function check(k){
+    if(k>=names.length){render();return;}
+    fetch(names[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(r.ok) found.push(names[k]);
+      check(k+1);
+    }).catch(function(){check(k+1);});
+  })(0);
+})();
