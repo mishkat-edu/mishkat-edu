@@ -1053,3 +1053,32 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     })(0);
   }
 })();
+/* ===== 29) تسيير واقتصاد: إخفاء الاحتمالات والأعداد المركبة والدوال الأصلية والقسمة من صفحة الرياضيات ===== */
+(function(){
+  if(!/math\.html$/.test(location.pathname)) return;
+  if((localStorage.getItem('mishkat_branch')||'')!=='تسيير واقتصاد') return;
+
+  function norm(s){
+    return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
+  }
+  var HIDE=['الاحتماله','الاحتمالات','المركبه','الاعداد المركبه','الاصليه','الدوال الاصليه','القسمه'];
+
+  var grid=document.querySelector('.wrap > .grid');
+  if(!grid) return;
+
+  [].slice.call(grid.children).forEach(function(el){
+    var name=norm(el.getAttribute('data-c')||el.textContent);
+    for(var i=0;i<HIDE.length;i++){
+      if(name.indexOf(HIDE[i])>-1){el.remove();return;}
+    }
+  });
+
+  var left=[].slice.call(grid.children).filter(function(c){return c.classList.contains('b');});
+  if(left.length%2===1){
+    var last=left[left.length-1];
+    last.classList.add('solo');
+    var st=document.createElement('style');
+    st.textContent='@media (max-width:899px){.grid > .b.solo{grid-column:1/-1;justify-self:center;width:calc(50% - 8px)}}';
+    document.head.appendChild(st);
+  }
+})();
