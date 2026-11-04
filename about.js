@@ -1082,7 +1082,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     document.head.appendChild(st);
   }
 })();
-/* ===== 22) صفحة التمارين: كل ملفات الفصل تظهر كأزرار (التمرين 1، 2، 3) ===== */
+/* ===== 22) صفحة التمارين: صور مصغرة لصفحة الغلاف، والضغط عليها يفتح الملف ===== */
 (function(){
   if(!/sciex\.html$/.test(location.pathname)) return;
   var SUBJ=localStorage.getItem('mishkat_subject')||'';
@@ -1113,37 +1113,86 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   if(!card) return;
   var box=card.querySelector('.vact');
   if(!box) return;
-  box.innerHTML='';
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.exth{display:flex;flex-direction:column;align-items:center;gap:4px;width:104px;text-decoration:none;color:#fff}'
+  +'.exth canvas{display:block;border-radius:6px;border:2px solid #fff;background:#fff;box-shadow:0 4px 10px rgba(0,0,0,.25);transition:transform .2s}'
+  +'.exth:hover canvas,.exth:focus-visible canvas{transform:translateY(-3px)}'
+  +'.exth span{font-size:11px;font-weight:800;background:#fff;color:#086a8c;border-radius:999px;padding:2px 10px}'
+  +'.exth-ph{width:100%;height:100%;display:grid;place-items:center;font-size:11px;color:#086a8c;font-weight:800}';
+  document.head.appendChild(st);
 
   var base=M.p+'-'+code;
   var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf'];
   var found=[];
-  var toast=document.getElementById('toast'), tm;
 
-  function say(msg){
-    if(!toast) return;
-    toast.textContent=msg;
-    toast.classList.add('on');
-    clearTimeout(tm);
-    tm=setTimeout(function(){toast.classList.remove('on');},2600);
+  function loadPdfJs(cb){
+    if(window.pdfjsLib){cb();return;}
+    var s=document.createElement('script');
+    s.src='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+    s.onload=function(){
+      try{pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';}catch(e){}
+      cb();
+    };
+    s.onerror=function(){cb();};
+    document.head.appendChild(s);
+  }
+
+  function draw(file,canvas,ph){
+    if(!window.pdfjsLib){ph.textContent='📄';return;}
+    pdfjsLib.getDocument(file).promise.then(function(pdf){
+      return pdf.getPage(1);
+    }).then(function(page){
+      var vp1=page.getViewport({scale:1});
+      var vp=page.getViewport({scale:(104*2)/vp1.width});
+      canvas.width=Math.floor(vp.width);
+      canvas.height=Math.floor(vp.height);
+      canvas.style.width='104px';
+      canvas.style.height=Math.round(104*vp1.height/vp1.width)+'px';
+      return page.render({canvasContext:canvas.getContext('2d'),viewport:vp}).promise;
+    }).catch(function(){
+      ph.textContent='📄';
+    });
   }
 
   function render(){
+    box.innerHTML='';
+    box.style.flexDirection='row';
+    box.style.flexWrap='wrap';
+    box.style.justifyContent='center';
+    box.style.gap='10px';
+
     if(!found.length){
       var b=document.createElement('button');
       b.type='button';
       b.className='vgo';
       b.textContent='تصفّح التمارين ←';
-      b.onclick=function(){say('تمارين «'+ch+'» قيد الإعداد ✨');};
+      b.onclick=function(){alert('تمارين «'+ch+'» قيد الإعداد');};
       box.appendChild(b);
       return;
     }
-    found.forEach(function(f,k){
-      var a=document.createElement('a');
-      a.className='vgo';
-      a.href='pdfview.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent('تمارين '+ch+' — التمرين '+(k+1));
-      a.textContent='التمرين '+(k+1)+' ←';
-      box.appendChild(a);
+
+    loadPdfJs(function(){
+      found.forEach(function(file,k){
+        var a=document.createElement('a');
+        a.className='exth';
+        a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('تمارين '+ch+' — التمرين '+(k+1));
+        var box2=document.createElement('div');
+        box2.style.position='relative';
+        var canvas=document.createElement('canvas');
+        var ph=document.createElement('div');
+        ph.className='exth-ph';
+        ph.textContent='⏳';
+        box2.appendChild(canvas);
+        box2.appendChild(ph);
+        var label=document.createElement('span');
+        label.textContent='التمرين '+(k+1);
+        a.appendChild(box2);
+        a.appendChild(label);
+        box.appendChild(a);
+        draw(file,canvas,ph);
+      });
     });
   }
 
