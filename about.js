@@ -981,7 +981,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   card.id='bs2-card';
   card.className='bs2';
   card.innerHTML=''
-    +'<p class="bs2-note">🚨 ملاحظة: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
+    +'<p class="bs2-note">ملاحظة🚨: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
     +'<a class="bs2-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener"><img src="bac-story.jpg" alt="" onerror="this.style.display=\'none\'">تصفّح BAC STORY ←</a>'
     +'<div class="bs2-edge"></div>'
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
