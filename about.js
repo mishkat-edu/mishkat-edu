@@ -987,3 +987,69 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
 })();
+/* ===== 20) تسيير واقتصاد: الرياضيات تفتح صفحة الرياضيات نفسها، وملخصاتها مثل بقية الشعب ===== */
+(function(){
+  var br=localStorage.getItem('mishkat_branch')||'';
+  if(br!=='تسيير واقتصاد') return;
+
+  /* 1) صفحة المواد: الرياضيات تفتح math.html */
+  if(/subjects\.html$/.test(location.pathname)){
+    document.querySelectorAll('[data-s="الرياضيات"]').forEach(function(el){
+      el.onclick=function(){
+        localStorage.setItem('mishkat_subject','الرياضيات');
+        localStorage.removeItem('mishkat_chapter');
+        location.href='math.html';
+      };
+    });
+  }
+
+  /* 2) صفحة الملخصات: ملخص كل فصل من الملفات المرفوعة */
+  if(/summaries\.html$/.test(location.pathname)){
+    if((localStorage.getItem('mishkat_subject')||'')!=='الرياضيات') return;
+    var vg=document.querySelector('.vgrid');
+    var ch=localStorage.getItem('mishkat_chapter')||'';
+    if(!vg) return;
+
+    function norm(s){
+      return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
+    }
+    var CH=[
+      ['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],
+      ['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']
+    ];
+    var n=norm(ch), code='';
+    for(var i=0;i<CH.length;i++){
+      if(n.indexOf(CH[i][1])>-1){code=CH[i][0];break;}
+    }
+    if(!code) return;
+
+    var cands=[
+      'math-ge-'+code+'.pdf',
+      'math-m-'+code+'.pdf',
+      'math-se-'+code+'.pdf',
+      'math-tm-'+code+'.pdf',
+      'math-'+code+'.pdf'
+    ];
+
+    var card=null;
+    vg.querySelectorAll('.vcard').forEach(function(c){
+      var t=c.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('ملخصات منصة مشكاة')>-1) card=c;
+    });
+    if(!card) return;
+    var btn=card.querySelector('button.vgo');
+    if(!btn) return;
+
+    (function tryNext(k){
+      if(k>=cands.length) return;
+      fetch(cands[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+        if(!r.ok){tryNext(k+1);return;}
+        var a=document.createElement('a');
+        a.className='vgo';
+        a.href='pdfview.html?f='+encodeURIComponent(cands[k])+'&t='+encodeURIComponent('ملخص '+ch+' — تسيير واقتصاد');
+        a.textContent='تصفّح الملخصات ←';
+        btn.replaceWith(a);
+      }).catch(function(){tryNext(k+1);});
+    })(0);
+  }
+})();
