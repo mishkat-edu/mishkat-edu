@@ -1161,3 +1161,13 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     }).catch(function(){check(k+1);});
   })(0);
 })();
+/* ===== 23) صفحة التمارين: تنسيق أزرار المواضيع داخل البطاقة ===== */
+(function(){
+  if(!/sciex\.html$/.test(location.pathname)) return;
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.vcard .pdfp-list{width:100%;padding:0 12px;box-sizing:border-box;align-items:stretch}'
+  +'.vcard .pdfp{min-width:0;width:100%;max-width:100%;box-sizing:border-box;border-radius:14px;padding:10px 14px;justify-content:center;white-space:nowrap}'
+  +'.vcard .pdfp span{overflow:hidden;text-overflow:ellipsis}';
+  document.head.appendChild(st);
+})();
