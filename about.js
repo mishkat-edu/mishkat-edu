@@ -1,46 +1,7 @@
-/* ===== about.js: أكاديمية مشكاة (كامل) ===== */
-
+/* ألوان المنصة: غيّرها من هنا فقط */
 var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',GOLDINK:'#4a3000',GLOW:'rgba(6,120,150,.38)',DEEP:'#086a8c'};
 
-/* ===== أدوات مساعدة ===== */
-function $all(sel,root){return [].slice.call((root||document).querySelectorAll(sel));}
-function normAr(s){return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();}
-function ytIdOf(u){var m=(u||'').match(/(?:youtu\.be\/|[?&]v=)([A-Za-z0-9_-]{6,})/);return m?m[1]:'';}
-function setLabel(el,text){
-  if(!el) return;
-  var tw=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null),first=true,t;
-  while((t=tw.nextNode())){
-    if(!t.nodeValue.trim()) continue;
-    if(first){t.nodeValue=text;first=false;}else{t.nodeValue='';}
-  }
-}
-function tagOf(card){var t=card.querySelector('.vtag');return t?t.textContent:'';}
-var toastTm=null;
-function say(msg){
-  var t=document.getElementById('toast');
-  if(!t) return;
-  t.textContent=msg;t.classList.add('on');
-  clearTimeout(toastTm);
-  toastTm=setTimeout(function(){t.classList.remove('on');},2600);
-}
-function checkFiles(list,done){
-  (function next(k){
-    if(k>=list.length){done('');return;}
-    fetch(list[k],{method:'HEAD',cache:'no-store'}).then(function(r){
-      if(r.ok) done(list[k]); else next(k+1);
-    }).catch(function(){next(k+1);});
-  })(0);
-}
-function replaceCard(card,label,onclick){
-  var n=card.cloneNode(true);
-  n.removeAttribute('data-t');
-  setLabel(n,label);
-  n.addEventListener('click',onclick);
-  card.replaceWith(n);
-  return n;
-}
-
-/* ===== 0) توجيه الشعب والمواد ===== */
+/* ===== 0) توجيه الصفحات حسب الشعبة (ووضع الأستاذ) ===== */
 (function(){
   var br=localStorage.getItem('mishkat_branch')||'';
   var tp=new URLSearchParams(location.search).get('t');
@@ -50,39 +11,46 @@ function replaceCard(card,label,onclick){
   if(tp&&document.querySelector('.b[data-b]')&&subEl){
     subEl.textContent='اختر شعبتك لمتابعة دروس '+(tp==='math'?'الرياضيات':'الفيزياء');
   }
-
-  $all('.b[data-b]').forEach(function(el){
+  document.querySelectorAll('.b[data-b]').forEach(function(el){
     el.onclick=function(){
       var b=el.dataset.b;
       localStorage.setItem('mishkat_branch',b);
       localStorage.removeItem('mishkat_chapter');
       if(!tp){location.href='subjects.html';return;}
-      var s=(tp==='math')?'الرياضيات':((b==='تسيير واقتصاد')?'الاقتصاد':'الفيزياء');
+      var s;
+      if(tp==='math'){s='الرياضيات';}
+      else{s=(b==='تسيير واقتصاد')?'الاقتصاد':'الفيزياء';}
       localStorage.setItem('mishkat_subject',s);
       if(s==='الرياضيات'&&b!=='تسيير واقتصاد'){location.href='math.html';}
-      else if(s==='الرياضيات'){location.href='math.html';}
       else if(s==='الفيزياء'){location.href='physics.html';}
       else{location.href='section.html';}
     };
   });
 
   var phys=document.querySelector('.b[data-s="الفيزياء"]');
-  if(phys&&br==='تسيير واقتصاد'){phys.dataset.s='الاقتصاد';phys.innerHTML='<span>📊</span>الاقتصاد';}
+  if(phys&&br==='تسيير واقتصاد'){
+    phys.dataset.s='الاقتصاد';
+    phys.innerHTML='<span>📊</span>الاقتصاد';
+  }
 
   if(phys&&(br==='علوم تجريبية'||br==='رياضيات')&&!document.querySelector('.b[data-s="العلوم"]')){
     var sc=document.createElement('button');
-    sc.type='button';sc.className='b';sc.setAttribute('data-s','العلوم');
+    sc.type='button';
+    sc.className='b';
+    sc.setAttribute('data-s','العلوم');
     sc.innerHTML='<span>🧬</span>العلوم';
     phys.after(sc);
   }
 
   var gridEl=document.querySelector('.wrap > .grid');
   if(phys&&gridEl&&!document.querySelector('.b[data-s="العلوم الإسلامية"]')){
-    var bsList=$all('.b',gridEl);
+    var bsList=[].slice.call(gridEl.children).filter(function(c){return c.classList.contains('b');});
     var isl=document.createElement('button');
-    isl.type='button';isl.className='b';isl.setAttribute('data-s','العلوم الإسلامية');
+    isl.type='button';
+    isl.className='b';
+    isl.setAttribute('data-s','العلوم الإسلامية');
     isl.innerHTML='<span>🕌</span>العلوم الإسلامية';
-    if(bsList.length) bsList[bsList.length-1].after(isl);
+    bsList[bsList.length-1].after(isl);
     if((bsList.length+1)%2===1){
       isl.classList.add('solo');
       var sst=document.createElement('style');
@@ -91,7 +59,7 @@ function replaceCard(card,label,onclick){
     }
   }
 
-  $all('[data-s]').forEach(function(el){
+  document.querySelectorAll('[data-s]').forEach(function(el){
     el.onclick=function(){
       var s=el.dataset.s;
       localStorage.setItem('mishkat_subject',s);
@@ -99,68 +67,83 @@ function replaceCard(card,label,onclick){
       if(s==='الفيزياء'){location.href='physics.html';}
       else if(s==='العلوم'){location.href='science.html';}
       else if(s==='العلوم الإسلامية'){location.href='islamic.html';}
-      else if(s==='الرياضيات'){location.href='math.html';}
+      else if(s==='الرياضيات'&&br!=='تسيير واقتصاد'){location.href='math.html';}
       else{location.href='section.html';}
     };
   });
 })();
 
-/* ===== 1) الأسلوب العام: حواف زرقاء عادية بلا توهج ===== */
+/* ===== 1) إطار العنوان الاسطواني (ثابت) ===== */
 (function(){
-  var st=document.createElement('style');
-  st.textContent=''
-  +'.b,.eng{border:2px solid #0a84ff!important;box-shadow:none!important;animation:none!important}'
-  +'.b:hover,.b:focus-visible,.eng:hover{border-color:#0a84ff!important;box-shadow:0 8px 18px rgba(10,132,255,.25)!important}'
-  +'.pi{display:inline-grid;place-items:center;width:52px;height:52px;border-radius:16px;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);box-shadow:0 8px 16px rgba(10,132,255,.25)}'
-  +'.pi svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
-  +'.has-pi{height:auto!important;line-height:1!important;margin-bottom:10px!important}'
-  +'.tpill{position:relative;overflow:hidden;display:block;margin:0 auto;max-width:560px;padding:20px 28px 18px;border-radius:46px;background:var(--card);border:3px solid #ff9f1c;box-shadow:0 14px 34px rgba(255,159,28,.28)}'
+  var w=document.querySelector('.wrap');
+  if(!w||w.querySelector('.tpill'))return;
+  var kids=[].slice.call(w.children);
+  var logo=kids.filter(function(c){return c.classList.contains('logo');})[0];
+  var h=kids.filter(function(c){return c.tagName==='H1';})[0];
+  var sub=kids.filter(function(c){return c.classList.contains('sub');})[0];
+  if(!h)return;
+
+  var css=''
+  +'.tpill{position:relative;overflow:hidden;display:block;margin:0 auto;max-width:560px;padding:20px 28px 18px;border-radius:46px;background:var(--card);border:3px solid #ff9f1c;box-shadow:0 14px 34px rgba(255,159,28,.28),inset 0 5px 10px rgba(255,255,255,.35),inset 0 -7px 14px rgba(255,159,28,.16)}'
   +'.tpill>*{position:relative;z-index:1}'
   +'.tpill .logo{margin-bottom:4px}.tpill h1{margin-bottom:4px}.tpill .sub{margin-bottom:0}'
-  +'body::before{content:"";position:fixed;top:50%;left:50%;width:min(86vmin,560px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:url(logo.jpg) center/cover no-repeat;opacity:.08;z-index:-1;pointer-events:none}'
-  +':root[data-theme="dark"] body::before{opacity:.06}';
+  +'@media (min-width:900px){.tpill{max-width:680px;padding:28px 40px 24px}}';
+  var st=document.createElement('style');
+  st.textContent=css;
   document.head.appendChild(st);
 
-  var w=document.querySelector('.wrap');
-  if(w&&!w.querySelector('.tpill')){
-    var kids=[].slice.call(w.children);
-    var logo=kids.filter(function(c){return c.classList.contains('logo');})[0];
-    var h=kids.filter(function(c){return c.tagName==='H1';})[0];
-    var sub=kids.filter(function(c){return c.classList.contains('sub');})[0];
-    if(h){
-      var pill=document.createElement('div');
-      pill.className='tpill';
-      w.insertBefore(pill,logo||h);
-      [logo,h,sub].forEach(function(el){if(el)pill.appendChild(el);});
-    }
-  }
+  var pill=document.createElement('div');
+  pill.className='tpill';
+  w.insertBefore(pill,logo||h);
+  [logo,h,sub].forEach(function(el){if(el)pill.appendChild(el);});
+})();
 
+/* ===== 2) شعار المنصة كخلفية باهتة + أيقونة التبويب ===== */
+(function(){
+  if(!document.querySelector('.hero.wm')){
+    var st=document.createElement('style');
+    st.textContent=''
+    +'body::before{content:"";position:fixed;top:50%;left:50%;width:min(86vmin,560px);aspect-ratio:1;transform:translate(-50%,-50%);border-radius:50%;background:url(logo.jpg) center/cover no-repeat;opacity:.08;z-index:-1;pointer-events:none}'
+    +':root[data-theme="dark"] body::before{opacity:.06}';
+    document.head.appendChild(st);
+  }
   if(!document.querySelector('link[rel~="icon"]')){
     var l=document.createElement('link');
-    l.rel='icon';l.href='logo.jpg';
+    l.rel='icon';
+    l.href='logo.jpg';
     document.head.appendChild(l);
   }
 })();
 
-/* ===== 2) الأيقونات ===== */
+/* ===== 3) الأيقونات الاحترافية ===== */
 (function(){
+  var css=''
+  +'.pi{display:inline-grid;place-items:center;width:62px;height:62px;border-radius:19px;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);box-shadow:0 12px 24px rgba(10,132,255,.38),inset 0 1px 0 rgba(255,255,255,.4);transition:transform .25s}'
+  +'.pi svg{width:36px;height:36px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+  +'.has-pi{height:auto!important;line-height:1!important;margin-bottom:14px!important}'
+  +'.b:hover .pi,.b:focus-visible .pi{transform:translateY(-3px) scale(1.07)}'
+  +'@media (min-width:900px){.pi{width:72px;height:72px;border-radius:22px}.pi svg{width:42px;height:42px}}';
+  var st=document.createElement('style');
+  st.textContent=css;
+  document.head.appendChild(st);
+
   var V='<svg viewBox="0 0 32 32" aria-hidden="true">';
   var ICONS={
     dna:V+'<path d="M10 3C10 10 22 10 22 16C22 22 10 22 10 29"/><path d="M22 3C22 10 10 10 10 16C10 22 22 22 22 29"/><path stroke-width="1.6" opacity=".85" d="M12 7H20M12 12.4H20M12 19.6H20M12 24.9H20"/></svg>',
-    calc:V+'<rect x="7" y="3" width="18" height="26" rx="3.5"/><rect x="10" y="6.5" width="12" height="5" rx="1.2" fill="#fff" stroke="none"/><g fill="#fff" stroke="none"><circle cx="11" cy="16.5" r="1.4"/><circle cx="16" cy="16.5" r="1.4"/><circle cx="21" cy="16.5" r="1.4"/><circle cx="11" cy="21" r="1.4"/><circle cx="16" cy="21" r="1.4"/><circle cx="21" cy="21" r="1.4"/></g></svg>',
+    calc:V+'<rect x="7" y="3" width="18" height="26" rx="3.5"/><rect x="10" y="6.5" width="12" height="5" rx="1.2" fill="#fff" stroke="none"/><g fill="#fff" stroke="none"><circle cx="11" cy="16.5" r="1.4"/><circle cx="16" cy="16.5" r="1.4"/><circle cx="21" cy="16.5" r="1.4"/><circle cx="11" cy="21" r="1.4"/><circle cx="16" cy="21" r="1.4"/><circle cx="21" cy="21" r="1.4"/><circle cx="11" cy="25.2" r="1.4"/><circle cx="16" cy="25.2" r="1.4"/><circle cx="21" cy="25.2" r="1.4"/></g></svg>',
     gear:V+'<circle cx="16" cy="16" r="8" stroke-width="2.2"/><circle cx="16" cy="16" r="3" stroke-width="2"/><path stroke-width="3.2" d="M16 3.5V6.7M16 25.3V28.5M3.5 16H6.7M25.3 16H28.5M7.2 7.2L9.5 9.5M22.5 22.5L24.8 24.8M24.8 7.2L22.5 9.5M9.5 22.5L7.2 24.8"/></svg>',
     chart:V+'<g fill="#fff" stroke="none"><rect x="5" y="21" width="5" height="7" rx="1.2"/><rect x="13.5" y="17" width="5" height="11" rx="1.2"/><rect x="22" y="13" width="5" height="15" rx="1.2"/></g><path d="M5 15L12 10.5L17 12.5L26 4.5"/><path d="M21 4.5H26V9.5"/></svg>',
     pi:V+'<path stroke-width="2.4" d="M7 9.5H25M12.5 9.5C12.5 14.5 12 18.5 10 22.5M19.5 9.5V21C19.5 23 20.3 24 22.3 24"/></svg>',
     atom:V+'<circle cx="16" cy="16" r="2.6" fill="#fff" stroke="none"/><g stroke-width="1.8"><ellipse cx="16" cy="16" rx="13" ry="5.2"/><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(60 16 16)"/><ellipse cx="16" cy="16" rx="13" ry="5.2" transform="rotate(120 16 16)"/></g></svg>',
     hat:V+'<path d="M6 21A10 10 0 0 1 26 21"/><path stroke-width="1.8" d="M16 11V21M11 12.5V21M21 12.5V21"/><rect x="4" y="21" width="24" height="4.5" rx="2.2" fill="#fff" stroke="none"/></svg>',
     book:V+'<path d="M16 7C13 5 9 4.5 5 5V24C9 23.5 13 24 16 26"/><path d="M16 7C19 5 23 4.5 27 5V24C23 23.5 19 24 16 26"/><path d="M16 7V26"/></svg>',
-    quran:V+'<path d="M16 15C13 13 9 12.5 5 13V26C9 25.5 13 26 16 28"/><path d="M16 15C19 13 23 12.5 27 13V26C23 25.5 19 26 16 28"/><path d="M16 15V28"/></svg>',
+    quran:V+'<g transform="translate(9 0) scale(.55)" stroke-width="3.6"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></g><path d="M16 15C13 13 9 12.5 5 13V26C9 25.5 13 26 16 28"/><path d="M16 15C19 13 23 12.5 27 13V26C23 25.5 19 26 16 28"/><path d="M16 15V28"/></svg>',
     pencil:V+'<path d="M5.5 26.5L7.5 20L22 5.5L26.5 10L12 24.5Z"/><path stroke-width="1.8" d="M18.5 9L23 13.5M7.5 20L12 24.5"/></svg>',
     check:V+'<circle cx="16" cy="16" r="11.5"/><path stroke-width="2.4" d="M10.5 16.5L14.5 20.5L21.5 12"/></svg>',
-    scale:V+'<path d="M16 5V26M10 26H22M6 10H26"/><path stroke-width="1.8" d="M8 10L5 18M8 10L11 18M24 10L21 18M24 10L27 18"/><path stroke-width="1.8" d="M4 18A4 4 0 0 0 12 18ZM20 18A4 4 0 0 0 28 18Z"/></svg>'
+    scale:V+'<path d="M16 5V26M10 26H22M6 10H26"/><path stroke-width="1.8" d="M8 10L5 18M8 10L11 18M24 10L21 18M24 10L27 18"/><path stroke-width="1.8" d="M4 18A4 4 0 0 0 12 18ZM20 18A4 4 0 0 0 28 18Z"/><circle cx="16" cy="5" r="1.4" fill="#fff" stroke="none"/></svg>'
   };
   function swap(sel,key){
-    $all(sel).forEach(function(s){
+    document.querySelectorAll(sel).forEach(function(s){
       s.innerHTML='<i class="pi" style="font-style:normal">'+ICONS[key]+'</i>';
       s.classList.add('has-pi');
     });
@@ -181,464 +164,826 @@ function replaceCard(card,label,onclick){
   swap('.b[data-t="ser"] > span','scale');
 })();
 
-/* ===== 3) فتح الدرس والملخصات ===== */
+/* ===== 4) فتح صفحة الدرس عند الضغط على أي درس ===== */
 (function(){
-  $all('.b[data-c]').forEach(function(el){
+  document.querySelectorAll('.b[data-c]').forEach(function(el){
     el.onclick=function(){
       localStorage.setItem('mishkat_chapter',el.dataset.c);
       location.href='lesson.html';
     };
   });
-  var sj=localStorage.getItem('mishkat_subject')||'';
-  var sum=document.querySelector('.b[data-t="sum"]');
-  if(sum&&sj!=='الاقتصاد'){sum.onclick=function(){location.href='summaries.html';};}
 })();
 
-/* ===== 4) بطاقة الفيديوهات في صفحة الدرس ===== */
+/* ===== 5) «الملخصات» تفتح صفحة الملخصات (ما عدا مادة الاقتصاد) ===== */
+(function(){
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  if(sj==='الاقتصاد')return;
+  var el=document.querySelector('.b[data-t="sum"]');
+  if(el){
+    el.onclick=function(){location.href='summaries.html';};
+  }
+})();
+
+/* ===== 6) بطاقة الفيديوهات الصغيرة (صفحات الدرس والأقسام) ===== */
 (function(){
   var grid=document.querySelector('.wrap > .grid');
-  if(!grid||!grid.querySelector('.b[data-t]')||document.getElementById('vid-card')) return;
-  var st=document.createElement('style');
-  st.textContent=''
-  +'.vc{direction:rtl;text-align:center;max-width:300px;margin:20px auto 0;padding:16px;border-radius:18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,'+MK.C1+','+MK.C2+');box-shadow:0 12px 28px '+MK.GLOW+'}'
-  +'.vc-tag{display:inline-block;background:linear-gradient(135deg,'+MK.GOLD1+','+MK.GOLD2+');color:'+MK.GOLDINK+';padding:5px 14px;border-radius:999px;font-weight:800;font-size:13.5px}'
-  +'.vc-num{font-size:36px;font-weight:800;line-height:1.1;margin:8px 0 0}'
+  if(!grid||!grid.querySelector('.b[data-t]')||document.getElementById('vid-card'))return;
+
+  var css=''
+  +'.vc{direction:rtl;text-align:center;max-width:300px;margin:20px auto 0;padding:16px 16px 18px;border-radius:18px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(135deg,'+MK.C1+','+MK.C2+');box-shadow:0 12px 28px '+MK.GLOW+';transition:transform .25s}'
+  +'.vc:hover{transform:translateY(-3px)}'
+  +'.vc::before{content:"";position:absolute;left:-40px;bottom:-60px;width:150px;height:150px;border-radius:50%;background:rgba(255,255,255,.12)}'
+  +'.vc>*{position:relative}'
+  +'.vc-tag{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,'+MK.GOLD1+','+MK.GOLD2+');color:'+MK.GOLDINK+';padding:5px 14px;border-radius:999px;font-weight:800;font-size:13.5px;box-shadow:0 6px 14px rgba(255,159,28,.4)}'
+  +'.vc-num{font-size:36px;font-weight:800;line-height:1.1;margin:8px 0 0;text-shadow:0 2px 4px rgba(0,60,80,.2)}'
   +'.vc-num small{font-size:14px;font-weight:700;opacity:.9;margin-right:6px}'
-  +'.vc p{color:#fff;font-size:13px;line-height:1.6;margin:6px 0 12px}'
-  +'.vc-go{display:inline-block;padding:8px 20px;border:0;border-radius:999px;background:#fff;color:'+MK.DEEP+';font:inherit;font-size:13.5px;font-weight:800;cursor:pointer}';
+  +'.vc-stars{color:'+MK.GOLD1+';font-size:17px;letter-spacing:3px;direction:ltr;margin:2px 0 4px;text-shadow:0 2px 6px rgba(0,60,80,.25)}'
+  +'.vc p{color:#fff;font-size:13px;line-height:1.6;margin:0 0 12px;font-weight:500;text-shadow:0 1px 2px rgba(0,60,80,.25)}'
+  +'.vc-go{display:inline-block;width:auto;margin:0;padding:8px 20px;border:0;border-radius:999px;background:#fff;color:'+MK.DEEP+';font:inherit;font-size:13.5px;font-weight:800;cursor:pointer;box-shadow:0 8px 18px rgba(0,60,80,.2)}'
+  +'.vc-go:hover{background:#e8fbff}'
+  +'@media (min-width:900px){.vc{max-width:320px}}'
+  +'@media (prefers-reduced-motion:reduce){.vc{transition:none}}';
+  var st=document.createElement('style');
+  st.textContent=css;
   document.head.appendChild(st);
+
   var d=document.createElement('div');
-  d.id='vid-card';d.className='vc';
-  d.innerHTML='<span class="vc-tag">🎥 الفيديوهات</span><div class="vc-num">24/7<small>متاحة</small></div><p>شاهد الدروس في أي وقت وأعد المشاهدة متى شئت.</p><button type="button" class="vc-go" id="vc-go">شاهد الآن ←</button>';
+  d.id='vid-card';
+  d.className='vc';
+  d.innerHTML=''
+  +'<span class="vc-tag">🎥 الفيديوهات</span>'
+  +'<div class="vc-num">24/7<small>متاحة</small></div>'
+  +'<div class="vc-stars" aria-hidden="true">★★★★★</div>'
+  +'<p>شاهد الدروس في أي وقت وأعد المشاهدة متى شئت.</p>'
+  +'<button type="button" class="vc-go" id="vc-go">شاهد الآن ←</button>';
   grid.after(d);
-  var MAP={'الرياضيات':'videos.html','الفيزياء':'physvideos.html','العلوم':'scivideos.html','العلوم الإسلامية':'islvideos.html'};
+
+  var toast=document.getElementById('toast'), tm;
   document.getElementById('vc-go').onclick=function(){
-    var sj=localStorage.getItem('mishkat_subject')||'';
-    if(MAP[sj]){location.href=MAP[sj];return;}
-    say('قسم «الفيديوهات» قيد الإعداد ✨');
+    var sj=localStorage.getItem('mishkat_subject');
+    if(sj==='الرياضيات'){location.href='videos.html';return;}
+    if(sj==='الفيزياء'){location.href='physvideos.html';return;}
+    if(sj==='العلوم'){location.href='scivideos.html';return;}
+    if(sj==='العلوم الإسلامية'){location.href='islvideos.html';return;}
+    if(!toast)return;
+    toast.textContent='قسم «الفيديوهات» قيد الإعداد، وسيُضاف محتواه قريباً ✨';
+    toast.classList.add('on');
+    clearTimeout(tm);
+    tm=setTimeout(function(){toast.classList.remove('on');},2800);
   };
 })();
 
-/* ===== 5) بطاقة عن المنصة ===== */
+/* ===== 7) بطاقة عن المنصة (سماوي + ذهبي) ===== */
 (function(){
   var mock=document.querySelector('.wrap > .mock');
-  if(!mock||document.getElementById('about-card')) return;
-  var st=document.createElement('style');
-  st.textContent=''
-  +'.ab{direction:rtl;text-align:right;max-width:420px;margin:22px auto 0;padding:26px 22px;border-radius:22px;color:#fff;background:linear-gradient(120deg,'+MK.C1+','+MK.C2+','+MK.C3+');box-shadow:0 18px 40px '+MK.GLOW+'}'
-  +'.ab-tag{display:inline-block;background:linear-gradient(135deg,'+MK.GOLD1+','+MK.GOLD2+');color:'+MK.GOLDINK+';padding:6px 16px;border-radius:999px;font-weight:800;font-size:14px}'
-  +'.ab h2{font-size:22px;font-weight:800;margin:12px 0 14px}'
+  if(!mock||document.getElementById('about-card'))return;
+
+  var C1=MK.C1,C2=MK.C2,C3=MK.C3,GOLD1=MK.GOLD1,GOLD2=MK.GOLD2,GOLDINK=MK.GOLDINK,GLOW=MK.GLOW;
+
+  var css=''
+  +'.ab{direction:rtl;text-align:right;max-width:420px;margin:22px auto 0;padding:26px 22px;border-radius:22px;color:#fff;position:relative;overflow:hidden;background:linear-gradient(120deg,'+C1+','+C2+','+C3+','+C1+');background-size:300% 300%;animation:abbg 10s ease infinite;box-shadow:0 18px 40px '+GLOW+'}'
+  +'@keyframes abbg{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}'
+  +'.ab::before,.ab::after{content:"";position:absolute;border-radius:50%;pointer-events:none}'
+  +'.ab::before{width:200px;height:200px;left:-70px;bottom:-90px;background:rgba(255,255,255,.12);animation:abf 7s ease-in-out infinite}'
+  +'.ab::after{width:120px;height:120px;right:-40px;top:-50px;background:rgba(255,194,51,.3);animation:abf 9s ease-in-out infinite reverse}'
+  +'@keyframes abf{0%,100%{transform:translate(0,0)}50%{transform:translate(18px,-14px)}}'
+  +'.ab>*:not(.ab-shine){position:relative;z-index:1}'
+  +'.ab-shine{position:absolute;top:0;bottom:0;width:60px;left:-80px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.28),transparent);transform:skewX(-20deg);animation:abs 6s ease-in-out 1.5s infinite;pointer-events:none}'
+  +'@keyframes abs{0%{left:-80px}40%,100%{left:110%}}'
+  +'.ab-tag{display:inline-flex;align-items:center;gap:6px;background:linear-gradient(135deg,'+GOLD1+','+GOLD2+');color:'+GOLDINK+';padding:6px 16px;border-radius:999px;font-weight:800;font-size:14px;box-shadow:0 8px 18px rgba(255,159,28,.4)}'
+  +'.ab h2{font-size:22px;font-weight:800;margin:12px 0 14px;color:#fff;text-shadow:0 2px 4px rgba(0,60,80,.2)}'
   +'.ab ul{list-style:none;padding:0;margin:0;display:grid;gap:12px}'
-  +'.ab li{display:flex;gap:12px;font-size:15px;line-height:1.7}'
-  +'.ab li i{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-style:normal}';
+  +'.ab li{display:flex;gap:12px;align-items:flex-start;font-size:15px;line-height:1.7;font-weight:500;color:#fff;text-shadow:0 1px 2px rgba(0,60,80,.25);opacity:0;transform:translateY(14px);transition:opacity .6s ease,transform .6s ease}'
+  +'.ab li i{flex:none;width:34px;height:34px;border-radius:10px;background:rgba(255,255,255,.25);display:grid;place-items:center;font-style:normal;font-size:17px;text-shadow:none}'
+  +'.ab.in li{opacity:1;transform:none}'
+  +'.ab.in li:nth-child(1){transition-delay:.1s}.ab.in li:nth-child(2){transition-delay:.35s}.ab.in li:nth-child(3){transition-delay:.6s}.ab.in li:nth-child(4){transition-delay:.85s}'
+  +'@media (min-width:900px){.ab{max-width:780px;padding:36px 38px;margin-top:26px}.ab h2{font-size:28px}.ab li{font-size:17px}.ab ul{grid-template-columns:1fr 1fr;gap:18px 30px}}'
+  +'@media (prefers-reduced-motion:reduce){.ab,.ab::before,.ab::after,.ab-shine{animation:none}.ab li{opacity:1;transform:none;transition:none}}';
+
+  var st=document.createElement('style');
+  st.textContent=css;
   document.head.appendChild(st);
+
   var d=document.createElement('section');
-  d.id='about-card';d.className='ab';
-  d.innerHTML='<span class="ab-tag">✨ عن المنصة</span><h2>أكاديمية مشكاة</h2><ul>'
-    +'<li><i>🎓</i><span>أكاديمية مشكاة منصة تعليمية عربية تساعدك على التفوق بخطوات واضحة ومنظمة.</span></li>'
-    +'<li><i>📚</i><span>دروس مرتبة حسب شعبتك ومادتك، من الدرس الأول حتى يوم الامتحان.</span></li>'
-    +'<li><i>🎥</i><span>شروحات مبسطة وفيديوهات تعيد مشاهدتها في أي وقت ومن أي جهاز.</span></li>'
-    +'<li><i>💡</i><span>اسم «مشكاة» مأخوذ من المصباح الذي ينير الطريق.</span></li></ul>';
+  d.id='about-card';
+  d.className='ab';
+  d.setAttribute('aria-label','عن أكاديمية مشكاة');
+  d.innerHTML=''
+  +'<span class="ab-shine"></span>'
+  +'<span class="ab-tag">✨ عن المنصة</span>'
+  +'<h2>أكاديمية مشكاة</h2>'
+  +'<ul>'
+  +'<li><i>🎓</i><span>أكاديمية مشكاة منصة تعليمية عربية تساعدك على التفوق بخطوات واضحة ومنظمة.</span></li>'
+  +'<li><i>📚</i><span>دروس مرتبة حسب شعبتك ومادتك، من الدرس الأول حتى يوم الامتحان.</span></li>'
+  +'<li><i>🎥</i><span>شروحات مبسطة وفيديوهات تعيد مشاهدتها في أي وقت ومن أي جهاز.</span></li>'
+  +'<li><i>💡</i><span>اسم «مشكاة» مأخوذ من المصباح الذي ينير الطريق، وهذا ما نريده لك في رحلتك الدراسية.</span></li>'
+  +'</ul>';
   mock.after(d);
+
+  function show(){d.classList.add('in');}
+  if('IntersectionObserver' in window){
+    var io=new IntersectionObserver(function(es){
+      es.forEach(function(e){if(e.isIntersecting){show();io.disconnect();}});
+    },{threshold:.25});
+    io.observe(d);
+  }else{show();}
 })();
 
-/* ===== 6) فتح فيديوهات يوتيوب داخل المنصة ===== */
+/* ===== 8) فتح فيديوهات يوتيوب داخل المنصة (صفحة watch.html) ===== */
 (function(){
-  if(/watch\.html$/.test(location.pathname)) return;
+  if(/watch\.html$/.test(location.pathname))return;
+
+  function vid(u){
+    var m=u.match(/youtu\.be\/([A-Za-z0-9_-]{6,})/)||u.match(/[?&]v=([A-Za-z0-9_-]{6,})/);
+    return m?m[1]:'';
+  }
+  function clean(s){
+    return (s||'').replace(/[←→]/g,'').replace(/^[^\u0600-\u06FFA-Za-z0-9]+/,'').replace(/\s+/g,' ').trim();
+  }
+
   document.addEventListener('click',function(e){
-    if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey) return;
+    if(e.defaultPrevented||e.button!==0||e.metaKey||e.ctrlKey||e.shiftKey)return;
     var a=e.target.closest?e.target.closest('a[href]'):null;
-    if(!a||a.hasAttribute('data-ext')) return;
-    var id=ytIdOf(a.getAttribute('href')||'');
-    if(!id) return;
+    if(!a||a.hasAttribute('data-ext'))return;
+    var id=vid(a.getAttribute('href')||'');
+    if(!id)return;
     e.preventDefault();
+
     var label='';
     var card=a.closest('.vcard');
     if(card){
-      label=tagOf(card).replace(/[←→]/g,'').trim();
-      var part=a.textContent.replace(/[←→]/g,'').trim();
-      if(part&&part!=='شاهد الآن') label+=' — '+part;
+      var tag=card.querySelector('.vtag');
+      label=clean(tag?tag.textContent:'');
+      var part=clean(a.textContent);
+      if(part&&part!=='شاهد الآن')label+=' — '+part;
+    }else{
+      var lc=a.closest('.lc');
+      if(lc){
+        var t=lc.querySelector('.lc-t');
+        label=clean(t?t.textContent:'');
+        if(label)label+=' — الأستاذة أميرة شنوف';
+      }
     }
     location.href='watch.html?v='+encodeURIComponent(id)+(label?'&t='+encodeURIComponent(label):'');
   });
 })();
 
-/* ===== 7) صفحة الدرس: التمارين، حقيبة عكاشة، السلاسل، والعلوم الإسلامية ===== */
+/* ===== 9) شكل البطاقات: حواف زرقاء عادية بلا توهج وبحجم أصغر قليلاً ===== */
+(function(){
+  var BLUE='#0a84ff';
+  var TINT=0.15;
+  var tint='rgba(10,132,255,'+TINT+')';
+  var fill='linear-gradient('+tint+','+tint+')';
+
+  var css=''
+  +'html body .b.b.b.b.b.b.b,html body .b.b.b.b.b.b.b:hover,html body .b.b.b.b.b.b.b:focus-visible,'
+  +'html body .eng.eng.eng.eng,html body .eng.eng.eng.eng:hover{'
+  +'border:2px solid '+BLUE+'!important;box-shadow:none!important;animation:none!important;background-image:'+fill+'!important}'
+  +'html body .b.b.b.b.b.b.b{padding:14px 8px!important;border-radius:16px!important;font-size:15px!important}'
+  +'html body .pi.pi{width:52px!important;height:52px!important;border-radius:16px!important}'
+  +'html body .pi.pi svg{width:30px!important;height:30px!important}'
+  +'html body .b.b .pi.pi{background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6)!important;box-shadow:0 8px 16px rgba(10,132,255,.25)!important}'
+  +'html body .has-pi.has-pi{margin-bottom:10px!important}'
+  +'@media (min-width:900px){html body .pi.pi{width:60px!important;height:60px!important}html body .pi.pi svg{width:34px!important;height:34px!important}}'
+  +'html body .b.b.b[data-c] span{color:'+BLUE+'!important}';
+
+  var st=document.createElement('style');
+  st.textContent=css;
+  document.head.appendChild(st);
+})();
+
+/* ===== 10) بطاقات صفحة الدرس: الملخصات | التمارين والتصحيح | حقيبة عكاشة | بطاقة المادة ===== */
+(function(){
+  if(!/lesson\.html$/.test(location.pathname)) return;
+
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+  var br=localStorage.getItem('mishkat_branch')||'';
+  var SJ={'الرياضيات':'math','الفيزياء':'phys','العلوم':'sci'};
+  var s=SJ[sj];
+  if(!s) return;
+
+  var grid=document.querySelector('.wrap > .grid');
+  if(!grid) return;
+  var cards=[].slice.call(grid.children).filter(function(c){return c.classList.contains('b');});
+  if(cards.length<4) return;
+
+  function norm(x){
+    return String(x||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim()
+      .toLowerCase();
+  }
+  function setLabel(el,text){
+    var tw=document.createTreeWalker(el,NodeFilter.SHOW_TEXT,null);
+    var first=true, tn;
+    while((tn=tw.nextNode())){
+      if(!tn.nodeValue.trim()) continue;
+      if(first){tn.nodeValue=text;first=false;}else{tn.nodeValue='';}
+    }
+  }
+  function fresh(card,label,tag){
+    var n=card.cloneNode(true);
+    n.removeAttribute('data-t');
+    n.setAttribute('data-g',tag);
+    setLabel(n,label);
+    card.replaceWith(n);
+    return n;
+  }
+
+  var toast=document.getElementById('toast'), tm;
+  function note(msg){
+    if(!toast) return;
+    toast.textContent=msg;
+    toast.classList.add('on');
+    clearTimeout(tm);
+    tm=setTimeout(function(){toast.classList.remove('on');},2800);
+  }
+
+  var CODES={
+    math:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']],
+    phys:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['ph','ph'],['nucl','النوويه'],['osc','اهتزاز']],
+    sci:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]
+  };
+  var nm=norm(ch), list=CODES[s], code='';
+  for(var i=0;i<list.length;i++){
+    if(nm.indexOf(list[i][1])>-1){code=list[i][0];break;}
+  }
+
+  /* 2) التمارين: الاسم فقط */
+  setLabel(cards[1],'التمارين والتصحيح');
+
+  /* 3) حقيبة عكاشة (فيديو) */
+  /* ✏️ روابط حقيبة عكاشة: رمز الدرس : [معرّفات الفيديوهات] */
+  var OK={
+    sci:{
+      prot:['Lg7awTpB74s'],
+      struct:['hRmKwvYBK0o'],
+      enz:['b-PzhqsxESo'],
+      imm:['MCl6EpL0dWA'],
+      nerve:['Jlho7146fJw'],
+      photo:['sXE2BTy7tsY'],
+      resp:['sXE2BTy7tsY']
+    },
+    math:{
+      exp:['PrRJ68feZ_M','V7JrHtM2x8o','mLy_d2dGmo0'],
+      ln:['MGvyXFfEKS0'],
+      seq:['oemNJdoG3ws','uFDphwlVRRE'],
+      prob:['QICDYpPeSjk'],
+      complex:['a5U2BhobNf8','ga8egmIIht4'],
+      div:['Hjz42I9Z7us','oP9Wif9e16Y'],
+      prim:['PrRJ68feZ_M','V7JrHtM2x8o','mLy_d2dGmo0','MGvyXFfEKS0']
+    },
+    phys:{}
+  };
+  var okTitle='حقيبة عكاشة (فيديو)';
+  var okIds=(OK[s]&&OK[s][code])||[];
+  var c3=fresh(cards[2],okTitle,'okacha');
+  c3.addEventListener('click',function(){
+    if(!okIds.length){
+      note('حقيبة عكاشة لدرس «'+ch+'» قيد الإعداد، وستُضاف قريباً ✨');
+      return;
+    }
+    location.href='watch.html?v='+encodeURIComponent(okIds[0])
+      +(okIds.length>1?'&l='+encodeURIComponent(okIds.join(',')):'')
+      +'&t='+encodeURIComponent(okTitle+' — '+ch);
+  });
+
+  /* 4) البطاقة الرابعة حسب المادة */
+  if(s==='phys'){
+    var BR={'علوم تجريبية':'se','رياضيات':'m','تقني رياضي':'tm','تسيير واقتصاد':'ge'};
+    var b=BR[br]||'';
+    var cands=[];
+    if(code){
+      if(b) cands.push('ser-'+b+'-phys-'+code+'.pdf');
+      cands.push('ser-phys-'+code+'.pdf');
+    }
+    if(b) cands.push('ser-'+b+'-phys.pdf');
+    cands.push('ser-phys.pdf');
+    var c4=fresh(cards[3],'سلاسل الميزان','ser');
+    c4.addEventListener('click',function(){
+      (function tryNext(k){
+        if(k>=cands.length){note('سلاسل الميزان لدرس «'+ch+'» قيد الإعداد، وستُضاف قريباً ✨');return;}
+        fetch(cands[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+          if(r.ok){
+            location.href='pdfview.html?f='+encodeURIComponent(cands[k])+'&t='+encodeURIComponent('سلاسل الميزان — '+ch);
+          }else{tryNext(k+1);}
+        }).catch(function(){tryNext(k+1);});
+      })(0);
+    });
+  }else{
+    var label=(s==='math')?'مواضيع أشبال الأمة':'النصوص العلمية';
+    var c4b=fresh(cards[3],label,'extra');
+    c4b.addEventListener('click',function(){
+      note('«'+label+'» لدرس «'+ch+'» قيد الإعداد، وستُضاف قريباً ✨');
+    });
+  }
+})();
+
+/* ===== 11) ملخصات منصة مشكاة (PDF) لدروس العلوم: تُفتح داخل عارض المنصة ===== */
+(function(){
+  if(!document.querySelector('.vgrid')) return;
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+
+  /* ✏️ أضف هنا ملفاً جديداً: 'اسم الدرس':'اسم-الملف.pdf' */
+  var PDF={
+    'تركيب البروتين':'protein.pdf',
+    'العلاقة بين البنية والوظيفة':'bonia.pdf',
+    'دور البروتينات في التحفيز الإنزيمي':'inzymes.pdf',
+    'المناعة':'manaa.pdf',
+    'الاتصال العصبي':'itisal.pdf',
+    'التركيب الضوئي':'Photosynthèse.pdf',
+    'التنفس':'La respiration.pdf'
+  };
+
+  function norm(s){
+    return String(s||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  var map={};
+  Object.keys(PDF).forEach(function(k){map[norm(k)]=PDF[k];});
+  var file=map[norm(ch)];
+
+  if(sj!=='العلوم'||!file) return;
+  document.querySelectorAll('.vcard').forEach(function(card){
+    var tag=card.querySelector('.vtag');
+    if(!tag||tag.textContent.indexOf('ملخصات منصة مشكاة')===-1) return;
+    var btn=card.querySelector('button.vgo');
+    if(!btn) return;
+    var a=document.createElement('a');
+    a.className='vgo';
+    a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('ملخص '+ch);
+    a.textContent='تصفّح الملخصات ←';
+    btn.replaceWith(a);
+  });
+})();
+
+/* ===== 12) ملخصات الرياضيات (PDF) لشعب: علوم تجريبية، رياضيات، تقني رياضي ===== */
+(function(){
+  if(!document.querySelector('.vgrid')) return;
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  if(sj!=='الرياضيات') return;
+  var br=localStorage.getItem('mishkat_branch')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+
+  var BR={'علوم تجريبية':'se','رياضيات':'m','تقني رياضي':'tm'};
+  var b=BR[br];
+  if(!b) return;
+
+  function norm(s){
+    return String(s||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+
+  var CH=[
+    ['seq','المتتاليات'],
+    ['func','العدديه'],
+    ['exp','اسيه'],
+    ['ln','اللوغاريتميه'],
+    ['prob','الاحتمالات'],
+    ['complex','المركبه'],
+    ['div','القسمه'],
+    ['prim','الاصليه']
+  ];
+  var n=norm(ch), code='';
+  for(var i=0;i<CH.length;i++){
+    if(n.indexOf(CH[i][1])>-1){code=CH[i][0];break;}
+  }
+  if(!code) return;
+
+  var cands=['math-'+b+'-'+code+'.pdf','math-'+code+'.pdf'];
+
+  var card=null;
+  document.querySelectorAll('.vcard').forEach(function(c){
+    var tag=c.querySelector('.vtag');
+    if(tag&&tag.textContent.indexOf('ملخصات منصة مشكاة')>-1) card=c;
+  });
+  if(!card) return;
+  var btn=card.querySelector('button.vgo');
+  if(!btn) return;
+
+  function show(file){
+    var a=document.createElement('a');
+    a.className='vgo';
+    a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('ملخص '+ch+' — شعبة '+br);
+    a.textContent='تصفّح الملخصات ←';
+    btn.replaceWith(a);
+  }
+  function tryNext(k){
+    if(k>=cands.length) return;
+    fetch(cands[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(r.ok){show(cands[k]);}else{tryNext(k+1);}
+    }).catch(function(){tryNext(k+1);});
+  }
+  tryNext(0);
+})();
+
+/* ===== 13) ملخصات الفيزياء (PDF) لشعب: علوم تجريبية، رياضيات، تقني رياضي ===== */
+(function(){
+  if(!document.querySelector('.vgrid')) return;
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  if(sj!=='الفيزياء') return;
+  var br=localStorage.getItem('mishkat_branch')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+
+  var BR={'علوم تجريبية':'se','رياضيات':'m','تقني رياضي':'tm'};
+  var b=BR[br];
+  if(!b) return;
+
+  function norm(s){
+    return String(s||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim()
+      .toLowerCase();
+  }
+
+  var CH=[
+    ['ester','استره'],
+    ['time','الزمنيه'],
+    ['mech','الميكانيك'],
+    ['elec','كهرب'],
+    ['ph','توازن'],
+    ['ph','ph'],
+    ['nucl','النوويه'],
+    ['osc','اهتزاز']
+  ];
+  var n=norm(ch), code='';
+  for(var i=0;i<CH.length;i++){
+    if(n.indexOf(CH[i][1])>-1){code=CH[i][0];break;}
+  }
+  if(!code) return;
+
+  var cands=['phys-'+b+'-'+code+'.pdf','phys-'+code+'.pdf'];
+
+  var card=null;
+  document.querySelectorAll('.vcard').forEach(function(c){
+    var tag=c.querySelector('.vtag');
+    if(tag&&tag.textContent.indexOf('ملخصات منصة مشكاة')>-1) card=c;
+  });
+  if(!card) return;
+  var btn=card.querySelector('button.vgo');
+  if(!btn) return;
+
+  function show(file){
+    var a=document.createElement('a');
+    a.className='vgo';
+    a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('ملخص '+ch+' — شعبة '+br);
+    a.textContent='تصفّح الملخصات ←';
+    btn.replaceWith(a);
+  }
+  function tryNext(k){
+    if(k>=cands.length) return;
+    fetch(cands[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(r.ok){show(cands[k]);}else{tryNext(k+1);}
+    }).catch(function(){tryNext(k+1);});
+  }
+  tryNext(0);
+})();
+
+/* ===== 14) العلوم الإسلامية: كتاب السلسلة الخضراء + ملخصات بوسعادي وشمس الدين ===== */
+(function(){
+  var sj=localStorage.getItem('mishkat_subject')||'';
+  if(sj!=='العلوم الإسلامية') return;
+
+  /* صفحة الدرس: بطاقة سلاسل الميزان تصبح «كتاب السلسلة الخضراء» */
+  var ser=document.querySelector('.b[data-t="ser"]');
+  if(ser){
+    var COLOR='#0a84ff';
+    var FILE='green.pdf';
+    var TITLE='كتاب السلسلة الخضراء';
+
+    var n=ser.cloneNode(true);
+    n.removeAttribute('data-t');
+    n.setAttribute('data-g','green');
+
+    var tw=document.createTreeWalker(n,NodeFilter.SHOW_TEXT,null);
+    var first=true, tn;
+    while((tn=tw.nextNode())){
+      if(!tn.nodeValue.trim()) continue;
+      if(first){tn.nodeValue=TITLE;first=false;}else{tn.nodeValue='';}
+    }
+
+    var pi=n.querySelector('.pi');
+    if(pi){
+      pi.innerHTML='<svg viewBox="0 0 32 32" aria-hidden="true"><path d="M8 4h16a2 2 0 0 1 2 2v20a2 2 0 0 1-2 2H8z"/><path d="M8 4v24"/><path d="M13 10h9M13 15h9"/></svg>';
+    }
+
+    var toast=document.getElementById('toast');
+    var note=function(){
+      if(!toast) return;
+      toast.textContent='«'+TITLE+'» قيد الإعداد، وسيُضاف قريباً ✨';
+      toast.classList.add('on');
+      setTimeout(function(){toast.classList.remove('on');},2800);
+    };
+
+    n.addEventListener('click',function(){
+      fetch(FILE,{method:'HEAD',cache:'no-store'}).then(function(r){
+        if(r.ok){
+          location.href='pdfview.html?f='+encodeURIComponent(FILE)+'&t='+encodeURIComponent(TITLE);
+        }else{note();}
+      }).catch(note);
+    });
+
+    ser.replaceWith(n);
+  }
+
+  /* صفحة الملخصات: ربط الكتابين */
+  var vg=document.querySelector('.vgrid');
+  if(vg&&/summaries/.test(location.pathname)){
+    var BOOKS=[
+      ['بوسعادي','bousaadi.pdf','ملخصات كتاب الأستاذة بوسعادي'],
+      ['شمس الدين','shams.pdf','ملخصات كتاب الأستاذ شمس الدين']
+    ];
+    [].slice.call(vg.querySelectorAll('.vcard')).forEach(function(card){
+      var tag=card.querySelector('.vtag');
+      var txt=tag?tag.textContent:'';
+      if(txt.indexOf('ملخصات منصة مشكاة')>-1){card.remove();return;}
+      BOOKS.forEach(function(b){
+        if(txt.indexOf(b[0])===-1) return;
+        var btn=card.querySelector('button.vgo');
+        if(!btn) return;
+        fetch(b[1],{method:'HEAD',cache:'no-store'}).then(function(r){
+          if(!r.ok) return;
+          var a=document.createElement('a');
+          a.className='vgo';
+          a.href='pdfview.html?f='+encodeURIComponent(b[1])+'&t='+encodeURIComponent(b[2]);
+          a.textContent='تصفّح الملخصات ←';
+          btn.replaceWith(a);
+        }).catch(function(){});
+      });
+    });
+  }
+})();
+
+/* ===== 15) تحميل الصفحات المحتملة مسبقاً ليكون الانتقال شبه فوري ===== */
+(function(){
+  var cn=navigator.connection||{};
+  if(cn.saveData||/(^|-)2g$/.test(cn.effectiveType||'')) return;
+
+  var here=location.pathname.split('/').pop()||'index.html';
+  var NEXT={
+    'index.html':['subjects.html','branches.html','bac.html','primary.html','beam.html','university.html'],
+    'branches.html':['subjects.html'],
+    'subjects.html':['math.html','physics.html','science.html','islamic.html','section.html'],
+    'math.html':['lesson.html'],
+    'physics.html':['lesson.html'],
+    'science.html':['lesson.html'],
+    'islamic.html':['lesson.html'],
+    'section.html':['summaries.html'],
+    'lesson.html':['summaries.html','videos.html','physvideos.html','scivideos.html','islvideos.html'],
+    'summaries.html':['pdfview.html'],
+    'videos.html':['watch.html'],
+    'physvideos.html':['watch.html','physlessons.html'],
+    'physlessons.html':['watch.html'],
+    'scivideos.html':['watch.html'],
+    'islvideos.html':['watch.html']
+  };
+
+  var done={};
+  function prefetch(u){
+    if(!u||done[u]||u===here) return;
+    done[u]=1;
+    var l=document.createElement('link');
+    l.rel='prefetch';
+    l.href=u;
+    document.head.appendChild(l);
+  }
+
+  function go(){(NEXT[here]||[]).forEach(prefetch);}
+  if('requestIdleCallback' in window){requestIdleCallback(go,{timeout:2500});}
+  else{setTimeout(go,1500);}
+
+  function hint(e){
+    var a=e.target&&e.target.closest?e.target.closest('a[href]'):null;
+    if(!a||a.target==='_blank'||a.hasAttribute('download')) return;
+    var u;
+    try{u=new URL(a.getAttribute('href'),location.href);}catch(x){return;}
+    if(u.origin!==location.origin||!/\.html$/.test(u.pathname)) return;
+    prefetch(u.pathname.split('/').pop()+u.search);
+  }
+  document.addEventListener('touchstart',hint,{passive:true,capture:true});
+  document.addEventListener('mouseover',hint,{passive:true,capture:true});
+})();
+/* ===== 16) التمارين والتصحيح: تفتح صفحة التمارين للعلوم والرياضيات والفيزياء ===== */
 (function(){
   if(!/lesson\.html$/.test(location.pathname)) return;
   var sj=localStorage.getItem('mishkat_subject')||'';
-  var ch=localStorage.getItem('mishkat_chapter')||'';
-  var br=localStorage.getItem('mishkat_branch')||'';
+  if(['العلوم','الرياضيات','الفيزياء'].indexOf(sj)===-1) return;
   var grid=document.querySelector('.wrap > .grid');
   if(!grid) return;
-  var cards=$all('.b',grid);
+  var cards=[].slice.call(grid.children).filter(function(c){return c.classList.contains('b');});
   if(cards.length<4) return;
-
-  /* العلوم الإسلامية: كتاب السلسلة الخضراء */
-  if(sj==='العلوم الإسلامية'){
-    replaceCard(cards[3],'كتاب السلسلة الخضراء',function(){
-      checkFiles(['green.pdf'],function(f){
-        if(!f){say('كتاب السلسلة الخضراء قيد الإعداد ✨');return;}
-        location.href='pdfview.html?f=green.pdf&t='+encodeURIComponent('كتاب السلسلة الخضراء');
-      });
-    });
-    return;
-  }
-  if(['الرياضيات','الفيزياء','العلوم'].indexOf(sj)<0) return;
-
-  var SJ={'الرياضيات':'math','الفيزياء':'phys','العلوم':'sci'}[sj];
-  var CODES={
-    math:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']],
-    phys:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']],
-    sci:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]
-  };
-  var OK={
-    sci:{prot:['Lg7awTpB74s'],struct:['hRmKwvYBK0o'],enz:['b-PzhqsxESo'],imm:['MCl6EpL0dWA'],nerve:['Jlho7146fJw'],photo:['sXE2BTy7tsY'],resp:['sXE2BTy7tsY']},
-    math:{exp:['PrRJ68feZ_M','V7JrHtM2x8o','mLy_d2dGmo0'],ln:['MGvyXFfEKS0'],seq:['oemNJdoG3ws','uFDphwlVRRE'],prob:['QICDYpPeSjk'],complex:['a5U2BhobNf8','ga8egmIIht4'],div:['Hjz42I9Z7us','oP9Wif9e16Y'],prim:['PrRJ68feZ_M','V7JrHtM2x8o','mLy_d2dGmo0','MGvyXFfEKS0']},
-    phys:{}
-  };
-  var nm=normAr(ch),code='',list=CODES[SJ];
-  for(var i=0;i<list.length;i++){if(nm.indexOf(list[i][1])>-1){code=list[i][0];break;}}
-  var ids=(OK[SJ]&&OK[SJ][code])||[];
-
-  /* التمارين والتصحيح: تفتح صفحة التمارين */
-  replaceCard(cards[1],'التمارين والتصحيح',function(){location.href='sciex.html';});
-
-  /* حقيبة عكاشة بدل التصحيح */
-  replaceCard(cards[2],'حقيبة عكاشة (فيديو)',function(){
-    if(!ids.length){say('حقيبة عكاشة لدرس «'+ch+'» قيد الإعداد ✨');return;}
-    location.href='watch.html?v='+encodeURIComponent(ids[0])
-      +(ids.length>1?'&l='+encodeURIComponent(ids.join(',')):'')
-      +'&t='+encodeURIComponent('حقيبة عكاشة — '+ch);
-  });
-
-  /* البطاقة الرابعة حسب المادة */
-  if(SJ==='phys'){
-    var BR={'علوم تجريبية':'se','رياضيات':'m','تقني رياضي':'tm','تسيير واقتصاد':'ge'}[br]||'';
-    var cands=[];
-    if(code){if(BR) cands.push('ser-'+BR+'-phys-'+code+'.pdf');cands.push('ser-phys-'+code+'.pdf');}
-    if(BR) cands.push('ser-'+BR+'-phys.pdf');
-    cands.push('ser-phys.pdf');
-    replaceCard(cards[3],'سلاسل الميزان',function(){
-      checkFiles(cands,function(f){
-        if(!f){say('سلاسل الميزان لدرس «'+ch+'» قيد الإعداد ✨');return;}
-        location.href='pdfview.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent('سلاسل الميزان — '+ch);
-      });
-    });
-  }else{
-    var lbl=(SJ==='math')?'مواضيع أشبال الأمة':'النصوص العلمية';
-    replaceCard(cards[3],lbl,function(){say('«'+lbl+'» لدرس «'+ch+'» قيد الإعداد ✨');});
-  }
+  var n=cards[1].cloneNode(true);
+  n.removeAttribute('data-t');
+  n.setAttribute('data-g','exgo');
+  cards[1].replaceWith(n);
+  n.addEventListener('click',function(){location.href='sciex.html';});
 })();
-
-/* ===== 8) صفحة الملخصات ===== */
+/* ===== 17) ملخصات العلوم الإسلامية: كتاب بوسعادي وشمس الدين لكل درس ===== */
 (function(){
   if(!/summaries\.html$/.test(location.pathname)) return;
-  var sj=localStorage.getItem('mishkat_subject')||'';
+  if((localStorage.getItem('mishkat_subject')||'')!=='العلوم الإسلامية') return;
   var ch=localStorage.getItem('mishkat_chapter')||'';
-  var br=localStorage.getItem('mishkat_branch')||'';
-  var vg=document.querySelector('.vgrid');
-  if(!vg) return;
-  var cards=$all('.vcard',vg);
 
-  cards.forEach(function(card){
-    if(tagOf(card).indexOf('ملخصات منصة مشكاة')>-1) setLabel(card.querySelector('.vword'),'ملخصاتنا (ملخصات أساتذة)');
-  });
+  /* ترتيب الدروس كما في islamic.html (الرقم = اسم الملف بعد الصفر) */
+  var LESSONS=[
+    'العقيدة الإسلامية وأثرها على الفرد والمجتمع',
+    'وسائل القرآن الكريم في تثبيت العقيدة الإسلامية',
+    'الإسلام والرسالات السماوية',
+    'العقل في القرآن الكريم',
+    'مقاصد الشريعة الإسلامية',
+    'منهج الإسلام في محاربة الانحراف والجريمة',
+    'المساواة أمام أحكام الشريعة الإسلامية',
+    'الصحة النفسية والجسمية في القرآن الكريم',
+    'من مصادر التشريع الإسلامي: الإجماع',
+    'من مصادر التشريع الإسلامي: القياس',
+    'من مصادر التشريع الإسلامي: المصالح المرسلة',
+    'القيم في القرآن الكريم',
+    'الوقف في الإسلام',
+    'من أحكام الأسرة في الإسلام: مدخل إلى علم الميراث',
+    'من أحكام الأسرة في الإسلام: الورثة وطرق ميراثهم',
+    'الربا وأحكامه',
+    'من المعاملات المالية الجائزة: الصرف - المرابحة - التقسيط',
+    'الحرية الشخصية',
+    'من أحكام الأسرة في الإسلام: النسب - التبني - الكفالة',
+    'العلاقات الاجتماعية بين المسلمين وغيرهم',
+    'خطبة حجة الوداع'
+  ];
 
-  function swapToPdf(card,files,title){
+  function norm(s){
+    return String(s||'')
+      .replace(/[\u064B-\u065F\u0670]/g,'')
+      .replace(/[أإآ]/g,'ا')
+      .replace(/ى/g,'ي')
+      .replace(/ة/g,'ه')
+      .replace(/\s+/g,' ')
+      .trim();
+  }
+  var idx=-1, n=norm(ch);
+  for(var i=0;i<LESSONS.length;i++){
+    if(norm(LESSONS[i])===n){idx=i;break;}
+  }
+  var num=idx>=0?('0'+(idx+1)).slice(-2):'';
+
+  /* الملفات المحتملة: الدرس أولاً، ثم الكتاب كاملاً */
+  var BOOKS={
+    'ملخصات (كتاب) الأستاذة بوسعادي':{pre:'bousaadi',all:'bousaadi.pdf',t:'كتاب الأستاذة بوسعادي'},
+    'ملخصات (كتاب) الأستاذ شمس الدين':{pre:'shams',all:'shams.pdf',t:'كتاب الأستاذ شمس الدين'}
+  };
+
+  function tryFiles(list,k,done){
+    if(k>=list.length){done('');return;}
+    fetch(list[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+      if(r.ok) done(list[k]); else tryFiles(list,k+1,done);
+    }).catch(function(){tryFiles(list,k+1,done);});
+  }
+
+  document.querySelectorAll('.vcard').forEach(function(card){
+    var tag=card.querySelector('.vtag');
+    if(!tag) return;
+    var txt=tag.textContent;
+    var key=null;
+    Object.keys(BOOKS).forEach(function(k){if(txt.indexOf(k)>-1) key=k;});
+    if(txt.indexOf('ملخصات منصة مشكاة')>-1||txt.indexOf('منصة همة')>-1){
+      /* تبقى كما هي؛ اسطر إزالة الكتل الأخرى فوق هذا الكود */
+    }
+    if(!key) return;
+
     var btn=card.querySelector('button.vgo');
     if(!btn) return;
-    checkFiles(files,function(f){
-      if(!f) return;
+    var book=BOOKS[key];
+    var list=[];
+    if(num) list.push(book.pre+'-'+num+'.pdf');
+    list.push(book.pre+'.pdf');
+    if(!num) list=[book.all];
+
+    tryFiles(list,0,function(found){
+      if(!found) return;
       var a=document.createElement('a');
       a.className='vgo';
-      a.href='pdfview.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent(title);
+      a.href='pdfview.html?f='+encodeURIComponent(found)+'&t='+encodeURIComponent(book.t+' — '+ch);
       a.textContent='تصفّح الملخصات ←';
       btn.replaceWith(a);
     });
-  }
-
-  /* العلوم الإسلامية: الكتابان حسب الدرس، وبدون بطاقة المنصة */
-  if(sj==='العلوم الإسلامية'){
-    var LESSONS=['العقيدة الإسلامية وأثرها على الفرد والمجتمع','وسائل القرآن الكريم في تثبيت العقيدة الإسلامية','الإسلام والرسالات السماوية','العقل في القرآن الكريم','مقاصد الشريعة الإسلامية','منهج الإسلام في محاربة الانحراف والجريمة','المساواة أمام أحكام الشريعة الإسلامية','الصحة النفسية والجسمية في القرآن الكريم','من مصادر التشريع الإسلامي: الإجماع','من مصادر التشريع الإسلامي: القياس','من مصادر التشريع الإسلامي: المصالح المرسلة','القيم في القرآن الكريم','الوقف في الإسلام','من أحكام الأسرة في الإسلام: مدخل إلى علم الميراث','من أحكام الأسرة في الإسلام: الورثة وطرق ميراثهم','الربا وأحكامه','من المعاملات المالية الجائزة: الصرف - المرابحة - التقسيط','الحرية الشخصية','من أحكام الأسرة في الإسلام: النسب - التبني - الكفالة','العلاقات الاجتماعية بين المسلمين وغيرهم','خطبة حجة الوداع'];
-    var idx=-1,nn=normAr(ch);
-    for(var i=0;i<LESSONS.length;i++){if(normAr(LESSONS[i])===nn){idx=i;break;}}
-    var num=idx>=0?('0'+(idx+1)).slice(-2):'';
-    cards.forEach(function(card){
-      var t=tagOf(card);
-      if(t.indexOf('ملخصات منصة مشكاة')>-1){card.remove();return;}
-      var book=null;
-      if(t.indexOf('بوسعادي')>-1) book={pre:'bousaadi',all:'bousaadi.pdf',title:'كتاب الأستاذة بوسعادي'};
-      else if(t.indexOf('شمس الدين')>-1) book={pre:'shams',all:'shams.pdf',title:'كتاب الأستاذ شمس الدين'};
-      if(!book) return;
-      var files=num?[book.pre+'-'+num+'.pdf',book.all]:[book.all];
-      swapToPdf(card,files,book.title+' — '+ch);
-    });
-    return;
-  }
-
-  /* العلوم: ملخص كل درس */
-  if(sj==='العلوم'){
-    var MAP={};
-    [['تركيب البروتين','protein.pdf'],['العلاقة بين البنية والوظيفة','bonia.pdf'],['دور البروتينات في التحفيز الإنزيمي','inzymes.pdf'],['المناعة','manaa.pdf'],['الاتصال العصبي','itisal.pdf'],['التركيب الضوئي','Photosynthèse.pdf'],['التنفس','La respiration.pdf']].forEach(function(p){MAP[normAr(p[0])]=p[1];});
-    var file=MAP[normAr(ch)];
-    if(file) cards.forEach(function(card){
-      if(tagOf(card).indexOf('ملخصات منصة مشكاة')>-1) swapToPdf(card,[file],'ملخص '+ch);
-    });
-    return;
-  }
-
-  /* الرياضيات والفيزياء: ملخص الفصل من الملفات المرفوعة */
-  var SUBJ={
-    'الرياضيات':{p:'math',codes:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']]},
-    'الفيزياء':{p:'phys',codes:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']]}
-  }[sj];
-  if(!SUBJ) return;
-  var BRM={'علوم تجريبية':'se','رياضيات':'m','تقني رياضي':'tm','تسيير واقتصاد':'ge'}[br]||'';
-  var code2='',nm2=normAr(ch);
-  for(var j=0;j<SUBJ.codes.length;j++){if(nm2.indexOf(SUBJ.codes[j][1])>-1){code2=SUBJ.codes[j][0];break;}}
-  if(!code2) return;
-  var files2=[];
-  if(sj==='الرياضيات'){
-    if(BRM) files2.push('math-'+BRM+'-'+code2+'.pdf');
-    ['ge','m','se','tm'].forEach(function(b){files2.push('math-'+b+'-'+code2+'.pdf');});
-    files2.push('math-'+code2+'.pdf');
-  }else{
-    if(BRM) files2.push('phys-'+BRM+'-'+code2+'.pdf');
-    files2.push('phys-'+code2+'.pdf');
-  }
-  cards.forEach(function(card){
-    if(tagOf(card).indexOf('ملخصات منصة مشكاة')>-1) swapToPdf(card,files2,'ملخص '+ch);
   });
 })();
-
-/* ===== 9) صفحة التمارين (sciex.html) ===== */
+/* ===== 18) ملخصاتنا وتماريننا (ملخصات أساتذة / تمارين أساتذة) + بطاقة منصة همة في التمارين ===== */
 (function(){
-  if(!/sciex\.html$/.test(location.pathname)) return;
-  var grid=document.getElementById('grid');
-  if(!grid) return;
-  var sj=localStorage.getItem('mishkat_subject')||'';
-  var ch=localStorage.getItem('mishkat_chapter')||'';
+  var path=location.pathname;
 
-  var exCard=null;
-  $all('.vcard',grid).forEach(function(c){
-    if(tagOf(c).indexOf('تمارين منصتنا')>-1){
-      exCard=c;
-      setLabel(c.querySelector('.vword'),'تماريننا (تمارين أساتذة)');
+  function setWord(card,text){
+    var w=card.querySelector('.vword');
+    if(w) w.textContent=text;
+  }
+
+  /* صفحة الملخصات: «ملخصاتنا (ملخصات أساتذة)» */
+  if(/summaries\.html$/.test(path)){
+    document.querySelectorAll('.vcard').forEach(function(card){
+      var t=card.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('ملخصات منصة مشكاة')>-1){
+        setWord(card,'ملخصاتنا (ملخصات أساتذة)');
+      }
+    });
+  }
+
+  /* صفحة التمارين: «تماريننا (تمارين أساتذة)» + بطاقة منصة همة */
+  if(/sciex\.html$/.test(path)){
+    var grid=document.getElementById('grid');
+    if(!grid) return;
+
+    document.querySelectorAll('.vcard').forEach(function(card){
+      var t=card.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('تمارين منصتنا')>-1){
+        setWord(card,'تماريننا (تمارين أساتذة)');
+      }
+    });
+
+    if(!grid.querySelector('[data-himma]')){
+      var art=document.createElement('article');
+      art.className='vcard';
+      art.setAttribute('data-himma','1');
+
+      var tag=document.createElement('span');
+      tag.className='vtag';
+      tag.textContent='🌟 تمارين منصة همة';
+
+      var ico=document.createElement('div');
+      ico.className='vico';
+      ico.innerHTML='<span style="font-size:26px;line-height:1">⭐</span>';
+
+      var word=document.createElement('div');
+      word.className='vword';
+      word.textContent='همة';
+
+      var p=document.createElement('p');
+      p.textContent='تمارين منصة همة';
+
+      var box=document.createElement('div');
+      box.className='vact';
+      var a=document.createElement('a');
+      a.className='vgo';
+      a.href='https://himma-sigma.vercel.app/';
+      a.target='_blank';
+      a.rel='noopener';
+      a.textContent='فتح الموقع ←';
+      box.appendChild(a);
+
+      art.appendChild(tag);
+      art.appendChild(ico);
+      art.appendChild(word);
+      art.appendChild(p);
+      art.appendChild(box);
+      grid.appendChild(art);
     }
-  });
-
-  /* بطاقة تمارين منصة همة */
-  if(!grid.querySelector('[data-himma]')){
-    var art=document.createElement('article');
-    art.className='vcard';art.setAttribute('data-himma','1');
-    art.innerHTML='<span class="vtag">🌟 تمارين منصة همة</span><div class="vico"><span style="font-size:26px;line-height:1">⭐</span></div><div class="vword">همة</div><p>تمارين منصة همة</p><div class="vact"><a class="vgo" href="https://himma-sigma.vercel.app/" target="_blank" rel="noopener">فتح الموقع ←</a></div>';
-    grid.appendChild(art);
-  }
-
-  /* المواضيع كتبويبات داخل بطاقة تمارين منصتنا */
-  if(!exCard) return;
-  var box=exCard.querySelector('.vact');
-  if(!box) return;
-  var MAT={
-    'العلوم':{p:'ex-sci',codes:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]},
-    'الرياضيات':{p:'ex-math',codes:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']]},
-    'الفيزياء':{p:'ex-phys',codes:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']]}
-  };
-  var M=MAT[sj];
-  if(!M) return;
-  var nm=normAr(ch),code='';
-  for(var i=0;i<M.codes.length;i++){if(nm.indexOf(M.codes[i][1])>-1){code=M.codes[i][0];break;}}
-  if(!code) return;
-
-  box.innerHTML='';
-  var wrap=document.createElement('div');
-  wrap.style.cssText='display:flex;flex-direction:row;flex-wrap:nowrap;align-items:stretch;justify-content:center;gap:4px;width:100%;padding:4px;box-sizing:border-box;border-radius:999px;background:rgba(255,255,255,.18);border:1px solid rgba(255,255,255,.3);';
-  box.appendChild(wrap);
-  box.style.cssText='display:flex;flex-direction:column;align-items:center;justify-content:center;width:100%;';
-
-  var ORD=['الأول','الثاني','الثالث','الرابع','الخامس','السادس'];
-  var base=M.p+'-'+code;
-  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf',base+'-6.pdf'];
-  var found=[];
-
-  function tab(label,href,active){
-    var el=document.createElement(href?'a':'span');
-    if(href){el.href=href;}
-    el.textContent=label;
-    el.style.cssText='flex:1 1 0;min-width:0;display:block;text-align:center;padding:7px 4px;border-radius:999px;font-size:11.5px;font-weight:800;line-height:1.3;color:#fff;text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;'
-      +(active?'background:#1d4ed8;box-shadow:0 3px 8px rgba(0,30,90,.35);':'background:transparent;');
-    return el;
-  }
-  function render(){
-    wrap.innerHTML='';
-    if(!found.length){wrap.appendChild(tab('قيد الإعداد',null,false));return;}
-    found.forEach(function(file,k){
-      wrap.appendChild(tab('الموضوع '+(ORD[k]||(k+1)),
-        'pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('تمارين '+ch+' — الموضوع '+(ORD[k]||(k+1))),
-        k===0));
-    });
-  }
-  (function check(k){
-    if(k>=names.length){render();return;}
-    fetch(names[k],{method:'HEAD',cache:'no-store'}).then(function(r){
-      if(r.ok) found.push(names[k]);
-      check(k+1);
-    }).catch(function(){check(k+1);});
-  })(0);
-})();
-
-/* ===== 10) الرياضيات: إخفاء بعض الفصول لشعبة تسيير واقتصاد ===== */
-(function(){
-  if(!/math\.html$/.test(location.pathname)) return;
-  if((localStorage.getItem('mishkat_branch')||'')!=='تسيير واقتصاد') return;
-  var grid=document.querySelector('.wrap > .grid');
-  if(!grid) return;
-  var HIDE=['الاحتماله','الاحتمالات','المركبه','الاعداد المركبه','الاصليه','الدوال الاصليه','القسمه'];
-  $all('.b',grid).forEach(function(el){
-    var name=normAr(el.getAttribute('data-c')||el.textContent);
-    for(var i=0;i<HIDE.length;i++){if(name.indexOf(HIDE[i])>-1){el.remove();return;}}
-  });
-  var left=$all('.b',grid);
-  if(left.length%2===1){
-    left[left.length-1].classList.add('solo');
-    var st=document.createElement('style');
-    st.textContent='@media (max-width:899px){.grid > .b.solo{grid-column:1/-1;justify-self:center;width:calc(50% - 8px)}}';
-    document.head.appendChild(st);
   }
 })();
-
-/* ===== 11) بطاقة BAC STORY في صفحتي الشعب والمواد ===== */
+/* ===== 19) بطاقة BAC STORY: بيضاء، شعار في زاوية الحافة الزرقاء، وزر أزرق بالشعار ===== */
 (function(){
   if(!/(branches|subjects)\.html$/.test(location.pathname)) return;
   var bar=document.querySelector('.wrap > .bar');
   if(!bar) return;
-  $all('#bs2-card').forEach(function(o){o.remove();});
+
+  /* حذف أي نسخة قديمة */
+  var old=document.querySelectorAll('#bs-card,.bs-card');
+  for(var i=0;i<old.length;i++) old[i].remove();
+
   var st=document.createElement('style');
   st.textContent=''
   +'.bs2{position:relative;max-width:420px;margin:18px auto 0;padding:16px 16px 22px;border-radius:16px;background:#fff;border:1.5px solid #d0d7e2;box-shadow:0 8px 20px rgba(16,24,40,.08);text-align:center;direction:rtl;overflow:hidden}'
   +'.bs2-note{font-size:13px;font-weight:700;line-height:1.7;color:#101828;margin:0}'
   +'.bs2-btn{display:inline-flex;align-items:center;gap:8px;margin-top:12px;padding:7px 16px 7px 7px;border-radius:999px;background:#0a84ff;color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(10,132,255,.3)}'
   +'.bs2-btn img{width:30px;height:30px;border-radius:8px;object-fit:cover;background:#fff}'
+  +'.bs2-btn:hover,.bs2-btn:focus-visible{background:#0870d8}'
   +'.bs2-edge{position:absolute;left:0;right:0;bottom:0;height:20px;background:#0a84ff}'
   +'.bs2-logo{position:absolute;left:8px;bottom:6px;width:34px;height:34px;border-radius:9px;object-fit:cover;background:#fff;box-shadow:0 3px 8px rgba(0,0,0,.25);z-index:2}';
   document.head.appendChild(st);
+
   var card=document.createElement('div');
-  card.id='bs2-card';card.className='bs2';
-  card.innerHTML='<p class="bs2-note"> ملاحظة🚨: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
+  card.id='bs2-card';
+  card.className='bs2';
+  card.innerHTML=''
+    +'<p class="bs2-note">ملاحظة🚨: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
     +'<a class="bs2-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener"><img src="bac-story.jpg" alt="" onerror="this.style.display=\'none\'">تصفّح BAC STORY ←</a>'
     +'<div class="bs2-edge"></div>'
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
-})();
-/* ===== 12) صفحة التمارين: المواضيع كأزرار كاملة الكتابة مع أيقونة PDF مثل الصورة ===== */
-(function(){
-  if(!/sciex\.html$/.test(location.pathname)) return;
-
-  var st=document.createElement('style');
-  st.textContent=''
-  +'.vcard .vact{width:100%!important;display:block!important}'
-  +'.vcard .vact>div{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:center!important;gap:6px!important;width:100%!important;max-width:100%!important;padding:4px!important;box-sizing:border-box!important;border-radius:999px!important;background:rgba(255,255,255,.94)!important;border:1px solid rgba(255,255,255,.7)!important;box-shadow:0 4px 12px rgba(0,40,80,.18)!important}'
-  +'.vcard .vact>div>a,.vcard .vact>div>span{flex:1 1 0!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:8px 6px!important;margin:0!important;border-radius:999px!important;font-size:12px!important;font-weight:800!important;line-height:1.2!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;color:#1e3a8a!important;background:transparent!important;box-shadow:none!important;text-decoration:none!important;font-family:inherit!important}'
-  +'.vcard .vact>div>a.on,.vcard .vact>div>span.on{background:#1d4ed8!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,30,90,.3)!important}'
-  +'.vcard .vact>div>a svg,.vcard .vact>div>span svg{width:13px!important;height:13px!important;flex:none!important}';
-  document.head.appendChild(st);
-
-  var DOC='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>';
-
-  function fix(){
-    var card=null;
-    document.querySelectorAll('.vcard').forEach(function(c){
-      var t=c.querySelector('.vtag');
-      if(t&&t.textContent.indexOf('تمارين منصتنا')>-1) card=c;
-    });
-    if(!card) return false;
-    var wrap=card.querySelector('.vact>div');
-    if(!wrap||!wrap.children.length) return false;
-    [].slice.call(wrap.children).forEach(function(el,k){
-      el.removeAttribute('style');
-      if(!el.querySelector('svg')) el.insertAdjacentHTML('afterbegin',DOC);
-      el.classList.toggle('on',k===0);
-    });
-    return true;
-  }
-
-  var tries=0;
-  var timer=setInterval(function(){
-    tries++;
-    var ok=fix();
-    if(ok||tries>30) clearInterval(timer);
-  },300);
-})();
-/* ===== 13) صفحة التمارين: «تصفح التمارين» يفتح صفحة جديدة فيها المواضيع ===== */
-(function(){
-  if(!/sciex\.html$/.test(location.pathname)) return;
-
-  var SUBJ=localStorage.getItem('mishkat_subject')||'';
-  var ch=localStorage.getItem('mishkat_chapter')||'';
-  var MAT={
-    'العلوم':{p:'ex-sci',codes:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]},
-    'الرياضيات':{p:'ex-math',codes:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']]},
-    'الفيزياء':{p:'ex-phys',codes:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']]}
-  };
-  var M=MAT[SUBJ];
-  if(!M) return;
-
-  function norm(s){
-    return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
-  }
-  var n=norm(ch), code='';
-  for(var i=0;i<M.codes.length;i++){
-    if(n.indexOf(M.codes[i][1])>-1){code=M.codes[i][0];break;}
-  }
-  if(!code) return;
-
-  var ORD=['الأول','الثاني','الثالث','الرابع','الخامس','السادس'];
-  var base=M.p+'-'+code;
-  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf',base+'-6.pdf'];
-
-  var card=null;
-  document.querySelectorAll('.vcard').forEach(function(c){
-    var t=c.querySelector('.vtag');
-    if(t&&t.textContent.indexOf('تمارين منصتنا')>-1) card=c;
-  });
-  if(!card) return;
-  var box=card.querySelector('.vact');
-  if(!box) return;
-
-  function openPage(){
-    var found=[];
-    (function check(k){
-      if(k>=names.length){go();return;}
-      fetch(names[k],{method:'HEAD',cache:'no-store'}).then(function(r){
-        if(r.ok) found.push(names[k]);
-        check(k+1);
-      }).catch(function(){check(k+1);});
-    })(0);
-
-    function go(){
-      var f=found.join('|');
-      var t=found.map(function(_,k){return 'الموضوع '+(ORD[k]||(k+1));}).join('|');
-      location.href='exlist.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent(t)+'&c='+encodeURIComponent(ch);
-    }
-  }
-
-  function ensureBtn(){
-    if(box.querySelector('[data-exbtn]')) return;
-    box.innerHTML='';
-    var b=document.createElement('button');
-    b.type='button';
-    b.className='vgo';
-    b.setAttribute('data-exbtn','1');
-    b.textContent='تصفح التمارين ←';
-    b.onclick=openPage;
-    box.appendChild(b);
-  }
-
-  ensureBtn();
-  var tries=0;
-  var iv=setInterval(function(){
-    ensureBtn();
-    if(++tries>40) clearInterval(iv);
-  },300);
 })();
