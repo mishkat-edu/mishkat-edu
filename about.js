@@ -1082,7 +1082,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     document.head.appendChild(st);
   }
 })();
-/* ===== 22) صفحة التمارين: أزرار «المواضيع (1)، (2)…» بأيقونة PDF، وكل زر يفتح الملف ===== */
+/* ===== 22) صفحة التمارين: أزرار «الموضوع الأول، الثاني…» بأيقونة PDF، وكل زر يفتح الملف ===== */
 (function(){
   if(!/sciex\.html$/.test(location.pathname)) return;
   var SUBJ=localStorage.getItem('mishkat_subject')||'';
@@ -1117,16 +1117,17 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   var st=document.createElement('style');
   st.textContent=''
   +'.pdfp-list{display:flex;flex-direction:column;align-items:center;gap:9px;width:100%}'
-  +'.pdfp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:150px;padding:9px 18px;border-radius:999px;background:rgba(255,255,255,.92);color:#1e3a8a;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(0,40,80,.22);transition:transform .2s}'
+  +'.pdfp{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-width:170px;padding:9px 18px;border-radius:999px;background:rgba(255,255,255,.95);color:#1e3a8a;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 4px 12px rgba(0,40,80,.22);transition:transform .2s}'
   +'.pdfp:hover,.pdfp:focus-visible{transform:translateY(-2px);background:#fff}'
   +'.pdfp.on{background:#1d4ed8;color:#fff}'
   +'.pdfp svg{width:16px;height:16px;flex:none;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}';
   document.head.appendChild(st);
 
   var DOC='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>';
+  var ORD=['الأول','الثاني','الثالث','الرابع','الخامس','السادس','السابع','الثامن'];
 
   var base=M.p+'-'+code;
-  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf'];
+  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf',base+'-6.pdf'];
   var found=[];
 
   function render(){
@@ -1139,7 +1140,6 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
       var b=document.createElement('span');
       b.className='pdfp';
       b.innerHTML=DOC+'<span>قيد الإعداد</span>';
-      b.style.cursor='default';
       list.appendChild(b);
       return;
     }
@@ -1147,8 +1147,8 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     found.forEach(function(file,k){
       var a=document.createElement('a');
       a.className='pdfp'+(k===0?' on':'');
-      a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('تمارين '+ch+' — المواضيع ('+(k+1)+')');
-      a.innerHTML=DOC+'<span>المواضيع ('+(k+1)+')</span>';
+      a.href='pdfview.html?f='+encodeURIComponent(file)+'&t='+encodeURIComponent('تمارين '+ch+' — الموضوع '+(ORD[k]||(k+1)));
+      a.innerHTML=DOC+'<span>الموضوع '+(ORD[k]||(k+1))+'</span>';
       list.appendChild(a);
     });
   }
