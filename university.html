@@ -212,6 +212,10 @@ h1{font-size:30px;margin:6px 0 4px}
     if(view==='subs'){e.preventDefault();show('ens');}
   });
 })();
+<div class="bar" style="margin-top:24px">
+  <a class="back" href="index.html">← العودة للرئيسية</a>
+  <button class="mode" type="button" onclick="(function(b){var r=document.documentElement;var d=r.getAttribute('data-theme')==='dark';if(d){r.removeAttribute('data-theme');}else{r.setAttribute('data-theme','dark');}try{localStorage.setItem('mishkat_theme',d?'light':'dark');}catch(e){}b.textContent=d?'🌙 الوضع الليلي':'☀️ الوضع النهاري';})(this)">☀️ الوضع النهاري</button>
+</div>
 </script>
 </body>
 </html>
