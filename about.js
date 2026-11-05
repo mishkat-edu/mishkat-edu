@@ -531,7 +531,7 @@ function replaceCard(card,label,onclick){
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
 })();
-/* ===== 37) صفحة التمارين: المواضيع كأزرار كاملة الكتابة مع أيقونة PDF مثل الصورة ===== */
+/* ===== 12) صفحة التمارين: المواضيع كأزرار كاملة الكتابة مع أيقونة PDF مثل الصورة ===== */
 (function(){
   if(!/sciex\.html$/.test(location.pathname)) return;
 
@@ -570,7 +570,7 @@ function replaceCard(card,label,onclick){
     if(ok||tries>30) clearInterval(timer);
   },300);
 })();
-/* ===== 39) صفحة التمارين: زر «تصفح التمارين» يفتح لوحة داخل الصفحة فيها المواضيع والعرض ===== */
+/* ===== 13) صفحة التمارين: زر «تصفح التمارين» يفتح لوحة داخل الصفحة فيها المواضيع والعرض ===== */
 (function(){
   if(!/sciex\.html$/.test(location.pathname)) return;
 
