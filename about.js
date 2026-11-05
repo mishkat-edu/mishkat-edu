@@ -1171,3 +1171,17 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   +'.vcard .pdfp span{overflow:hidden;text-overflow:ellipsis}';
   document.head.appendChild(st);
 })();
+/* ===== 24) صفحة التمارين: المواضيع كتبويبات داخل البطاقة مثل موقع BAC STORY ===== */
+(function(){
+  if(!/sciex\.html$/.test(location.pathname)) return;
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.vcard .vact{width:100%}'
+  +'.vcard .pdfp-list{display:flex;flex-direction:row;flex-wrap:wrap;justify-content:center;align-items:center;gap:4px;width:100%;max-width:100%;padding:4px;box-sizing:border-box;border-radius:999px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25)}'
+  +'.vcard .pdfp-list .pdfp{flex:1 1 auto;min-width:0;width:auto;max-width:100%;margin:0;padding:6px 10px;border-radius:999px;background:transparent;color:#fff;font-size:11.5px;font-weight:800;box-shadow:none;white-space:nowrap;justify-content:center;gap:5px}'
+  +'.vcard .pdfp-list .pdfp:hover,.vcard .pdfp-list .pdfp:focus-visible{background:rgba(255,255,255,.22);transform:none}'
+  +'.vcard .pdfp-list .pdfp.on{background:#1d4ed8;color:#fff;box-shadow:0 3px 8px rgba(0,30,90,.35)}'
+  +'.vcard .pdfp-list .pdfp svg{width:13px;height:13px}'
+  +'.vcard .pdfp-list .pdfp span{overflow:hidden;text-overflow:ellipsis}';
+  document.head.appendChild(st);
+})();
