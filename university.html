@@ -17,7 +17,6 @@ body{margin:0;font-family:'Tajawal',system-ui,sans-serif;min-height:100vh;paddin
 h1{font-size:30px;margin:6px 0 4px}
 .sub{color:var(--muted);margin:0}
 
-/* بطاقتا ENS جنباً إلى جنب */
 #ens{display:none;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:20px auto 0}
 #ens.show{display:grid}
 .ens{padding:16px 12px;border-radius:20px;background:var(--card);border:2px solid #ffc233;box-shadow:0 10px 24px rgba(255,194,51,.25)}
@@ -27,7 +26,6 @@ h1{font-size:30px;margin:6px 0 4px}
 .ens-d{color:var(--muted);font-size:12.5px;line-height:1.7}
 .orange-btn{display:inline-block;margin-top:10px;padding:8px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(255,159,28,.35)}
 
-/* البطاقات */
 .subs,.tops,.acts{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
 .subs.show,.tops.show,.acts.show{display:grid}
 .sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.5;cursor:pointer;transition:transform .2s}
@@ -125,11 +123,9 @@ h1{font-size:30px;margin:6px 0 4px}
     writing:V+'<path d="M6 26h20"/><path d="M9 22l13-13 4 4-13 13H9z"/><path d="M20 9l4 4"/></svg>',
     computer:V+'<rect x="5" y="6" width="22" height="15" rx="2"/><path d="M12 27h8M16 21v6"/></svg>',
     notes:V+'<path d="M8 5h14a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M11 11h8M11 15h8M11 19h5"/></svg>',
-    exam:V+'<circle cx="16" cy="16" r="11"/><path d="M11 16l3.5 3.5L21 12"/></svg>',
-    video:V+'<rect x="4" y="7" width="24" height="18" rx="4"/><path d="M14 12v8l7-4z"/></svg>'
+    exam:V+'<circle cx="16" cy="16" r="11"/><path d="M11 16l3.5 3.5L21 12"/></svg>'
   };
 
-  /* مواد السنة الأولى */
   var SUBJECTS1=[
     {n:'الرياضيات',c:'math',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
     {n:'الفيزياء',c:'phys',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
@@ -147,7 +143,6 @@ h1{font-size:30px;margin:6px 0 4px}
     {n:'أعلام آلي',c:'comp',ic:ICON.computer,topics:null}
   ];
 
-  /* مواد السنة الثانية */
   var SUBJECTS2=[
     {n:'النحو العربي',c:'gram2',ic:ICON.grammar,topics:null},
     {n:'علم النفس',c:'psy',ic:ICON.notes,topics:null},
