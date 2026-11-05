@@ -525,9 +525,48 @@ function replaceCard(card,label,onclick){
   document.head.appendChild(st);
   var card=document.createElement('div');
   card.id='bs2-card';card.className='bs2';
-  card.innerHTML='<p class="bs2-note">🚨 ملاحظة: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
+  card.innerHTML='<p class="bs2-note"> ملاحظة🚨: الشعب والمواد غير المتوفرة في منصتنا تجدونها في منصة BAC STORY</p>'
     +'<a class="bs2-btn" href="https://www.bac-story.com/" target="_blank" rel="noopener"><img src="bac-story.jpg" alt="" onerror="this.style.display=\'none\'">تصفّح BAC STORY ←</a>'
     +'<div class="bs2-edge"></div>'
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
+})();
+/* ===== 37) صفحة التمارين: المواضيع كأزرار كاملة الكتابة مع أيقونة PDF مثل الصورة ===== */
+(function(){
+  if(!/sciex\.html$/.test(location.pathname)) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.vcard .vact{width:100%!important;display:block!important}'
+  +'.vcard .vact>div{display:flex!important;flex-direction:row!important;flex-wrap:nowrap!important;align-items:stretch!important;justify-content:center!important;gap:6px!important;width:100%!important;max-width:100%!important;padding:4px!important;box-sizing:border-box!important;border-radius:999px!important;background:rgba(255,255,255,.94)!important;border:1px solid rgba(255,255,255,.7)!important;box-shadow:0 4px 12px rgba(0,40,80,.18)!important}'
+  +'.vcard .vact>div>a,.vcard .vact>div>span{flex:1 1 0!important;min-width:0!important;display:flex!important;align-items:center!important;justify-content:center!important;gap:5px!important;padding:8px 6px!important;margin:0!important;border-radius:999px!important;font-size:12px!important;font-weight:800!important;line-height:1.2!important;white-space:nowrap!important;overflow:visible!important;text-overflow:clip!important;color:#1e3a8a!important;background:transparent!important;box-shadow:none!important;text-decoration:none!important;font-family:inherit!important}'
+  +'.vcard .vact>div>a.on,.vcard .vact>div>span.on{background:#1d4ed8!important;color:#fff!important;box-shadow:0 3px 8px rgba(0,30,90,.3)!important}'
+  +'.vcard .vact>div>a svg,.vcard .vact>div>span svg{width:13px!important;height:13px!important;flex:none!important}';
+  document.head.appendChild(st);
+
+  var DOC='<svg viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 3h8l5 5v13H6z"/><path d="M14 3v5h5"/></svg>';
+
+  function fix(){
+    var card=null;
+    document.querySelectorAll('.vcard').forEach(function(c){
+      var t=c.querySelector('.vtag');
+      if(t&&t.textContent.indexOf('تمارين منصتنا')>-1) card=c;
+    });
+    if(!card) return false;
+    var wrap=card.querySelector('.vact>div');
+    if(!wrap||!wrap.children.length) return false;
+    [].slice.call(wrap.children).forEach(function(el,k){
+      el.removeAttribute('style');
+      if(!el.querySelector('svg')) el.insertAdjacentHTML('afterbegin',DOC);
+      el.classList.toggle('on',k===0);
+    });
+    return true;
+  }
+
+  var tries=0;
+  var timer=setInterval(function(){
+    tries++;
+    var ok=fix();
+    if(ok||tries>30) clearInterval(timer);
+  },300);
 })();
