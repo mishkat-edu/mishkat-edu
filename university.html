@@ -17,14 +17,15 @@ body{margin:0;font-family:'Tajawal',system-ui,sans-serif;min-height:100vh;paddin
 h1{font-size:30px;margin:6px 0 4px}
 .sub{color:var(--muted);margin:0}
 
-/* بطاقة ENS */
-.ens{display:none;max-width:460px;margin:26px auto 0;border-radius:24px;padding:28px 24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28)}
-.ens.show{display:block}
-.uic{width:76px;height:76px;margin:0 auto 14px;border-radius:50%;background:linear-gradient(135deg,#ffc233,#ff9f1c);display:grid;place-items:center;box-shadow:0 10px 22px rgba(255,159,28,.35)}
-.uic svg{width:40px;height:40px;fill:none;stroke:#4a3000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ens-t{font-size:24px;font-weight:800;margin-bottom:10px}
-.ens-d{color:var(--muted);font-size:15px;line-height:1.9}
-.orange-btn{display:inline-block;margin-top:20px;padding:12px 34px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 22px rgba(255,159,28,.35)}
+/* بطاقتا ENS جنباً إلى جنب */
+#ens{display:none;grid-template-columns:1fr 1fr;gap:12px;max-width:520px;margin:20px auto 0}
+#ens.show{display:grid}
+.ens{padding:16px 12px;border-radius:20px;background:var(--card);border:2px solid #ffc233;box-shadow:0 10px 24px rgba(255,194,51,.25)}
+.uic{width:52px;height:52px;margin:0 auto 8px;border-radius:50%;background:linear-gradient(135deg,#ffc233,#ff9f1c);display:grid;place-items:center;box-shadow:0 8px 16px rgba(255,159,28,.35)}
+.uic svg{width:26px;height:26px;fill:none;stroke:#4a3000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.ens-t{font-size:17px;font-weight:800;margin-bottom:6px}
+.ens-d{color:var(--muted);font-size:12.5px;line-height:1.7}
+.orange-btn{display:inline-block;margin-top:10px;padding:8px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(255,159,28,.35)}
 
 /* البطاقات */
 .subs,.tops,.acts{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
@@ -33,7 +34,7 @@ h1{font-size:30px;margin:6px 0 4px}
 .sb:hover,.sb:focus-visible{transform:translateY(-4px)}
 .sb-i{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);display:grid;place-items:center;box-shadow:0 10px 20px rgba(10,132,255,.35),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
 .sb-i svg{width:30px;height:30px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.sb-i .ar{font-family:'Tajawal',system-ui,sans-serif;font-size:15px;font-weight:800;line-height:1;direction:rtl}
+.sb-i .ar{font-size:15px;font-weight:800;line-height:1}
 .tops .sb{min-height:118px;font-size:15px;padding:16px 12px;gap:8px}
 .tops .sb-i{width:42px;height:42px}
 .tops .sb-i .ar{font-size:18px}
@@ -54,11 +55,19 @@ h1{font-size:30px;margin:6px 0 4px}
     <p class="sub">محتوى خاص بطلبة الجامعة</p>
   </div>
 
-  <div class="ens show" id="ens">
-    <div class="uic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/><path d="M27 12v7"/></svg></div>
-    <div class="ens-t">ENS (PEP)</div>
-    <div class="ens-d">المدرسة العليا للأساتذة<br>ملمح التعليم الابتدائي<br>السنة الأولى</div>
-    <button class="orange-btn" id="start" type="button">ابدأ الآن</button>
+  <div id="ens" class="show">
+    <div class="ens">
+      <div class="uic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/><path d="M27 12v7"/></svg></div>
+      <div class="ens-t">ENS (PEP)</div>
+      <div class="ens-d">المدرسة العليا للأساتذة<br>ملمح التعليم الابتدائي<br>السنة الأولى</div>
+      <button class="orange-btn" type="button" data-year="1">ابدأ الآن</button>
+    </div>
+    <div class="ens">
+      <div class="uic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/><path d="M27 12v7"/></svg></div>
+      <div class="ens-t">ENS (PEP2)</div>
+      <div class="ens-d">المدرسة العليا للأساتذة<br>ملمح التعليم الابتدائي<br>السنة الثانية</div>
+      <button class="orange-btn" type="button" data-year="2">ابدأ الآن</button>
+    </div>
   </div>
 
   <div class="subs" id="subs"></div>
@@ -109,24 +118,24 @@ h1{font-size:30px;margin:6px 0 4px}
   };
 
   var SUBJECTS=[
-    {n:'الرياضيات',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
-    {n:'الفيزياء',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
-    {n:'الكيمياء',ic:ICON.chem,topics:null},
-    {n:'تكنولوجيا الإعلام والاتصال',ic:ICON.it,topics:['المحور الأول: ماهية تكنولوجيا الإعلام والاتصال','المحور الثالث: بعض تطبيقات تكنولوجيا الإعلام والاتصال','المحور الرابع: انعكاسات التكنولوجيا على الإعلام والاتصال']},
-    {n:'البلاغة',ic:ICON.rhetoric,topics:['الموضوع الأول: مدخل إلى علم البلاغة','الموضوع الثاني: أقسام علم البلاغة','الموضوع الثالث: الحقيقة والمجاز','الموضوع الرابع: التشبيه وأركانه','الموضوع الخامس: الاستعارة وأنواعها']},
-    {n:'النحو',ic:ICON.grammar,topics:['الموضوع الأول: تعريف النحو وأهميته','الموضوع الثاني: أقسام الكلام','الموضوع الثالث: الإعراب والبناء في الأسماء']},
-    {n:'الصرف',ic:'<span class="ar">ٱ ب ت</span>',topics:['الموضوع الأول: معنى الصرف وميدانه','الموضوع الثاني: الميزان الصرفي','الموضوع الثالث: الصحيح والمعتل في الأفعال','الموضوع الرابع: المجرد والمزيد','الموضوع الخامس: إسناد الفعل الصحيح إلى الضمائر']},
-    {n:'الأدب العربي قديماً وحديثاً',ic:ICON.literature,topics:null},
-    {n:'الإسلامية',ic:ICON.islam,topics:['الموضوع الأول: الأديان','الموضوع الثاني: مدخل إلى العقيدة الإسلامية','الموضوع الثالث: أركان الإيمان','الموضوع الرابع: الإيمان بالله تعالى','الموضوع الخامس: الإيمان بالملائكة']},
-    {n:'الإملاء',ic:ICON.dictation,topics:['اهمية الاملاء واهدافها','العلاقة بين الملاء والكتابة','أنواع الهمزة في أول الكلمة','التاء المفتوحة والمربوطة في الأسماء والأفعال','الحروف المزيدة والمحذوفة','كتابة العدد','علامات الترقيم','الأخطاء الشائعة في الكتابة']},
-    {n:'الإنجليزية',ic:ICON.english,topics:['Unit (1): Ethics (أخلاق مهنية)','Unit (2): The world of work and its conflict (عالم العمل وصراعاته)','Unit (3): social media (وسائل التواصل الاجتماعي)','Unit (4): digital marketing (التسويق الرقمي)']},
-    {n:'الخط العربي',ic:ICON.calligraphy,topics:null},
-    {n:'فنيات الكتابة والتعبير',ic:ICON.writing,topics:['تعريف مقياس فنيات الكتابة والتعبير وتحديد أهم مصطلحاته','خطوات تحرير موضوع','تقنيات كتابة التقرير الكتابي','تقنيات كتابة التقرير الإداري','التعبير الشفهي','قراءة نصوص عربية وفك رموزها','فنيات كتابة المقال وأساليب الكتابة الإيضاحية والإقناعية']},
-    {n:'أعلام آلي',ic:ICON.computer,topics:null}
+    {n:'الرياضيات',c:'math',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
+    {n:'الفيزياء',c:'phys',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
+    {n:'الكيمياء',c:'chem',ic:ICON.chem,topics:null},
+    {n:'تكنولوجيا الإعلام والاتصال',c:'ict',ic:ICON.it,topics:['المحور الأول: ماهية تكنولوجيا الإعلام والاتصال','المحور الثالث: بعض تطبيقات تكنولوجيا الإعلام والاتصال','المحور الرابع: انعكاسات التكنولوجيا على الإعلام والاتصال']},
+    {n:'البلاغة',c:'rhet',ic:ICON.rhetoric,topics:['الموضوع الأول: مدخل إلى علم البلاغة','الموضوع الثاني: أقسام علم البلاغة','الموضوع الثالث: الحقيقة والمجاز','الموضوع الرابع: التشبيه وأركانه','الموضوع الخامس: الاستعارة وأنواعها']},
+    {n:'النحو',c:'gram',ic:ICON.grammar,topics:['الموضوع الأول: تعريف النحو وأهميته','الموضوع الثاني: أقسام الكلام','الموضوع الثالث: الإعراب والبناء في الأسماء']},
+    {n:'الصرف',c:'morph',ic:'<span class="ar">ٱ ب ت</span>',topics:['الموضوع الأول: معنى الصرف وميدانه','الموضوع الثاني: الميزان الصرفي','الموضوع الثالث: الصحيح والمعتل في الأفعال','الموضوع الرابع: المجرد والمزيد','الموضوع الخامس: إسناد الفعل الصحيح إلى الضمائر']},
+    {n:'الأدب العربي قديماً وحديثاً',c:'lit',ic:ICON.literature,topics:null},
+    {n:'الإسلامية',c:'islam',ic:ICON.islam,topics:['الموضوع الأول: الأديان','الموضوع الثاني: مدخل إلى العقيدة الإسلامية','الموضوع الثالث: أركان الإيمان','الموضوع الرابع: الإيمان بالله تعالى','الموضوع الخامس: الإيمان بالملائكة']},
+    {n:'الإملاء',c:'dict',ic:ICON.dictation,topics:['اهمية الاملاء واهدافها','العلاقة بين الملاء والكتابة','أنواع الهمزة في أول الكلمة','التاء المفتوحة والمربوطة في الأسماء والأفعال','الحروف المزيدة والمحذوفة','كتابة العدد','علامات الترقيم','الأخطاء الشائعة في الكتابة']},
+    {n:'الإنجليزية',c:'eng',ic:ICON.english,topics:['Unit (1): Ethics (أخلاق مهنية)','Unit (2): The world of work and its conflict (عالم العمل وصراعاته)','Unit (3): social media (وسائل التواصل الاجتماعي)','Unit (4): digital marketing (التسويق الرقمي)']},
+    {n:'الخط العربي',c:'calli',ic:ICON.calligraphy,topics:null},
+    {n:'فنيات الكتابة والتعبير',c:'writ',ic:ICON.writing,topics:['تعريف مقياس فنيات الكتابة والتعبير وتحديد أهم مصطلحاته','خطوات تحرير موضوع','تقنيات كتابة التقرير الكتابي','تقنيات كتابة التقرير الإداري','التعبير الشفهي','قراءة نصوص عربية وفك رموزها','فنيات كتابة المقال وأساليب الكتابة الإيضاحية والإقناعية']},
+    {n:'أعلام آلي',c:'comp',ic:ICON.computer,topics:null}
   ];
 
   var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), back=$('backb');
-  var view='ens';
+  var view='ens', YEAR=1;
 
   function show(v){
     view=v;
@@ -153,7 +162,25 @@ h1{font-size:30px;margin:6px 0 4px}
     box.appendChild(b);
   }
 
-  /* بطاقات المواد */
+  /* يبحث عن أول ملف موجود من القائمة ويفتحه، وإلا يعرض رسالة */
+  function openPdf(cands,title,msg){
+    (function next(k){
+      if(k>=cands.length){say(msg);return;}
+      fetch(cands[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+        if(r.ok){location.href='pdfview.html?f='+encodeURIComponent(cands[k])+'&t='+encodeURIComponent(title);}
+        else{next(k+1);}
+      }).catch(function(){next(k+1);});
+    })(0);
+  }
+
+  /* بطاقات السنة الأولى والثانية */
+  document.querySelectorAll('[data-year]').forEach(function(btn){
+    btn.onclick=function(){
+      YEAR=parseInt(btn.getAttribute('data-year'),10)||1;
+      show('subs');
+    };
+  });
+
   SUBJECTS.forEach(function(s){
     card(subs,s.n,s.ic,null,function(){
       tops.innerHTML='';
@@ -162,10 +189,14 @@ h1{font-size:30px;margin:6px 0 4px}
       }else{
         s.topics.forEach(function(t,k){
           card(tops,t,null,String(k+1),function(){
-            /* بطاقتا الملخصات والتمارين للمحور */
             acts.innerHTML='';
-            card(acts,'الملخصات',ICON.notes,null,function(){say('ملخصات «'+t+'» قيد الإعداد ✨');});
-            card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){say('التمارين والتصحيح لـ«'+t+'» قيد الإعداد ✨');});
+            var pre='ens'+YEAR;
+            card(acts,'الملخصات',ICON.notes,null,function(){
+              openPdf([pre+'-'+s.c+'-'+(k+1)+'.pdf',pre+'-'+s.c+'.pdf'],'ملخص '+t,'ملخصات «'+t+'» قيد الإعداد ✨');
+            });
+            card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
+              openPdf([pre+'-ex-'+s.c+'-'+(k+1)+'.pdf',pre+'-ex-'+s.c+'.pdf'],'تمارين '+t,'تمارين «'+t+'» قيد الإعداد ✨');
+            });
             show('acts');
           });
         });
@@ -174,9 +205,7 @@ h1{font-size:30px;margin:6px 0 4px}
     });
   });
 
-  $('start').onclick=function(){show('subs');};
-
-  /* الرجوع: من بطاقتي المحور إلى المحاور، ومن المحاور إلى المواد، ومن المواد إلى بطاقة ENS */
+  /* الرجوع خطوة بخطوة */
   back.addEventListener('click',function(e){
     if(view==='acts'){e.preventDefault();show('topics');return;}
     if(view==='topics'){e.preventDefault();show('subs');return;}
