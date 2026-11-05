@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>تمارين - أكاديمية مشكاة</title>
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<script>try{if(localStorage.getItem('mishkat_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+<style>
+:root{--blue:#0a84ff;--ink:#101828;--muted:#667085;--card:#fff;--bgfrom:#e3f4ff;--bgmid:#f4fbff;--bgto:#fffbea;color-scheme:light}
+:root[data-theme="dark"]{--ink:#f2f5f8;--muted:#9aa7b6;--card:#16212d;--bgfrom:#0f2438;--bgmid:#0d141c;--bgto:#0d141c;color-scheme:dark}
+*{box-sizing:border-box;margin:0}
+body{font-family:'Tajawal',system-ui,sans-serif;min-height:100vh;padding:24px 4%;background:linear-gradient(135deg,var(--bgfrom),var(--bgmid) 60%,var(--bgto));color:var(--ink);text-align:center}
+.ttl{font-size:22px;font-weight:800;margin:8px 0 4px}
+.sub{color:var(--muted);font-size:14px;margin-bottom:14px}
+.tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:12px auto}
+.tabs button{padding:9px 18px;border-radius:999px;border:1.5px solid var(--blue);background:transparent;color:var(--blue);font:inherit;font-size:14px;font-weight:800;cursor:pointer}
+.tabs button.on{background:var(--blue);color:#fff}
+#frame{width:100%;max-width:820px;height:72vh;min-height:460px;margin:12px auto 0;border:0;border-radius:16px;background:#1f1f1f;display:block}
+.msg{padding:30px;color:var(--muted);font-weight:700}
+.bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:18px}
+.back,.home{display:inline-block;padding:8px 20px;border:1.5px solid var(--blue);border-radius:999px;color:var(--blue);font-size:14px;font-weight:700;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="ttl" id="ttl">التمارين</div>
+<div class="sub" id="sub"></div>
+<div class="tabs" id="tabs"></div>
+<div id="area"><div class="msg">جاري تحميل المواضيع…</div></div>
+<div class="bar">
+  <a class="back" id="backb" href="sciex.html">← رجوع</a>
+  <a class="home" href="index.html">🏠 الرئيسية</a>
+</div>
+
+<script>
+(function(){
+  var P=new URLSearchParams(location.search);
+  var files=(P.get('f')||'').split('|').filter(Boolean);
+  var titles=(P.get('t')||'').split('|');
+  var ch=P.get('c')||'';
+
+  document.getElementById('ttl').textContent='تمارين '+ch;
+  document.getElementById('sub').textContent='اختر الموضوع';
+  document.title='تمارين '+ch+' - أكاديمية مشكاة';
+
+  var area=document.getElementById('area');
+  var tabs=document.getElementById('tabs');
+
+  if(!files.length){
+    area.innerHTML='<div class="msg">تمارين «'+ch+'» قيد الإعداد ✨</div>';
+    return;
+  }
+
+  area.innerHTML='';
+  var frame=document.createElement('iframe');
+  frame.id='frame';
+  frame.title='تمارين '+ch;
+  area.appendChild(frame);
+
+  function select(k){
+    [].forEach.call(tabs.children,function(b,j){b.classList.toggle('on',j===k);});
+    frame.src='pdfview.html?f='+encodeURIComponent(files[k])+'&t='+encodeURIComponent('تمارين '+ch+' — '+(titles[k]||('الموضوع '+(k+1))));
+  }
+
+  files.forEach(function(f,k){
+    var b=document.createElement('button');
+    b.type='button';
+    b.textContent=titles[k]||('الموضوع '+(k+1));
+    b.onclick=function(){select(k);};
+    tabs.appendChild(b);
+  });
+  select(0);
+})();
+</script>
+</body>
+</html>
