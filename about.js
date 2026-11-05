@@ -570,3 +570,125 @@ function replaceCard(card,label,onclick){
     if(ok||tries>30) clearInterval(timer);
   },300);
 })();
+/* ===== 39) صفحة التمارين: زر «تصفح التمارين» يفتح لوحة داخل الصفحة فيها المواضيع والعرض ===== */
+(function(){
+  if(!/sciex\.html$/.test(location.pathname)) return;
+
+  var SUBJ=localStorage.getItem('mishkat_subject')||'';
+  var ch=localStorage.getItem('mishkat_chapter')||'';
+  var MAT={
+    'العلوم':{p:'ex-sci',codes:[['enz','التحفيز'],['photo','الضوئي'],['nerve','العصبي'],['imm','المناعه'],['struct','البنيه'],['prot','تركيب'],['resp','التنفس']]},
+    'الرياضيات':{p:'ex-math',codes:[['seq','المتتاليات'],['func','العدديه'],['exp','اسيه'],['ln','اللوغاريتميه'],['prob','الاحتمالات'],['complex','المركبه'],['div','القسمه'],['prim','الاصليه']]},
+    'الفيزياء':{p:'ex-phys',codes:[['ester','استره'],['time','الزمنيه'],['mech','الميكانيك'],['elec','كهرب'],['ph','توازن'],['nucl','النوويه'],['osc','اهتزاز']]}
+  };
+  var M=MAT[SUBJ];
+  if(!M) return;
+
+  function norm(s){
+    return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim();
+  }
+  var n=norm(ch), code='';
+  for(var i=0;i<M.codes.length;i++){
+    if(n.indexOf(M.codes[i][1])>-1){code=M.codes[i][0];break;}
+  }
+  if(!code) return;
+
+  var ORD=['الأول','الثاني','الثالث','الرابع','الخامس','السادس'];
+  var base=M.p+'-'+code;
+  var names=[base+'.pdf',base+'-2.pdf',base+'-3.pdf',base+'-4.pdf',base+'-5.pdf',base+'-6.pdf'];
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'#ex-panel{max-width:560px;margin:22px auto 0;padding:14px;border-radius:22px;background:var(--card,#fff);border:2px solid #ff9f1c;box-shadow:0 14px 34px rgba(255,159,28,.25);text-align:center}'
+  +'#ex-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin-bottom:12px}'
+  +'#ex-tabs button{padding:8px 16px;border-radius:999px;border:1.5px solid #0a84ff;background:transparent;color:#0a84ff;font:inherit;font-size:14px;font-weight:800;cursor:pointer}'
+  +'#ex-tabs button.on{background:#0a84ff;color:#fff}'
+  +'#ex-frame{width:100%;height:70vh;min-height:420px;border:0;border-radius:14px;background:#1f1f1f}'
+  +'#ex-msg{padding:24px;color:var(--muted,#667085);font-weight:700}'
+  +'[data-exbtn]{cursor:pointer}';
+  document.head.appendChild(st);
+
+  var grid=document.getElementById('grid');
+  if(!grid) return;
+
+  var card=null;
+  document.querySelectorAll('.vcard').forEach(function(c){
+    var t=c.querySelector('.vtag');
+    if(t&&t.textContent.indexOf('تمارين منصتنا')>-1) card=c;
+  });
+  if(!card) return;
+  var box=card.querySelector('.vact');
+  if(!box) return;
+
+  function fileUrl(f,k){
+    return 'pdfview.html?f='+encodeURIComponent(f)+'&t='+encodeURIComponent('تمارين '+ch+' — الموضوع '+(ORD[k]||(k+1)));
+  }
+
+  function openPanel(){
+    var panel=document.getElementById('ex-panel');
+    if(!panel){
+      panel=document.createElement('div');
+      panel.id='ex-panel';
+      grid.after(panel);
+    }
+    panel.innerHTML='<div id="ex-msg">جاري تحميل المواضيع…</div>';
+    panel.scrollIntoView({behavior:'smooth',block:'start'});
+
+    var found=[];
+    (function check(k){
+      if(k>=names.length){build();return;}
+      fetch(names[k],{method:'HEAD',cache:'no-store'}).then(function(r){
+        if(r.ok) found.push(names[k]);
+        check(k+1);
+      }).catch(function(){check(k+1);});
+    })(0);
+
+    function build(){
+      panel.innerHTML='';
+      if(!found.length){
+        panel.innerHTML='<div id="ex-msg">تمارين «'+ch+'» قيد الإعداد ✨</div>';
+        return;
+      }
+      var tabs=document.createElement('div');
+      tabs.id='ex-tabs';
+      var frame=document.createElement('iframe');
+      frame.id='ex-frame';
+      frame.title='تمارين '+ch;
+      frame.setAttribute('loading','lazy');
+
+      function select(k){
+        [].forEach.call(tabs.children,function(b,j){b.classList.toggle('on',j===k);});
+        frame.src=fileUrl(found[k],k);
+      }
+      found.forEach(function(f,k){
+        var b=document.createElement('button');
+        b.type='button';
+        b.textContent='الموضوع '+(ORD[k]||(k+1));
+        b.onclick=function(){select(k);};
+        tabs.appendChild(b);
+      });
+      panel.appendChild(tabs);
+      panel.appendChild(frame);
+      select(0);
+    }
+  }
+
+  function ensureBtn(){
+    if(box.querySelector('[data-exbtn]')) return;
+    box.innerHTML='';
+    var b=document.createElement('button');
+    b.type='button';
+    b.className='vgo';
+    b.setAttribute('data-exbtn','1');
+    b.textContent='تصفح التمارين ←';
+    b.onclick=openPanel;
+    box.appendChild(b);
+  }
+
+  ensureBtn();
+  var tries=0;
+  var iv=setInterval(function(){
+    ensureBtn();
+    if(++tries>40) clearInterval(iv);
+  },300);
+})();
