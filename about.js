@@ -987,3 +987,13 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
 })();
+/* ===== 20) صفحة الجامعة: استبدال شروط بطاقة «عن المنصة» بنص المدرسة العليا للأساتذة ===== */
+(function(){
+  if(!/university\.html$/.test(location.pathname)) return;
+  var card=document.getElementById('about-card');
+  if(!card) return;
+  var list=card.querySelector('ul');
+  if(!list) return;
+  list.innerHTML=''
+    +'<li><i>📘</i><span>ملخصات وتمارين لطلبة المدرسة العليا للأساتذة.</span></li>';
+})();
