@@ -993,3 +993,27 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   var bars=[].slice.call(document.querySelectorAll('.wrap > .bar'));
   bars.slice(1).forEach(function(b){b.remove();});
 })();
+/* ===== 21) صفحة الجامعة: بطاقة بيضاء صغيرة فيها زر prof_wared ===== */
+(function(){
+  if(!/university\.html$/.test(location.pathname)) return;
+  var bar=document.querySelector('.wrap > .bar');
+  if(!bar||document.getElementById('pw-card')) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.pw2{position:relative;max-width:420px;margin:18px auto 0;padding:14px 16px 20px;border-radius:16px;background:#fff;border:1.5px solid #d0d7e2;box-shadow:0 8px 20px rgba(16,24,40,.08);text-align:center;direction:rtl;overflow:hidden}'
+  +'.pw2-note{font-size:13px;font-weight:700;line-height:1.7;color:#101828;margin:0}'
+  +'.pw2-btn{display:inline-block;margin-top:10px;padding:8px 22px;border-radius:999px;background:#e83e8c;color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(232,62,140,.3)}'
+  +'.pw2-btn:hover,.pw2-btn:focus-visible{background:#d12d78}'
+  +'.pw2-edge{position:absolute;left:0;right:0;bottom:0;height:16px;background:#e83e8c}';
+  document.head.appendChild(st);
+
+  var card=document.createElement('div');
+  card.id='pw-card';
+  card.className='pw2';
+  card.innerHTML=''
+    +'<p class="pw2-note"> ملاحظة🚨: بعض النصائح والتوجيهات، وكيفية دراسة المقاييس، وبعض الملخصات غير المتوفرة في منصتنا، تجدونها عند prof_wared</p>'
+    +'<a class="pw2-btn" href="https://www.instagram.com/prof_wared?obrf=bzgzdGYycnkyMWpm" target="_blank" rel="noopener">زر prof_wared ←</a>'
+    +'<div class="pw2-edge"></div>';
+  bar.insertAdjacentElement('afterend',card);
+})();
