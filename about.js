@@ -987,3 +987,9 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     +'<img class="bs2-logo" src="bac-story.jpg" alt="BAC STORY" onerror="this.style.display=\'none\'">';
   bar.insertAdjacentElement('afterend',card);
 })();
+/* ===== 20) صفحة الجامعة: إزالة الشريط المكرر من الأزرار ===== */
+(function(){
+  if(!/university\.html$/.test(location.pathname)) return;
+  var bars=[].slice.call(document.querySelectorAll('.wrap > .bar'));
+  bars.slice(1).forEach(function(b){b.remove();});
+})();
