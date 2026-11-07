@@ -56,7 +56,7 @@ h1{font-size:30px;margin:6px 0 4px}
   <div id="ens" class="show">
     <div class="ens">
       <div class="uic"><svg viewBox="0 0 32 32" aria-hidden="true"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/><path d="M27 12v7"/></svg></div>
-      <div class="ens-t">ENS (PEP1)</div>
+      <div class="ens-t">ENS (PEP)</div>
       <div class="ens-d">المدرسة العليا للأساتذة<br>ملمح التعليم الابتدائي<br>السنة الأولى</div>
       <button class="orange-btn" type="button" data-year="1">ابدأ الآن</button>
     </div>
@@ -76,33 +76,22 @@ h1{font-size:30px;margin:6px 0 4px}
     <a class="back" id="backb" href="index.html">← العودة للرئيسية</a>
     <button class="mode" id="mode" type="button">🌙 الوضع الليلي</button>
   </div>
-
-  <div class="bar" style="margin-top:24px">
-    <a class="back" href="index.html">← العودة للرئيسية</a>
-    <button class="mode" id="mode2" type="button">☀️ الوضع النهاري</button>
-  </div>
 </div>
 <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
 <script>
 (function(){
   var $=function(i){return document.getElementById(i);};
-  var root=document.documentElement, modeBtn=$('mode'), modeBtn2=$('mode2');
+  var root=document.documentElement, modeBtn=$('mode');
 
-  function paint(){
-    var dark=root.getAttribute('data-theme')==='dark';
-    modeBtn.textContent=dark?'☀️ الوضع النهاري':'🌙 الوضع الليلي';
-    modeBtn2.textContent=dark?'☀️ الوضع النهاري':'🌙 الوضع الليلي';
-  }
-  function toggleMode(){
+  function paint(){modeBtn.textContent=root.getAttribute('data-theme')==='dark'?'☀️ الوضع النهاري':'🌙 الوضع الليلي';}
+  paint();
+  modeBtn.onclick=function(){
     var d=root.getAttribute('data-theme')==='dark';
     if(d){root.removeAttribute('data-theme');}else{root.setAttribute('data-theme','dark');}
     try{localStorage.setItem('mishkat_theme',d?'light':'dark');}catch(e){}
     paint();
-  }
-  paint();
-  modeBtn.onclick=toggleMode;
-  modeBtn2.onclick=toggleMode;
+  };
 
   var toast=$('toast'), tm;
   function say(m){toast.textContent=m;toast.classList.add('on');clearTimeout(tm);tm=setTimeout(function(){toast.classList.remove('on');},2400);}
@@ -123,9 +112,12 @@ h1{font-size:30px;margin:6px 0 4px}
     writing:V+'<path d="M6 26h20"/><path d="M9 22l13-13 4 4-13 13H9z"/><path d="M20 9l4 4"/></svg>',
     computer:V+'<rect x="5" y="6" width="22" height="15" rx="2"/><path d="M12 27h8M16 21v6"/></svg>',
     notes:V+'<path d="M8 5h14a2 2 0 0 1 2 2v18a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2z"/><path d="M11 11h8M11 15h8M11 19h5"/></svg>',
-    exam:V+'<circle cx="16" cy="16" r="11"/><path d="M11 16l3.5 3.5L21 12"/></svg>'
+    exam:V+'<circle cx="16" cy="16" r="11"/><path d="M11 16l3.5 3.5L21 12"/></svg>',
+    ai:V+'<rect x="9" y="9" width="14" height="14" rx="3"/><path d="M13 4v5M19 4v5M13 23v5M19 23v5M4 13h5M4 19h5M23 13h5M23 19h5"/></svg>',
+    history:V+'<path d="M6 26h20"/><path d="M8 26V12M13 26V12M19 26V12M24 26V12"/><path d="M5 12l11-7 11 7"/></svg>'
   };
 
+  /* مواد السنة الأولى: لها محاور */
   var SUBJECTS1=[
     {n:'الرياضيات',c:'math',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
     {n:'الفيزياء',c:'phys',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
@@ -143,16 +135,20 @@ h1{font-size:30px;margin:6px 0 4px}
     {n:'أعلام آلي',c:'comp',ic:ICON.computer,topics:null}
   ];
 
-var SUBJECTS2=[
-  {n:'النحو العربي',c:'gram2',ic:ICON.grammar,topics:['النحو العربي']},
-  {n:'علم النفس',c:'psy',ic:ICON.notes,topics:['علم النفس ']},
-  {n:'الصرف',c:'morph2',ic:'<span class="ar">ٱ ب ت</span>',topics:['الصرف']},                                                                                                                               
-  {n:'قضايا النقد العربي ق و ح',c:'crit',ic:ICON.literature,topics:['قضايا النقد العربي ق و ح']},
-  {n:'الرياضيات',c:'math2',ic:ICON.math,topics:['الرياضيات']},
-  {n:'علم الأحياء',c:'bio',ic:ICON.chem,topics:['علم الاحياء']},
-  {n:'التربية الإسلامية',c:'islam2',ic:ICON.islam,topics:['التربية الاسلامية']},
-  {n:'لسانيات عامة',c:'ling',ic:ICON.rhetoric,topics:['لسانيات عامة']}
-];
+  /* مواد السنة الثانية: بدون محاور، تفتح الملخصات والتمارين مباشرة */
+  var SUBJECTS2=[
+    {n:'النحو العربي',c:'gram2',ic:ICON.grammar,topics:false},
+    {n:'علم النفس',c:'psy',ic:ICON.notes,topics:false},
+    {n:'الصرف',c:'morph2',ic:'<span class="ar">ٱ ب ت</span>',topics:false},
+    {n:'قضايا النقد العربي ق و ح',c:'crit',ic:ICON.literature,topics:false},
+    {n:'الرياضيات',c:'math2',ic:ICON.math,topics:false},
+    {n:'علم الأحياء',c:'bio',ic:ICON.chem,topics:false},
+    {n:'التربية الإسلامية',c:'islam2',ic:ICON.islam,topics:false},
+    {n:'لسانيات عامة',c:'ling',ic:ICON.rhetoric,topics:false},
+    {n:'اللغة الإنجليزية',c:'eng2',ic:ICON.english,topics:false},
+    {n:'الذكاء الاصطناعي',c:'ai',ic:ICON.ai,topics:false},
+    {n:'تاريخ الفكر',c:'history',ic:ICON.history,topics:false}
+  ];
 
   var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), back=$('backb');
   var view='ens', YEAR=1, SUBJ=SUBJECTS1;
@@ -192,28 +188,47 @@ var SUBJECTS2=[
     })(0);
   }
 
+  /* بطاقتا الملخصات والتمارين لمادة بدون محاور */
+  function showActs(s,pre,title){
+    acts.innerHTML='';
+    card(acts,'الملخصات',ICON.notes,null,function(){
+      openPdf([pre+'-'+s.c+'.pdf'],'ملخص '+title,'ملخصات «'+title+'» قيد الإعداد ✨');
+    });
+    card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
+      openPdf([pre+'-ex-'+s.c+'.pdf'],'تمارين '+title,'تمارين «'+title+'» قيد الإعداد ✨');
+    });
+    show('acts');
+  }
+
   function buildSubjects(){
     subs.innerHTML='';
     SUBJ.forEach(function(s){
       card(subs,s.n,s.ic,null,function(){
-        tops.innerHTML='';
-        if(!s.topics){
-          card(tops,'قيد الإعداد',ICON.calligraphy,null,function(){say('«'+s.n+'» قيد الإعداد ✨');});
-        }else{
-          s.topics.forEach(function(t,k){
-            card(tops,t,null,String(k+1),function(){
-              acts.innerHTML='';
-              var pre='ens'+YEAR;
-              card(acts,'الملخصات',ICON.notes,null,function(){
-                openPdf([pre+'-'+s.c+'-'+(k+1)+'.pdf',pre+'-'+s.c+'.pdf'],'ملخص '+t,'ملخصات «'+t+'» قيد الإعداد ✨');
-              });
-              card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
-                openPdf([pre+'-ex-'+s.c+'-'+(k+1)+'.pdf',pre+'-ex-'+s.c+'.pdf'],'تمارين '+t,'تمارين «'+t+'» قيد الإعداد ✨');
-              });
-              show('acts');
-            });
-          });
+        var pre='ens'+YEAR;
+        /* مادة بدون محاور: تفتح الملخصات والتمارين مباشرة */
+        if(s.topics===false||!s.topics){
+          if(s.topics===null){
+            tops.innerHTML='';
+            card(tops,'قيد الإعداد',ICON.calligraphy,null,function(){say('«'+s.n+'» قيد الإعداد ✨');});
+            show('topics');
+            return;
+          }
+          showActs(s,pre,s.n);
+          return;
         }
+        tops.innerHTML='';
+        s.topics.forEach(function(t,k){
+          card(tops,t,null,String(k+1),function(){
+            acts.innerHTML='';
+            card(acts,'الملخصات',ICON.notes,null,function(){
+              openPdf([pre+'-'+s.c+'-'+(k+1)+'.pdf',pre+'-'+s.c+'.pdf'],'ملخص '+t,'ملخصات «'+t+'» قيد الإعداد ✨');
+            });
+            card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
+              openPdf([pre+'-ex-'+s.c+'-'+(k+1)+'.pdf',pre+'-ex-'+s.c+'.pdf'],'تمارين '+t,'تمارين «'+t+'» قيد الإعداد ✨');
+            });
+            show('acts');
+          });
+        });
         show('topics');
       });
     });
@@ -229,7 +244,7 @@ var SUBJECTS2=[
   });
 
   back.addEventListener('click',function(e){
-    if(view==='acts'){e.preventDefault();show('topics');return;}
+    if(view==='acts'){e.preventDefault();show(YEAR===2?'subs':'topics');return;}
     if(view==='topics'){e.preventDefault();show('subs');return;}
     if(view==='subs'){e.preventDefault();show('ens');}
   });
