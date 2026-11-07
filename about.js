@@ -1017,7 +1017,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     +'<div class="pw2-edge"></div>';
   bar.insertAdjacentElement('afterend',card);
 })();
-/* ===== 23) صفحة الجامعة: زر مشاركة صغير عائم ===== */
+/* ===== 22) صفحة الجامعة: زر مشاركة صغير عائم ===== */
 (function(){
   if(!/university\.html$/.test(location.pathname)) return;
   if(document.getElementById('uni-share')) return;
