@@ -1017,3 +1017,28 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
     +'<div class="pw2-edge"></div>';
   bar.insertAdjacentElement('afterend',card);
 })();
+/* ===== 23) صفحة الجامعة: زر مشاركة صغير عائم ===== */
+(function(){
+  if(!/university\.html$/.test(location.pathname)) return;
+  if(document.getElementById('uni-share')) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'#uni-share{position:fixed;left:14px;bottom:18px;z-index:40;width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(135deg,#0f9bbd,#086a8c);box-shadow:0 10px 22px rgba(6,120,150,.38);display:grid;place-items:center;cursor:pointer}'
+  +'#uni-share svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}';
+  document.head.appendChild(st);
+
+  var b=document.createElement('button');
+  b.id='uni-share';
+  b.type='button';
+  b.setAttribute('aria-label','مشاركة الصفحة');
+  b.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/><path d="M12 15V4M8 8l4-4 4 4"/></svg>';
+  b.onclick=function(){
+    var data={title:'أكاديمية مشكاة - الجامعة',text:'محتوى خاص بطلبة الجامعة',url:location.href};
+    if(navigator.share){navigator.share(data).catch(function(){});}
+    else if(navigator.clipboard&&navigator.clipboard.writeText){
+      navigator.clipboard.writeText(location.href).then(function(){alert('تم نسخ رابط الصفحة ✓');});
+    }else{alert('انسخ الرابط من شريط العنوان');}
+  };
+  document.body.appendChild(b);
+})();
