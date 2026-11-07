@@ -250,6 +250,11 @@ h1{font-size:30px;margin:6px 0 4px}
   });
 })();
 </script>
+<style>
+#uni-share{position:fixed;left:14px;bottom:18px;z-index:40;width:46px;height:46px;border-radius:50%;border:0;background:linear-gradient(135deg,#0f9bbd,#086a8c);box-shadow:0 10px 22px rgba(6,120,150,.38);display:grid;place-items:center;cursor:pointer}
+#uni-share svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+</style>
+<button id="uni-share" type="button" aria-label="مشاركة الصفحة" onclick="(function(){var d={title:'أكاديمية مشكاة - الجامعة',text:'محتوى خاص بطلبة الجامعة',url:location.href};if(navigator.share){navigator.share(d).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(location.href).then(function(){alert('تم نسخ رابط الصفحة ✓');});}else{alert('انسخ الرابط من شريط العنوان');}})()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/><path d="M12 15V4M8 8l4-4 4 4"/></svg></button>
 <script src="about.js"></script>
 </body>
 </html>
