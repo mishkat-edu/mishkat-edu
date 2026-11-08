@@ -1042,3 +1042,40 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   };
   document.body.appendChild(b);
 })();
+/* ===== 24) بطاقة prof_wared فوق بطاقة المؤسس: نصائح وملخصات وتمارين ===== */
+(function(){
+  var target=null;
+  document.querySelectorAll('h2,h3,span,b,div').forEach(function(el){
+    if(target) return;
+    if(el.children.length===0 && /المؤسس|المطور/.test(el.textContent)) target=el;
+  });
+  if(!target) return;
+
+  var row=target.closest('a,li,div,section,article');
+  while(row && row.parentElement && row.parentElement.children.length<3){ row=row.parentElement; }
+  if(!row || !row.parentElement) return;
+  if(document.getElementById('pw-row')) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'#pw-row{display:flex;align-items:center;gap:14px;padding:16px 16px;margin:14px 0;border-radius:20px;background:#0b1530;border:1.5px solid rgba(255,255,255,.08);text-decoration:none;color:#fff;direction:rtl;text-align:right;box-shadow:0 10px 26px rgba(0,0,0,.35);cursor:default}'
+  +'#pw-row .pw-ic{flex:none;width:58px;height:58px;border-radius:50%;background:#0b0f1a;border:2.5px solid #e1306c;display:grid;place-items:center;cursor:pointer;text-decoration:none;box-shadow:0 0 18px rgba(225,48,108,.35);animation:pwspin 6s linear infinite}'
+  +'#pw-row .pw-ic:hover{animation-play-state:paused}'
+  +'#pw-row .pw-ic svg{width:28px;height:28px;fill:none;stroke:#e1306c;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+  +'@keyframes pwspin{to{transform:rotate(360deg)}}'
+  +'#pw-row .pw-t{flex:1;min-width:0}'
+  +'#pw-row .pw-h{font-size:17px;font-weight:800;margin:0 0 4px;color:#fff}'
+  +'#pw-row .pw-s{font-size:13px;line-height:1.8;color:#b9c7e6;margin:0}'
+  +'@media (prefers-reduced-motion:reduce){#pw-row .pw-ic{animation:none}}';
+  document.head.appendChild(st);
+
+  var box=document.createElement('div');
+  box.id='pw-row';
+  box.innerHTML=''
+    +'<a class="pw-ic" href="https://www.instagram.com/prof_wared?srtk=bzgzdGYycnkyMWpm" target="_blank" rel="noopener" aria-label="انستغرام prof_wared">'
+    +'<svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#e1306c" stroke="none"/></svg></a>'
+    +'<div class="pw-t"><div class="pw-h">prof_wared</div>'
+    +'<p class="pw-s">ملخصات وتمارين مختلفة، ونصائح ومساعدات لكيفية دراسة المقاييس.</p></div>';
+
+  row.parentElement.insertBefore(box,row);
+})();
