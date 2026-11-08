@@ -18,7 +18,6 @@ body::after{content:"";position:fixed;left:0;right:0;bottom:0;height:150px;backg
 html[data-theme="light"] body::after{display:none}
 .stage{position:relative;max-width:560px;margin:0 auto}
 
-/* الأعلى: الشعار + المصباح + الورقة + العبارة اليدوية */
 .hero{position:relative;height:176px}
 .lamp{position:absolute;right:-4px;top:-8px;width:118px;pointer-events:none}
 .lamp svg{display:block;width:100%;height:auto}
@@ -30,7 +29,6 @@ html[data-theme="light"] .hand{color:#b45309}
 .note{position:absolute;right:2%;top:86px;width:28%;min-width:92px;padding:15px 8px 12px;transform:rotate(6deg);background:linear-gradient(160deg,#ffe58a,#f6c844);color:#5a3b00;border-radius:3px;font-family:'Aref Ruqaa','Tajawal',serif;font-weight:700;font-size:14px;line-height:1.6;box-shadow:0 10px 18px rgba(0,0,0,.45)}
 .note::before{content:"";position:absolute;top:-8px;left:50%;width:42px;height:14px;transform:translateX(-50%) rotate(-3deg);background:rgba(255,255,255,.45);border-radius:2px}
 
-/* أشعة صفراء */
 .rays{position:absolute;top:50%;width:46px;height:64px;transform:translateY(-50%);pointer-events:none}
 .rays i{position:absolute;width:4px;height:20px;border-radius:3px;background:linear-gradient(180deg,#ffd45e,#ff9f1c);box-shadow:0 0 8px rgba(255,190,70,.7)}
 .rays.l{left:-54px}
@@ -42,7 +40,6 @@ html[data-theme="light"] .hand{color:#b45309}
 .rays.r i:nth-child(2){top:22px;right:6px;transform:rotate(90deg)}
 .rays.r i:nth-child(3){bottom:0;right:18px;transform:rotate(-48deg)}
 
-/* الشعار: ثابت، وعند الضغط يدور بالألوان ثم يعيدك إلى الصفحة الرئيسية */
 .orbw{position:absolute;left:50%;top:22px;width:104px;height:104px;margin-left:-52px}
 .orb{position:relative;width:104px;height:104px;cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none}
 .orb:focus-visible{outline:3px solid #5aa2ff;outline-offset:8px;border-radius:50%}
@@ -61,7 +58,6 @@ html[data-theme="light"] .hand{color:#b45309}
 h1{margin-top:8px;font-size:clamp(30px,8vw,40px);font-weight:800;line-height:1.25;color:var(--ink);text-shadow:0 4px 18px rgba(0,0,0,.35)}
 .tag{margin:6px 0 0;color:var(--muted);font-size:15px}
 
-/* البطاقة الكبيرة بإطارها الذهبي */
 .frame{position:relative;margin:20px auto 0;padding:10px;border-radius:34px;border:3px solid #f5b942;background:var(--frame);box-shadow:0 0 0 1px rgba(245,185,66,.25),0 0 26px rgba(245,185,66,.30),inset 0 0 26px rgba(245,185,66,.07);animation:fglow 3.5s ease-in-out infinite alternate}
 @keyframes fglow{from{box-shadow:0 0 0 1px rgba(245,185,66,.2),0 0 18px rgba(245,185,66,.22),inset 0 0 20px rgba(245,185,66,.05)}to{box-shadow:0 0 0 1px rgba(245,185,66,.35),0 0 38px rgba(245,185,66,.45),inset 0 0 30px rgba(245,185,66,.1)}}
 .rows{display:grid;gap:9px}
@@ -75,8 +71,7 @@ h1{margin-top:8px;font-size:clamp(30px,8vw,40px);font-weight:800;line-height:1.2
 .founder b{display:block;margin-top:1px;font-size:18px;font-weight:800;color:#ffc94d}
 html[data-theme="light"] .founder b{color:#b45309}
 
-/* الرسومات: تدور وتتلون عند الضغط عليها */
-.ic{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--c);background:rgba(0,0,0,.28);box-shadow:0 0 10px -2px var(--c);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;font-size:25px}
+.ic{flex:none;width:52px;height:52px;border-radius:50%;display:grid;place-items:center;border:2px solid var(--c);background:rgba(0,0,0,.28);box-shadow:0 0 10px -2px var(--c);cursor:pointer;-webkit-tap-highlight-color:transparent;user-select:none;font-size:25px;text-decoration:none}
 html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
 .ic:focus-visible{outline:3px solid #5aa2ff;outline-offset:2px}
 .ic svg{width:26px;height:26px;fill:none;stroke:var(--c);stroke-width:1.9;stroke-linecap:round;stroke-linejoin:round}
@@ -92,19 +87,16 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
   100%{background-color:rgba(255,77,166,.4);box-shadow:0 0 0 2px #ff4da6,0 0 14px #ff4da6}
 }
 
-/* زر ابدأ التعلم */
 .ctaw{position:relative;width:min(250px,70%);margin:24px auto 0}
 .cta{display:block;padding:13px;border-radius:999px;text-align:center;font-weight:800;font-size:17px;color:#fff;text-decoration:none;background:linear-gradient(180deg,#4a95ff,#0a54e6);box-shadow:0 0 0 2px rgba(120,180,255,.5),0 10px 30px rgba(10,100,255,.55)}
 .cta:hover,.cta:focus-visible{filter:brightness(1.1)}
 
-/* الأزرار السفلية */
 .pills{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:20px}
 .pl{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:999px;border:1.5px solid #2f6bff;color:var(--pl);background:var(--plbg);font:inherit;font-size:14px;font-weight:700;text-decoration:none;cursor:pointer}
 .pl:hover,.pl:focus-visible{background:#2f6bff;color:#fff}
 .pl svg{width:17px;height:17px;fill:none;stroke:#5aa2ff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .pl:hover svg,.pl:focus-visible svg{stroke:#fff}
 
-/* المكتب: كتب ودفتر */
 .desk{direction:ltr;display:flex;justify-content:space-between;align-items:flex-end;margin-top:26px;padding:0 2px}
 .books{width:152px}
 .bk{display:flex;align-items:center;justify-content:center;height:34px;margin-top:-1px;border-radius:4px 9px 9px 4px;color:#d6e3ff;font-weight:800;font-size:13px;box-shadow:0 6px 12px rgba(0,0,0,.45);direction:rtl}
@@ -212,20 +204,17 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
           <p>دروس مرتبة حسب شعبتك ومادتك ووحدتك، ولكل درس ملخصات وتمارين وفيديوهات وسلاسل تساعدك على المراجعة.</p>
         </div>
       </div>
-     <div class="row" style="--c:#e1306c">
-  <a class="ic" href="https://www.instagram.com/prof_wared?srtk=bzgzdGYycnkyMWpm" target="_blank" rel="noopener" aria-label="انستغرام prof_wared">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:var(--c);stroke:none"/></svg>
 
-  </a>
- <div class="row" id="pw-row" style="--c:#e83e8c">
-  <a class="ic" id="pw-ic" href="https://www.instagram.com/prof_wared?srtk=bzgzdGYycnkyMWpm" target="_blank" rel="noopener" aria-label="انستغرام prof_wared">
-    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:var(--c);stroke:none"/></svg>
-  </a>
-  <div class="rt">
-    <h2>prof_wared</h2>
-    <p>ملخصات وتمارين مختلفة، ونصائح ومساعدات لكيفية دراسة المقاييس، وكل مايخص السنة اولى والثانية مدرسة عليا ملمح التعليم الابتدائي</p>
-  </div>
-</div>
+      <!-- بطاقة prof_wared: واحدة فقط -->
+      <div class="row" id="pw-row" style="--c:#e0709a">
+        <a class="ic" id="pw-ic" href="https://www.instagram.com/prof_wared?srtk=bzgzdGYycnkyMWpm" target="_blank" rel="noopener" aria-label="انستغرام prof_wared">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:var(--c);stroke:none"/></svg>
+        </a>
+        <div class="rt">
+          <h2>prof_wared</h2>
+          <p>ملخصات وتمارين مختلفة، ونصائح ومساعدات لكيفية دراسة المقاييس، وكل مايخص السنة اولى والثانية مدرسة عليا ملمح التعليم الابتدائي</p>
+        </div>
+      </div>
 
       <div class="row founder" style="--c:#ffc94d">
         <div class="ic">👨‍💻</div>
@@ -269,7 +258,6 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
   var $=function(i){return document.getElementById(i);};
   var root=document.documentElement;
 
-  /* الوضع الليلي / النهاري */
   function paint(){
     var dark=root.getAttribute('data-theme')!=='light';
     $('mi').textContent=dark?'☀️':'🌙';
@@ -283,13 +271,11 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
     paint();
   };
 
-  /* رجوع */
   $('backb').onclick=function(e){
     e.preventDefault();
     if(history.length>1){history.back();}else{location.href='index.html';}
   };
 
-  /* الشعار: يدور بالألوان عند الضغط ثم يعيدك إلى الصفحة الرئيسية */
   var orb=$('orb');
   var reduce=window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   orb.setAttribute('role','link');
@@ -306,20 +292,27 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
   orb.addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '){e.preventDefault();spinOrb();}
   });
-  /* دائرة prof_wared: تدور أولاً ثم يفتح الانستغرام */
+
+  /* دائرة prof_wared: تدور وتتلون أولاً ثم يفتح الانستغرام */
   (function(){
-    var a=document.getElementById('pw-ic');
+    var a=$('pw-ic');
     if(!a) return;
     var url=a.getAttribute('href');
+    var busy=false;
     a.addEventListener('click',function(e){
       e.preventDefault();
       e.stopPropagation();
-      if(a.classList.contains('go')) return;
+      if(busy) return;
+      busy=true;
       a.classList.add('go');
-      setTimeout(function(){window.open(url,'_blank','noopener');},900);
+      setTimeout(function(){
+        var w=window.open(url,'_blank','noopener');
+        if(!w){location.href=url;}
+        busy=false;
+      },900);
     },true);
   })();
-  /* الرسومات: تدور وتتلون عند الضغط عليها */
+
   document.querySelectorAll('.ic').forEach(function(ic){
     ic.setAttribute('role','button');
     ic.setAttribute('tabindex','0');
@@ -329,7 +322,10 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
     }
     ic.addEventListener('click',go);
     ic.addEventListener('keydown',function(e){
-      if(e.key==='Enter'||e.key===' '){e.preventDefault();go();}
+      if(e.key==='Enter'||e.key===' '){
+        e.preventDefault();
+        if(ic.id==='pw-ic'){ic.click();}else{go();}
+      }
     });
     ic.addEventListener('animationend',function(e){
       if(e.animationName==='icspin') ic.classList.remove('go');
