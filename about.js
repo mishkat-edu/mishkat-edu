@@ -1012,7 +1012,7 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   card.id='pw-card';
   card.className='pw2';
   card.innerHTML=''
-    +'<p class="pw2-note"> ملاحظة🚨: بعض النصائح والتوجيهات، وكيفية دراسة المقاييس، وبعض الملخصات غير المتوفرة في منصتنا، تجدونها عند prof_wared</p>'
+    +'<p class="pw2-note"> ملاحظة🚨: بعض  النصائح والتوجيهات، وكيفية دراسة المقاييس، وبعض الملخصات  والتمارين غير المتوفرة في منصتنا، تجدونها عند prof_wared</p>'
     +'<a class="pw2-btn" href="https://www.instagram.com/prof_wared?obrf=bzgzdGYycnkyMWpm" target="_blank" rel="noopener">زر prof_wared ←</a>'
     +'<div class="pw2-edge"></div>';
   bar.insertAdjacentElement('afterend',card);
