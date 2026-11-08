@@ -217,11 +217,15 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
     <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:var(--c);stroke:none"/></svg>
 
   </a>
-     <div class="rt">
-        <h2>prof_wared</h2>
-        <p>ملخصات وتمارين مختلفة، ونصائح ومساعدات لكيفية دراسة المقاييس والمصادر المعتمدة. وكل مايخص السنة اولى والثانية مدرسة عليا ملمح ابتدائي.</p>
-       </div>
-      </div>
+ <div class="row" id="pw-row" style="--c:#e83e8c">
+  <a class="ic" id="pw-ic" href="https://www.instagram.com/prof_wared?srtk=bzgzdGYycnkyMWpm" target="_blank" rel="noopener" aria-label="انستغرام prof_wared">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" style="fill:var(--c);stroke:none"/></svg>
+  </a>
+  <div class="rt">
+    <h2>prof_wared</h2>
+    <p>ملخصات وتمارين مختلفة، ونصائح ومساعدات لكيفية دراسة المقاييس، وكل مايخص السنة اولى والثانية مدرسة عليا ملمح التعليم الابتدائي</p>
+  </div>
+</div>
 
       <div class="row founder" style="--c:#ffc94d">
         <div class="ic">👨‍💻</div>
@@ -302,7 +306,19 @@ html[data-theme="light"] .ic{background:rgba(255,255,255,.8)}
   orb.addEventListener('keydown',function(e){
     if(e.key==='Enter'||e.key===' '){e.preventDefault();spinOrb();}
   });
-
+  /* دائرة prof_wared: تدور أولاً ثم يفتح الانستغرام */
+  (function(){
+    var a=document.getElementById('pw-ic');
+    if(!a) return;
+    var url=a.getAttribute('href');
+    a.addEventListener('click',function(e){
+      e.preventDefault();
+      e.stopPropagation();
+      if(a.classList.contains('go')) return;
+      a.classList.add('go');
+      setTimeout(function(){window.open(url,'_blank','noopener');},900);
+    },true);
+  })();
   /* الرسومات: تدور وتتلون عند الضغط عليها */
   document.querySelectorAll('.ic').forEach(function(ic){
     ic.setAttribute('role','button');
