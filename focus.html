@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>التركيز - أكاديمية مشكاة</title>
+<link rel="icon" href="logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mk.css">
+<script>try{if(localStorage.getItem('mishkat_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+</head>
+<body data-mk="1">
+<div class="wrap">
+  <div class="pill"><div class="lg">أكاديمية مشكاة</div><h1>التركيز</h1><p>مؤقت بومودورو لتنظيم وقت دراستك</p></div>
+
+  <div class="cd" style="text-align:center">
+    <div class="tabs" id="mt">
+      <button type="button" data-m="f" class="on">تركيز</button>
+      <button type="button" data-m="b">استراحة قصيرة</button>
+      <button type="button" data-m="l">استراحة طويلة</button>
+    </div>
+    <div class="ring">
+      <svg viewBox="0 0 200 200" aria-hidden="true"><circle class="rb" cx="100" cy="100" r="88"/><circle class="rp" id="rp" cx="100" cy="100" r="88"/></svg>
+      <div class="rc"><div class="tm" id="tm">25:00</div><div class="tl" id="tl">وقت التركيز</div></div>
+    </div>
+    <div class="row" style="justify-content:center">
+      <button class="bt" id="go" type="button">ابدأ</button>
+      <button class="bt g" id="rs" type="button">إعادة ضبط</button>
+      <button class="bt g" id="sk" type="button">تخطي</button>
+    </div>
+    <div class="dots2" id="cy"></div>
+  </div>
+
+  <div class="cd">
+    <h2>الإعدادات</h2>
+    <div class="grid2">
+      <div><label class="f" for="sf">مدة التركيز (دقيقة)</label><input id="sf" type="number" min="1" max="180"></div>
+      <div><label class="f" for="sb">الاستراحة القصيرة (دقيقة)</label><input id="sb" type="number" min="1" max="60"></div>
+      <div><label class="f" for="sl">الاستراحة الطويلة (دقيقة)</label><input id="sl" type="number" min="1" max="90"></div>
+      <div><label class="f" for="sc">عدد الجلسات قبل الطويلة</label><input id="sc" type="number" min="2" max="10"></div>
+    </div>
+    <div class="row" style="margin-top:12px">
+      <button class="bt o" id="ss" type="button">حفظ الإعدادات</button>
+      <button class="bt g" id="sd" type="button">الافتراضي (25 / 5)</button>
+    </div>
+  </div>
+
+  <div class="cd">
+    <h2>إحصاءات التركيز</h2>
+    <div class="st">
+      <div class="tile"><b id="s1">0 د</b><span>اليوم</span></div>
+      <div class="tile"><b id="s2">0 د</b><span>آخر 7 أيام</span></div>
+      <div class="tile"><b id="s3">0 د</b><span>المجموع</span></div>
+      <div class="tile"><b id="s4">0</b><span>جلسات اليوم</span></div>
+    </div>
+    <h2 style="margin-top:16px">آخر 7 أيام</h2>
+    <div class="bars" id="bars"></div>
+  </div>
+
+  <div class="bar">
+    <a class="nb" id="backb" href="index.html">← رجوع</a>
+    <a class="nb" href="index.html">🏠 الرئيسية</a>
+    <button class="nb" id="mode" type="button">🌙 الوضع الليلي</button>
+  </div>
+</div>
+
+<script src="mk.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var S=MK2.get('focus',{});
+  S.set=S.set||{f:25,b:5,l:15,c:4};
+  S.log=S.log||{};
+  S.ses=S.ses||{};
+  var mode=S.mode||'f', cyc=S.cyc||0, rem=0, running=false, endAt=0, lastT=0, pend=0;
+  var LBL={f:'وقت التركيز',b:'استراحة قصيرة',l:'استراحة طويلة'};
+  var DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+
+  function dur(m){return (m==='f'?S.set.f:(m==='b'?S.set.b:S.set.l))*60;}
+  function pad(n){return n<10?'0'+n:''+n;}
+  function save(){S.mode=mode;S.cyc=cyc;S.rem=rem;S.running=running;S.endAt=endAt;MK2.set('focus',S);}
+  function flush(){if(pend>0){var d=MK2.today();S.log[d]=(S.log[d]||0)+pend/60;pend=0;}}
+
+  function beep(){
+    try{
+      var C=window.AudioContext||window.webkitAudioContext, a=new C();
+      [0,.25,.5].forEach(function(t){
+        var o=a.createOscillator(),g=a.createGain();
+        o.frequency.value=880;g.gain.value=.15;
+        o.connect(g);g.connect(a.destination);
+        o.start(a.currentTime+t);o.stop(a.currentTime+t+.15);
+      });
+    }catch(e){}
+  }
+
+  function stats(){
+    var td=MK2.today(), w=0, tot=0, vals=[], lbl=[];
+    for(var i=6;i>=0;i--){
+      var d=new Date();d.setDate(d.getDate()-i);
+      var v=(S.log[MK2.today(d)]||0)+(i===0?pend/60:0);
+      w+=v;vals.push(v);lbl.push(DAYS[d.getDay()]);
+    }
+    Object.keys(S.log).forEach(function(k){tot+=S.log[k];});
+    tot+=pend/60;
+    $('s1').textContent=MK2.fmt((S.log[td]||0)+pend/60);
+    $('s2').textContent=MK2.fmt(w);
+    $('s3').textContent=MK2.fmt(tot);
+    $('s4').textContent=S.ses[td]||0;
+    var mx=Math.max.apply(null,vals.concat([1]));
+    $('bars').innerHTML=vals.map(function(v,i){
+      return '<div><i style="height:'+Math.max(v>0?8:2,Math.round(v/mx*80))+'px"></i>'+lbl[i]+'</div>';
+    }).join('');
+  }
+
+  function draw(){
+    var t=dur(mode);
+    $('tm').textContent=pad(Math.floor(rem/60))+':'+pad(rem%60);
+    $('tl').textContent=LBL[mode];
+    $('rp').style.strokeDashoffset=String(553*(1-(t?rem/t:0)));
+    $('go').textContent=running?'إيقاف مؤقت':(rem<dur(mode)&&rem>0?'متابعة':'ابدأ');
+    [].forEach.call($('mt').children,function(b){b.classList.toggle('on',b.getAttribute('data-m')===mode);});
+    var c=S.set.c, filled=(mode==='l'&&cyc>0)?c:(cyc%c), dots='';
+    for(var i=0;i<c;i++) dots+='<i class="'+(i<filled?'on':'')+'"></i>';
+    $('cy').innerHTML=dots;
+    document.title=(running?$('tm').textContent+' - ':'')+'التركيز - أكاديمية مشكاة';
+  }
+
+  function complete(){
+    running=false;flush();
+    if(mode==='f'){
+      cyc++;
+      var d=MK2.today();S.ses[d]=(S.ses[d]||0)+1;
+      mode=(cyc%S.set.c===0)?'l':'b';
+    }else{mode='f';}
+    rem=dur(mode);save();beep();draw();stats();
+  }
+
+  function tick(){
+    if(!running) return;
+    var now=Date.now();
+    rem=Math.max(0,Math.round((endAt-now)/1000));
+    if(mode==='f') pend+=(now-lastT)/1000;
+    lastT=now;
+    if(pend>=15){flush();save();}
+    if(rem<=0){complete();return;}
+    draw();stats();
+  }
+
+  function start(){
+    if(rem<=0) rem=dur(mode);
+    running=true;endAt=Date.now()+rem*1000;lastT=Date.now();
+    save();draw();
+  }
+  function pause(){tick();running=false;flush();save();draw();stats();}
+  function reset(){running=false;flush();rem=dur(mode);save();draw();stats();}
+  function setMode(m){running=false;flush();mode=m;rem=dur(m);save();draw();stats();}
+
+  $('go').onclick=function(){if(running){pause();}else{start();}};
+  $('rs').onclick=reset;
+  $('sk').onclick=function(){
+    running=false;flush();
+    if(mode==='f'){mode=((cyc+1)%S.set.c===0)?'l':'b';cyc++;}else{mode='f';}
+    rem=dur(mode);save();draw();stats();
+  };
+  [].forEach.call($('mt').children,function(b){b.onclick=function(){setMode(b.getAttribute('data-m'));};});
+
+  function fillSet(){$('sf').value=S.set.f;$('sb').value=S.set.b;$('sl').value=S.set.l;$('sc').value=S.set.c;}
+  function clamp(v,a,b,d){v=parseInt(v,10);if(isNaN(v)) return d;return Math.min(b,Math.max(a,v));}
+  $('ss').onclick=function(){
+    S.set={f:clamp($('sf').value,1,180,25),b:clamp($('sb').value,1,60,5),l:clamp($('sl').value,1,90,15),c:clamp($('sc').value,2,10,4)};
+    fillSet();
+    if(!running){rem=dur(mode);}
+    save();draw();alert('تم حفظ الإعدادات ✓');
+  };
+  $('sd').onclick=function(){S.set={f:25,b:5,l:15,c:4};fillSet();if(!running){rem=dur(mode);}save();draw();};
+
+  /* استعادة الحالة بعد تحديث الصفحة */
+  if(S.running&&S.endAt){
+    var left=Math.round((S.endAt-Date.now())/1000);
+    if(left>0){rem=left;running=true;endAt=S.endAt;lastT=Date.now();}
+    else{rem=0;if(mode==='f') pend+=Math.max(0,S.rem||0);complete();}
+  }else{
+    rem=(S.rem!=null&&S.rem>0)?S.rem:dur(mode);
+  }
+
+  fillSet();draw();stats();
+  setInterval(tick,500);
+  window.addEventListener('pagehide',function(){if(running){tick();}flush();save();});
+})();
+</script>
+</body>
+</html>
