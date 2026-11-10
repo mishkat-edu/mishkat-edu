@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>خطتي الدراسية - أكاديمية مشكاة</title>
+<link rel="icon" href="logo.jpg">
+<link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="mk.css">
+<script>try{if(localStorage.getItem('mishkat_theme')==='dark')document.documentElement.setAttribute('data-theme','dark');}catch(e){}</script>
+</head>
+<body data-mk="1">
+<div class="wrap">
+  <div class="pill"><div class="lg">أكاديمية مشكاة</div><h1>خطتي الدراسية</h1><p>جدول يومي وأسبوعي وأهداف ومهام</p></div>
+
+  <div class="cd">
+    <h2>جدولي الأسبوعي</h2>
+    <div class="tabs" id="dt"></div>
+    <div class="st" id="sm"></div>
+    <div id="tl"></div>
+  </div>
+
+  <div class="cd">
+    <h2 id="ft">إضافة مهمة</h2>
+    <div class="grid2">
+      <div><label class="f" for="td">اليوم</label><select id="td"></select></div>
+      <div><label class="f" for="tt">وقت المراجعة</label><input id="tt" type="time"></div>
+      <div><label class="f" for="ts">المادة</label><select id="ts"></select></div>
+      <div><label class="f" for="tu">الدرس</label><input id="tu" list="ul" placeholder="اسم الدرس"><datalist id="ul"></datalist></div>
+    </div>
+    <label class="f" for="tn">ملاحظة (اختياري)</label>
+    <input id="tn" placeholder="مثال: حل 3 تمارين">
+    <div class="row" style="margin-top:12px">
+      <button class="bt" id="tsv" type="button">إضافة</button>
+      <button class="bt g" id="tcn" type="button" hidden>إلغاء التعديل</button>
+    </div>
+  </div>
+
+  <div class="cd">
+    <h2>أهدافي</h2>
+    <div class="row">
+      <select id="gt" style="max-width:120px"><option value="d">يومي</option><option value="w">أسبوعي</option></select>
+      <input id="gx" placeholder="اكتب هدفك" style="flex:1;min-width:140px">
+      <button class="bt s" id="ga" type="button">إضافة</button>
+    </div>
+    <h3 class="un">أهداف اليوم</h3><div id="gd"></div>
+    <h3 class="un">أهداف الأسبوع</h3><div id="gw"></div>
+  </div>
+
+  <div class="bar">
+    <a class="nb" id="backb" href="index.html">← رجوع</a>
+    <a class="nb" href="index.html">🏠 الرئيسية</a>
+    <button class="nb" id="mode" type="button">🌙 الوضع الليلي</button>
+  </div>
+</div>
+
+<script src="mk.js"></script>
+<script>
+(function(){
+  var $=function(i){return document.getElementById(i);};
+  var E=MK2.esc;
+  var DAYS=['الأحد','الاثنين','الثلاثاء','الأربعاء','الخميس','الجمعة','السبت'];
+  var P=MK2.get('plan',{tasks:[],goals:[]});
+  P.tasks=P.tasks||[];P.goals=P.goals||[];
+  var cur=new Date().getDay(), editId=null;
+
+  function save(){if(!MK2.set('plan',P)) alert('تعذّر حفظ الخطة');}
+  function weekStart(){var d=new Date();d.setDate(d.getDate()-d.getDay());return MK2.today(d);}
+
+  /* الأهداف الدورية تُصفَّر تلقائياً: اليومية كل يوم، والأسبوعية كل أسبوع */
+  P.goals.forEach(function(g){
+    var st=g.t==='d'?MK2.today():weekStart();
+    if(g.stamp!==st){g.stamp=st;g.done=false;}
+  });
+  save();
+
+  /* القوائم */
+  $('td').innerHTML=DAYS.map(function(d,i){return '<option value="'+i+'">'+d+'</option>';}).join('');
+  $('ts').innerHTML=MK2.SUBJECTS.map(function(s){return '<option value="'+s.k+'">'+s.n+'</option>';}).join('');
+  function fillUnits(){
+    var k=$('ts').value, s=MK2.SUBJECTS.filter(function(x){return x.k===k;})[0];
+    $('ul').innerHTML=(s?s.u:[]).map(function(u){return '<option value="'+E(u)+'">';}).join('');
+  }
+  $('ts').onchange=fillUnits;fillUnits();
+  $('td').value=String(cur);
+
+  function subjName(k){var s=MK2.SUBJECTS.filter(function(x){return x.k===k;})[0];return s?s.n:'';}
+
+  function renderTabs(){
+    $('dt').innerHTML=DAYS.map(function(d,i){
+      var n=P.tasks.filter(function(t){return t.day===i&&!t.done;}).length;
+      return '<button type="button" data-d="'+i+'" class="'+(i===cur?'on':'')+'">'+d+(n?' ('+n+')':'')+'</button>';
+    }).join('');
+    [].forEach.call($('dt').children,function(b){b.onclick=function(){cur=parseInt(b.getAttribute('data-d'),10);renderAll();};});
+  }
+
+  function renderSummary(){
+    var day=P.tasks.filter(function(t){return t.day===cur;});
+    var dDone=day.filter(function(t){return t.done;}).length;
+    var wDone=P.tasks.filter(function(t){return t.done;}).length;
+    $('sm').innerHTML=
+      '<div class="tile"><b>'+(day.length-dDone)+'</b><span>متبقية اليوم</span></div>'+
+      '<div class="tile"><b>'+dDone+'</b><span>منجزة اليوم</span></div>'+
+      '<div class="tile"><b>'+(P.tasks.length-wDone)+'</b><span>متبقية بالأسبوع</span></div>'+
+      '<div class="tile"><b>'+wDone+'</b><span>منجزة بالأسبوع</span></div>';
+  }
+
+  function renderTasks(){
+    var day=P.tasks.filter(function(t){return t.day===cur;}).sort(function(a,b){return (a.time||'99:99')<(b.time||'99:99')?-1:1;});
+    if(!day.length){$('tl').innerHTML='<p class="mu">لا توجد مهام في '+DAYS[cur]+'، أضف مهمتك من الأسفل.</p>';return;}
+    $('tl').innerHTML=day.map(function(t){
+      return '<div class="it'+(t.done?' done':'')+'">'+
+        '<input type="checkbox" data-a="done" data-id="'+t.id+'"'+(t.done?' checked':'')+' aria-label="تم الإنجاز">'+
+        '<div class="tx">'+E(subjName(t.subj))+(t.lesson?' — '+E(t.lesson):'')+(t.note?'<small>'+E(t.note)+'</small>':'')+'</div>'+
+        (t.time?'<span class="tm2">'+E(t.time)+'</span>':'')+
+        '<button class="bt g s" type="button" data-a="edit" data-id="'+t.id+'">تعديل</button>'+
+        '<button class="bt r s" type="button" data-a="del" data-id="'+t.id+'">حذف</button></div>';
+    }).join('');
+  }
+
+  function renderGoals(){
+    function one(g){
+      return '<div class="it'+(g.done?' done':'')+'"><input type="checkbox" data-a="gdone" data-id="'+g.id+'"'+(g.done?' checked':'')+'>'+
+        '<div class="tx">'+E(g.x)+'</div><button class="bt r s" type="button" data-a="gdel" data-id="'+g.id+'">حذف</button></div>';
+    }
+    var d=P.goals.filter(function(g){return g.t==='d';}), w=P.goals.filter(function(g){return g.t==='w';});
+    $('gd').innerHTML=d.length?d.map(one).join(''):'<p class="mu">لا أهداف يومية</p>';
+    $('gw').innerHTML=w.length?w.map(one).join(''):'<p class="mu">لا أهداف أسبوعية</p>';
+  }
+
+  function renderAll(){renderTabs();renderSummary();renderTasks();renderGoals();}
+
+  function resetForm(){
+    editId=null;$('tu').value='';$('tn').value='';$('tt').value='';$('td').value=String(cur);
+    $('tsv').textContent='إضافة';$('ft').textContent='إضافة مهمة';$('tcn').hidden=true;
+  }
+
+  $('tsv').onclick=function(){
+    var lesson=$('tu').value.trim();
+    if(!lesson&&!$('tn').value.trim()){alert('اكتب اسم الدرس أو ملاحظة');return;}
+    var o={day:parseInt($('td').value,10),subj:$('ts').value,lesson:lesson,time:$('tt').value,note:$('tn').value.trim()};
+    if(editId){
+      P.tasks.forEach(function(t){if(t.id===editId){for(var k in o) t[k]=o[k];}});
+    }else{
+      o.id=MK2.uid();o.done=false;P.tasks.push(o);
+    }
+    cur=o.day;save();resetForm();renderAll();
+  };
+  $('tcn').onclick=resetForm;
+
+  $('tl').onclick=function(e){
+    var el=e.target.closest('[data-a]');if(!el) return;
+    var id=el.getAttribute('data-id'),a=el.getAttribute('data-a');
+    var t=P.tasks.filter(function(x){return x.id===id;})[0];if(!t) return;
+    if(a==='done'){t.done=el.checked;save();renderAll();}
+    else if(a==='del'){if(confirm('حذف هذه المهمة؟')){P.tasks=P.tasks.filter(function(x){return x.id!==id;});save();renderAll();}}
+    else if(a==='edit'){
+      editId=id;$('td').value=String(t.day);$('ts').value=t.subj;fillUnits();
+      $('tu').value=t.lesson||'';$('tt').value=t.time||'';$('tn').value=t.note||'';
+      $('tsv').textContent='حفظ التعديل';$('ft').textContent='تعديل المهمة';$('tcn').hidden=false;
+      $('ft').scrollIntoView({behavior:'smooth'});
+    }
+  };
+
+  $('ga').onclick=function(){
+    var x=$('gx').value.trim();if(!x) return;
+    var t=$('gt').value;
+    P.goals.push({id:MK2.uid(),t:t,x:x,done:false,stamp:t==='d'?MK2.today():weekStart()});
+    $('gx').value='';save();renderGoals();
+  };
+  function goalClick(e){
+    var el=e.target.closest('[data-a]');if(!el) return;
+    var id=el.getAttribute('data-id'),a=el.getAttribute('data-a');
+    if(a==='gdone'){P.goals.forEach(function(g){if(g.id===id) g.done=el.checked;});save();renderGoals();}
+    else if(a==='gdel'){P.goals=P.goals.filter(function(g){return g.id!==id;});save();renderGoals();}
+  }
+  $('gd').onclick=goalClick;$('gw').onclick=goalClick;
+
+  renderAll();
+})();
+</script>
+</body>
+</html>
