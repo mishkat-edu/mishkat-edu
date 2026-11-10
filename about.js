@@ -1042,3 +1042,70 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   };
   document.body.appendChild(b);
 })();
+/* ===== 23) الصفحة الرئيسية: مربع أدوات الدراسة (4 بطاقات تتبدل كل 3 ثوانٍ) ===== */
+(function(){
+  if(!window.MK2){var sc=document.createElement('script');sc.src='mk.js';document.head.appendChild(sc);}
+
+  var hb=document.querySelector('.hero .hbtns');
+  if(!hb||document.getElementById('tb-box')) return;
+
+  var V='<svg viewBox="0 0 24 24" aria-hidden="true">';
+  var TOOLS=[
+    {h:'focus.html',t:'التركيز',d:'مؤقت بومودورو لتنظيم وقت دراستك',g:'linear-gradient(145deg,#ffc233,#ff9f1c)',
+     i:V+'<circle cx="12" cy="13" r="8"/><path d="M12 9v4l3 2M9 2h6"/></svg>'},
+    {h:'achievements.html',t:'إنجازاتي',d:'تابع تقدمك وأوسمتك وساعات دراستك',g:'linear-gradient(145deg,#4cc3ff,#0a84ff)',
+     i:V+'<path d="M8 21h8M12 17v4M7 4h10v5a5 5 0 0 1-10 0z"/><path d="M17 5h3v2a3 3 0 0 1-3 3M7 5H4v2a3 3 0 0 0 3 3"/></svg>'},
+    {h:'plan.html',t:'خطتي الدراسية',d:'جدول يومي وأسبوعي وأهداف ومهام',g:'linear-gradient(145deg,#4ade80,#16a34a)',
+     i:V+'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18M9 15l2 2 4-4"/></svg>'},
+    {h:'mistakes.html',t:'أخطائي وتصحيحها',d:'سجّل أخطاءك وراجعها حتى لا تتكرر',g:'linear-gradient(145deg,#ff6b9a,#e11d48)',
+     i:V+'<path d="M12 3l9 16H3z"/><path d="M12 10v4M12 17h.01"/></svg>'}
+  ];
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.tb{max-width:520px;margin:0 0 18px;padding:14px 16px 12px;border-radius:22px;background:var(--card);background-image:linear-gradient(rgba(10,132,255,.1),rgba(10,132,255,.1));border:2px solid #0a84ff;box-shadow:0 12px 28px rgba(10,132,255,.18)}'
+  +'.tb-h{font-size:13.5px;font-weight:800;color:var(--muted);margin-bottom:8px}'
+  +'.tb-v{position:relative;height:92px;overflow:hidden}'
+  +'.tb-s{position:absolute;inset:0;display:flex;align-items:center;gap:14px;text-decoration:none;color:var(--ink);opacity:0;transform:translateX(26px);transition:opacity .45s,transform .45s;pointer-events:none}'
+  +'.tb-s.on{opacity:1;transform:none;pointer-events:auto}'
+  +'.tb-i{flex:none;width:62px;height:62px;border-radius:19px;display:grid;place-items:center;box-shadow:0 10px 20px rgba(0,0,0,.2),inset 0 1px 0 rgba(255,255,255,.4)}'
+  +'.tb-i svg{width:32px;height:32px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}'
+  +'.tb-t{min-width:0}'
+  +'.tb-t b{display:block;font-size:19px;font-weight:800;line-height:1.3}'
+  +'.tb-t small{display:block;font-size:13px;color:var(--muted);line-height:1.6;margin-top:2px}'
+  +'.tb-t em{display:inline-block;margin-top:5px;font-style:normal;font-size:12.5px;font-weight:800;color:#0a84ff}'
+  +'.tb-d{display:flex;justify-content:center;gap:10px;margin-top:8px}'
+  +'.tb-d button{width:9px;height:9px;padding:0;border:0;border-radius:50%;background:rgba(10,132,255,.35);cursor:pointer;transition:transform .3s,background .3s}'
+  +'.tb-d button.on{background:#0a84ff;transform:scale(1.5)}'
+  +'@media (prefers-reduced-motion:reduce){.tb-s{transition:none}}';
+  document.head.appendChild(st);
+
+  var box=document.createElement('div');
+  box.id='tb-box';
+  box.className='tb';
+  box.innerHTML='<div class="tb-h">أدواتك الدراسية</div><div class="tb-v">'
+    +TOOLS.map(function(t){
+      return '<a class="tb-s" href="'+t.h+'"><span class="tb-i" style="background:'+t.g+'">'+t.i+'</span>'
+        +'<span class="tb-t"><b>'+t.t+'</b><small>'+t.d+'</small><em>افتح ←</em></span></a>';
+    }).join('')+'</div><div class="tb-d">'
+    +TOOLS.map(function(t,i){return '<button type="button" aria-label="'+t.t+'"></button>';}).join('')+'</div>';
+  hb.parentNode.insertBefore(box,hb);
+
+  var slides=[].slice.call(box.querySelectorAll('.tb-s')), dots=[].slice.call(box.querySelectorAll('.tb-d button'));
+  var cur=0, paused=false, timer=null;
+  function go(i){
+    cur=(i+slides.length)%slides.length;
+    slides.forEach(function(s,k){s.classList.toggle('on',k===cur);});
+    dots.forEach(function(d,k){d.classList.toggle('on',k===cur);});
+  }
+  function start(){
+    clearInterval(timer);
+    timer=setInterval(function(){if(!paused) go(cur+1);},3000);
+  }
+  dots.forEach(function(d,k){d.onclick=function(){go(k);start();};});
+  box.addEventListener('mouseenter',function(){paused=true;});
+  box.addEventListener('mouseleave',function(){paused=false;});
+  box.addEventListener('touchstart',function(){paused=true;},{passive:true});
+  box.addEventListener('touchend',function(){setTimeout(function(){paused=false;},1500);},{passive:true});
+  go(0);start();
+})();
