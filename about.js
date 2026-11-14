@@ -1225,3 +1225,33 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   sb.onclick=function(){if(cur.list.length&&inp.value.trim()){start(cur.list[0],cur.b);}else{render();inp.focus();}};
   document.addEventListener('click',function(e){if(!box.contains(e.target)) dd.classList.remove('on');});
 })();
+/* ===== 27) زر «الوقت المتبقي للبكالوريا» بجانب شريط البحث ===== */
+(function(){
+  var P=location.pathname.split('/').pop()||'index.html';
+  if(P!=='index.html'||document.getElementById('bc-btn')) return;
+
+  var sw=document.getElementById('mk-sw');
+  var ref=sw||document.querySelector('.hero .bmq')||document.querySelector('.hero .hbtns');
+  if(!ref||!ref.parentNode) return;
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.mk-row{display:flex;align-items:stretch;gap:10px;max-width:520px;margin:4px 0 18px;direction:rtl}'
+  +'.mk-row .mk-sw{margin:0;flex:1;min-width:0}'
+  +'#bc-btn{flex:none;width:76px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;padding:6px 4px;border-radius:999px;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;text-decoration:none;font-size:10.5px;font-weight:800;line-height:1.2;text-align:center;box-shadow:0 8px 18px rgba(255,159,28,.35);transition:transform .2s}'
+  +'#bc-btn:hover,#bc-btn:focus-visible{transform:translateY(-2px)}'
+  +'#bc-btn svg{width:22px;height:22px;fill:none;stroke:#4a3000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}';
+  document.head.appendChild(st);
+
+  var row=document.createElement('div');
+  row.className='mk-row';
+  ref.parentNode.insertBefore(row,ref);
+  if(sw) row.appendChild(sw);
+
+  var a=document.createElement('a');
+  a.id='bc-btn';
+  a.href='bac-count.html';
+  a.setAttribute('aria-label','الوقت المتبقي للبكالوريا');
+  a.innerHTML='<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 2h12M6 22h12"/><path d="M7 2v4a5 5 0 0 0 2.2 4.1L12 12l2.8-1.9A5 5 0 0 0 17 6V2"/><path d="M7 22v-4a5 5 0 0 1 2.2-4.1L12 12l2.8 1.9A5 5 0 0 1 17 18v4"/></svg><span>البكالوريا</span>';
+  row.appendChild(a);
+})();
