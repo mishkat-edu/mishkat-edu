@@ -1042,3 +1042,186 @@ var MK={C1:'#0a7ba0',C2:'#0f9bbd',C3:'#0b8cae',GOLD1:'#ffc233',GOLD2:'#ff9f1c',G
   };
   document.body.appendChild(b);
 })();
+/* ===== 26) شريط البحث في الرئيسية + الانتقال التلقائي السريع إلى الدرس ===== */
+(function(){
+  var P=location.pathname.split('/').pop()||'index.html';
+  function norm(s){return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim().toLowerCase();}
+  function clearGo(){try{sessionStorage.removeItem('mk_go');}catch(e){}}
+
+  /* ===== 1) المشغّل: ينفذ الخطوة التالية في كل صفحة ===== */
+  var go=null;
+  try{go=JSON.parse(sessionStorage.getItem('mk_go')||'null');}catch(e){}
+  if(go&&(Date.now()-go.t>180000||P==='index.html'||P==='lesson.html')){clearGo();go=null;}
+
+  function banner(t){
+    var d=document.createElement('div');
+    d.style.cssText='position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:99999;max-width:92vw;padding:10px 20px;border-radius:999px;background:#0a84ff;color:#fff;font:800 14px Tajawal,system-ui,sans-serif;box-shadow:0 10px 24px rgba(10,132,255,.4);text-align:center';
+    d.textContent=t;
+    document.body.appendChild(d);
+    return d;
+  }
+  function clickBy(sel,test){
+    var els=[].slice.call(document.querySelectorAll(sel));
+    for(var i=0;i<els.length;i++){if(test(els[i])){els[i].click();return true;}}
+    return false;
+  }
+
+  if(go&&/^(branches|subjects|math|physics|science|islamic)\.html$/.test(P)){
+    var bn=banner('جارٍ الانتقال إلى «'+go.n+'» …');
+    setTimeout(function(){
+      var ok=false;
+      if(P==='branches.html'){
+        if(go.b){
+          ok=clickBy('.b[data-b]',function(e){return e.dataset.b===go.b;});
+        }else{
+          bn.textContent='اختر شعبتك لنكمل إلى «'+go.n+'»';
+          return;
+        }
+      }else if(P==='subjects.html'){
+        ok=clickBy('.b[data-s]',function(e){return e.dataset.s===go.s;});
+      }else{
+        if(!go.k){clearGo();bn.remove();return;}
+        ok=clickBy('.b[data-c]',function(e){return norm(e.dataset.c||e.textContent).indexOf(go.k)>-1;});
+      }
+      if(!ok){clearGo();bn.remove();}
+    },500);
+  }
+
+  /* ===== 2) شريط البحث (الصفحة الرئيسية فقط) ===== */
+  if(P!=='index.html'||document.getElementById('mk-sw')) return;
+  var ref=document.querySelector('.hero .bmq')||document.querySelector('.hero .hbtns');
+  if(!ref||!ref.parentNode) return;
+
+  var MATH=[
+    ['الدالة العددية','العدديه','دوال عددية',1],
+    ['الدالة الأسية','اسيه','exp أسية',1],
+    ['الدالة اللوغاريتمية','اللوغاريتميه','ln لوغاريتم',1],
+    ['المتتاليات','المتتاليات','متتالية',1],
+    ['الاحتمالات','الاحتمالات','احتمال',0],
+    ['الأعداد المركبة','المركبه','مركبة',0],
+    ['القسمة في Z','القسمه','قسمة div',0],
+    ['الدوال الأصلية والحساب التكاملي','الاصليه','تكامل أصلية',0]
+  ];
+  var PHYS=[
+    ['المتابعة الزمنية لتحول كيميائي','الزمنيه','تطور زمني سرعة تفاعل'],
+    ['الميكانيك','الميكانيك','حركة قوانين نيوتن'],
+    ['الظواهر الكهربائية','كهرب','تيار مكثف وشيعة'],
+    ['التطور نحو حالة توازن','توازن','ph حمض أساس'],
+    ['التحولات النووية','النوويه','نواة نشاط إشعاعي'],
+    ['الاسترة والأعمدة','استره','استر أعمدة'],
+    ['الاهتزازات','اهتزاز','نواس موجات']
+  ];
+  var SCI=[
+    ['تركيب البروتين','تركيب البروتين',''],
+    ['العلاقة بين البنية والوظيفة','البنيه','بنية وظيفة'],
+    ['دور البروتينات في التحفيز الإنزيمي','التحفيز','إنزيم أنزيم'],
+    ['المناعة','المناعه','مناعه'],
+    ['الاتصال العصبي','العصبي','عصب'],
+    ['التركيب الضوئي','الضوئي','ضوئي'],
+    ['التنفس','التنفس','تنفس']
+  ];
+  var ISL=['العقيدة الإسلامية وأثرها على الفرد والمجتمع','وسائل القرآن الكريم في تثبيت العقيدة الإسلامية','الإسلام والرسالات السماوية','العقل في القرآن الكريم','مقاصد الشريعة الإسلامية','منهج الإسلام في محاربة الانحراف والجريمة','المساواة أمام أحكام الشريعة الإسلامية','الصحة النفسية والجسمية في القرآن الكريم','من مصادر التشريع الإسلامي: الإجماع','من مصادر التشريع الإسلامي: القياس','من مصادر التشريع الإسلامي: المصالح المرسلة','القيم في القرآن الكريم','الوقف في الإسلام','من أحكام الأسرة في الإسلام: مدخل إلى علم الميراث','من أحكام الأسرة في الإسلام: الورثة وطرق ميراثهم','الربا وأحكامه','من المعاملات المالية الجائزة: الصرف - المرابحة - التقسيط','الحرية الشخصية','من أحكام الأسرة في الإسلام: النسب - التبني - الكفالة','العلاقات الاجتماعية بين المسلمين وغيرهم','خطبة حجة الوداع'];
+
+  var ITEMS=[];
+  [['الرياضيات','رياضيات'],['الفيزياء','فيزياء'],['العلوم','علوم طبيعية'],['العلوم الإسلامية','إسلامية']].forEach(function(s){
+    ITEMS.push({s:s[0],d:'مادة '+s[0],k:'',x:s[1],ge:true,sub:true});
+  });
+  MATH.forEach(function(m){ITEMS.push({s:'الرياضيات',d:m[0],k:m[1],x:m[2],ge:m[3]===1});});
+  PHYS.forEach(function(m){ITEMS.push({s:'الفيزياء',d:m[0],k:m[1],x:m[2],ge:false});});
+  SCI.forEach(function(m){ITEMS.push({s:'العلوم',d:m[0],k:m[1],x:m[2],ge:false});});
+  ISL.forEach(function(n){ITEMS.push({s:'العلوم الإسلامية',d:n,k:norm(n),x:'',ge:true});});
+  ITEMS.forEach(function(it){it.h=norm(it.s+' '+it.d+' '+it.x);});
+
+  var BR=[
+    ['رياضيات',/شعبه\s*رياضيات/],
+    ['علوم تجريبية',/(شعبه\s*)?(علوم\s*)?تجريبيه/],
+    ['تقني رياضي',/(شعبه\s*)?تقني(\s*رياضي)?/],
+    ['تسيير واقتصاد',/(شعبه\s*)?(تسيير|اقتصاد)(\s*و?\s*(اقتصاد|تسيير))?/]
+  ];
+  var STOP=['درس','دروس','الدرس','فصل','الفصل','ماده','شعبه','في','من','عن'];
+
+  function avail(it,b){
+    if(!b) return true;
+    if(it.s==='الفيزياء') return b!=='تسيير واقتصاد';
+    if(it.s==='العلوم') return b==='علوم تجريبية'||b==='رياضيات';
+    if(it.s==='الرياضيات'&&b==='تسيير واقتصاد') return it.ge;
+    return true;
+  }
+
+  function search(q){
+    var n=norm(q), b=null;
+    BR.forEach(function(x){if(!b&&x[1].test(n)){b=x[0];n=n.replace(x[1],' ');}});
+    var toks=n.split(' ').filter(function(t){return t&&STOP.indexOf(t)<0;});
+    var all=[];
+    if(toks.length){
+      all=ITEMS.filter(function(it){
+        return toks.every(function(t){
+          var t2=t.replace(/^ال/,'');
+          return it.h.indexOf(t)>-1||(t2.length>1&&it.h.indexOf(t2)>-1);
+        });
+      });
+    }
+    return {b:b,all:all,list:all.filter(function(it){return avail(it,b);}).slice(0,9)};
+  }
+
+  function start(it,b){
+    try{sessionStorage.setItem('mk_go',JSON.stringify({b:b,s:it.s,k:it.k,n:it.sub?it.s:it.d,t:Date.now()}));}catch(e){}
+    location.href='branches.html';
+  }
+
+  var st=document.createElement('style');
+  st.textContent=''
+  +'.mk-sw{position:relative;max-width:520px;margin:4px 0 18px;direction:rtl}'
+  +'.mk-sf{display:flex;align-items:center;gap:10px;padding:5px 18px 5px 5px;border-radius:999px;background:var(--card,#fff);border:2px solid rgba(10,132,255,.45);box-shadow:0 8px 22px rgba(10,132,255,.14);transition:border-color .2s}'
+  +'.mk-sf:focus-within{border-color:#0a84ff}'
+  +'.mk-sf input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ink,#101828);font:inherit;font-size:15px;font-weight:600;padding:10px 0;text-align:right}'
+  +'.mk-sf input::placeholder{color:var(--muted,#667085);font-weight:500}'
+  +'.mk-sf button{flex:none;width:46px;height:46px;border-radius:50%;border:0;background:#0a84ff;display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 14px rgba(10,132,255,.35)}'
+  +'.mk-sf button svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}'
+  +'.mk-sd{position:absolute;top:calc(100% + 8px);left:0;right:0;z-index:60;display:none;padding:10px;border-radius:20px;background:var(--card,#fff);color:var(--ink,#101828);border:2px solid #0a84ff;box-shadow:0 18px 40px rgba(0,0,0,.28);max-height:55vh;overflow:auto}'
+  +'.mk-sd.on{display:block}'
+  +'.mk-sm{font-size:13px;color:var(--muted,#667085);font-weight:700;line-height:1.7;padding:2px 4px 4px}'
+  +'.mk-sd button{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;padding:10px 12px;margin-top:6px;border:1.5px solid rgba(10,132,255,.4);border-radius:14px;background:rgba(10,132,255,.1);color:inherit;font:inherit;font-size:14px;font-weight:700;text-align:right;cursor:pointer}'
+  +'.mk-sd button small{flex:none;font-size:11.5px;font-weight:800;color:#fff;background:#0a84ff;border-radius:999px;padding:2px 10px}';
+  document.head.appendChild(st);
+
+  var box=document.createElement('div');
+  box.id='mk-sw';box.className='mk-sw';
+  box.innerHTML='<div class="mk-sf"><input id="mk-si" type="search" placeholder="ابحث عن درس أو مادة..." autocomplete="off" aria-label="بحث"><button type="button" id="mk-sbtn" aria-label="بحث"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button></div><div class="mk-sd" id="mk-sd"></div>';
+  ref.parentNode.insertBefore(box,ref);
+
+  var inp=document.getElementById('mk-si'), dd=document.getElementById('mk-sd'), sb=document.getElementById('mk-sbtn');
+  var cur={b:null,list:[]};
+
+  function render(){
+    var q=inp.value.trim();
+    dd.innerHTML='';
+    if(!q){dd.classList.remove('on');cur={b:null,list:[]};return;}
+    var r=search(q);cur=r;
+    var m=document.createElement('div');m.className='mk-sm';
+    if(!r.list.length){
+      m.textContent=r.all.length?('هذا الدرس غير متوفر في شعبة «'+r.b+'».'):'لم أجد درساً بهذا الاسم، جرّب كلمة أخرى.';
+      dd.appendChild(m);dd.classList.add('on');return;
+    }
+    m.textContent=r.b?('الشعبة: '+r.b+' — اختر الدرس'):'اذكر الشعبة ليصل بك مباشرة، أو اختر وستحدد شعبتك بعد الضغط.';
+    dd.appendChild(m);
+    r.list.forEach(function(it){
+      var b=document.createElement('button');
+      b.type='button';
+      var s=document.createElement('span');s.textContent=it.d;
+      var g=document.createElement('small');g.textContent=it.sub?'مادة':it.s;
+      b.appendChild(s);b.appendChild(g);
+      b.onclick=function(){start(it,r.b);};
+      dd.appendChild(b);
+    });
+    dd.classList.add('on');
+  }
+
+  inp.addEventListener('input',render);
+  inp.addEventListener('focus',function(){if(inp.value.trim()) render();});
+  inp.addEventListener('keydown',function(e){
+    if(e.key==='Enter'){e.preventDefault();if(cur.list.length) start(cur.list[0],cur.b); else render();}
+  });
+  sb.onclick=function(){if(cur.list.length&&inp.value.trim()){start(cur.list[0],cur.b);}else{render();inp.focus();}};
+  document.addEventListener('click',function(e){if(!box.contains(e.target)) dd.classList.remove('on');});
+})();
