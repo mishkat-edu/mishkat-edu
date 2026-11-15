@@ -250,6 +250,109 @@ h1{font-size:30px;margin:6px 0 4px}
 #uni-share svg{width:22px;height:22px;fill:none;stroke:#fff;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
 </style>
 <button id="uni-share" type="button" aria-label="مشاركة الصفحة" onclick="(function(){var d={title:'أكاديمية مشكاة - الجامعة',text:'محتوى خاص بطلبة الجامعة',url:location.href};if(navigator.share){navigator.share(d).catch(function(){});}else if(navigator.clipboard){navigator.clipboard.writeText(location.href).then(function(){alert('تم نسخ رابط الصفحة ✓');});}else{alert('انسخ الرابط من شريط العنوان');}})()"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 14v5a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-5"/><path d="M12 15V4M8 8l4-4 4 4"/></svg></button>
+<style>
+#lec{max-width:560px;margin:22px auto 90px;padding:22px 18px;border-radius:28px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);text-align:center}
+#lec h2{margin:0 0 4px;font-size:20px;font-weight:800;color:var(--ink)}
+#lec .lec-sub{margin:0 0 16px;color:var(--muted);font-size:13px}
+.lec-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.lec-grid .sb{min-height:110px;font-size:14px;padding:14px 10px}
+.lec-grid .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 6px)}
+.lec-back{margin-bottom:14px;display:none}
+.lec-imgs{display:flex;flex-direction:column;gap:12px}
+.lec-imgs img{width:100%;border-radius:14px;border:1px solid var(--line);cursor:zoom-in}
+.lec-msg{color:var(--muted);font-weight:700;padding:16px 0}
+#lec-box{position:fixed;inset:0;background:rgba(0,0,0,.88);z-index:60;display:none;align-items:center;justify-content:center;padding:10px}
+#lec-box.on{display:flex}
+#lec-box img{max-width:100%;max-height:100%;border-radius:8px}
+</style>
+
+<section id="lec">
+  <h2>📚 المقاييس والمحاضرات المقررة</h2>
+  <p class="lec-sub" id="lec-sub">اختر السنة الدراسية</p>
+  <button class="back lec-back" id="lec-back" type="button">← رجوع</button>
+
+  <div class="lec-grid" id="lec-years">
+    <button class="sb" type="button" data-y="1"><span class="sb-i"><svg viewBox="0 0 32 32"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/></svg></span>ENS (PEP 1)<br><small>السنة الأولى</small></button>
+    <button class="sb" type="button" data-y="2"><span class="sb-i"><svg viewBox="0 0 32 32"><path d="M16 6L3 12l13 6 13-6-13-6Z"/><path d="M8 15v6c0 2 3.6 4 8 4s8-2 8-4v-6"/></svg></span>ENS (PEP 2)<br><small>السنة الثانية</small></button>
+  </div>
+  <div class="lec-grid" id="lec-subs" style="display:none"></div>
+  <div class="lec-imgs" id="lec-imgs" style="display:none"></div>
+</section>
+<div id="lec-box"><img alt=""></div>
+
+<script>
+(function(){
+  var FOLDER='lectures/';
+  var S={
+    1:[['الرياضيات','math'],['الفيزياء','phys'],['الكيمياء','chem'],['تكنولوجيا الإعلام والاتصال','ict'],['البلاغة','rhet'],['النحو','gram'],['الصرف','morph'],['الأدب العربي قديماً وحديثاً','lit'],['الإسلامية','islam'],['الإملاء','dict'],['الإنجليزية','eng'],['الخط العربي','calli'],['فنيات الكتابة والتعبير','writ'],['أعلام آلي','comp']],
+    2:[['النحو العربي','gram2'],['علم النفس','psy'],['الصرف','morph2'],['قضايا النقد العربي','crit'],['الرياضيات','math2'],['علم الأحياء','bio'],['التربية الإسلامية','islam2'],['لسانيات عامة','ling'],['اللغة الإنجليزية','eng2'],['الذكاء الاصطناعي','ai'],['تاريخ الفكر','history']]
+  };
+  var EXT=['jpg','jpeg','png','webp'];
+  var $=function(i){return document.getElementById(i);};
+  var years=$('lec-years'),subs=$('lec-subs'),imgs=$('lec-imgs'),back=$('lec-back'),sub=$('lec-sub'),box=$('lec-box'),bimg=box.querySelector('img');
+  var level='years',curY=1;
+
+  function go(l){
+    level=l;
+    years.style.display=l==='years'?'grid':'none';
+    subs.style.display=l==='subs'?'grid':'none';
+    imgs.style.display=l==='imgs'?'flex':'none';
+    back.style.display=l==='years'?'none':'inline-block';
+    sub.textContent=l==='years'?'اختر السنة الدراسية':(l==='subs'?'اختر المادة':'');
+  }
+
+  function loadImgs(pre,i,found){
+    var k=0;
+    (function tryExt(){
+      if(k>=EXT.length){
+        if(!found){imgs.innerHTML='<div class="lec-msg">المحاضرات قيد الإعداد ✨</div>';}
+        return;
+      }
+      var im=new Image(), src=FOLDER+pre+'-'+i+'.'+EXT[k];
+      im.onload=function(){im.alt=pre+' '+i;im.loading='lazy';im.onclick=function(){bimg.src=src;box.classList.add('on');};imgs.appendChild(im);loadImgs(pre,i+1,true);};
+      im.onerror=function(){k++;tryExt();};
+      im.src=src;
+    })();
+  }
+
+  years.querySelectorAll('[data-y]').forEach(function(b){
+    b.onclick=function(){
+      curY=b.getAttribute('data-y');
+      subs.innerHTML='';
+      S[curY].forEach(function(s){
+        var c=document.createElement('button');
+        c.type='button';c.className='sb';c.textContent=s[0];
+        c.onclick=function(){
+          imgs.innerHTML='';
+          sub.textContent=s[0];
+          go('imgs');
+          loadImgs('ens'+curY+'-'+s[1],1,false);
+        };
+        subs.appendChild(c);
+      });
+      go('subs');
+    };
+  });
+  back.onclick=function(){go(level==='imgs'?'subs':'years');};
+  box.onclick=function(){box.classList.remove('on');};
+
+  /* وضعه تحت بطاقة prof_wared */
+  var tries=0,t=setInterval(function(){
+    tries++;
+    var wrap=document.querySelector('.wrap'),lec=$('lec');
+    var el=[].slice.call(document.querySelectorAll('a,button')).filter(function(x){return /prof_wared/.test(x.textContent)&&!lec.contains(x);})[0];
+    if(el){
+      var n=el;
+      while(n.parentElement&&n.parentElement!==wrap&&n.parentElement!==document.body){n=n.parentElement;}
+      n.parentNode.insertBefore(lec,n.nextSibling);
+      clearInterval(t);
+    }else if(tries>15){
+      (wrap||document.body).appendChild(lec);
+      clearInterval(t);
+    }
+  },200);
+})();
+</script>
 <script src="about.js"></script>
 </body>
 </html>
