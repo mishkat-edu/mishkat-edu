@@ -117,7 +117,7 @@ h1{font-size:30px;margin:6px 0 4px}
     history:V+'<path d="M6 26h20"/><path d="M8 26V12M13 26V12M19 26V12M24 26V12"/><path d="M5 12l11-7 11 7"/></svg>'
   };
 
-  /* مواد السنة الأولى: لها محاور */
+  /* السنة الأولى: مواد لها محاور (topics مصفوفة) ومواد بدون محاور (topics:null) تفتح الملخصات والتمارين مباشرة */
   var SUBJECTS1=[
     {n:'الرياضيات',c:'math',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
     {n:'الفيزياء',c:'phys',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
@@ -135,23 +135,23 @@ h1{font-size:30px;margin:6px 0 4px}
     {n:'أعلام آلي',c:'comp',ic:ICON.computer,topics:null}
   ];
 
-  /* مواد السنة الثانية: بدون محاور، تفتح الملخصات والتمارين مباشرة */
+  /* السنة الثانية: كلها بدون محاور */
   var SUBJECTS2=[
-    {n:'النحو العربي',c:'gram2',ic:ICON.grammar,topics:false},
-    {n:'علم النفس',c:'psy',ic:ICON.notes,topics:false},
-    {n:'الصرف',c:'morph2',ic:'<span class="ar">ٱ ب ت</span>',topics:false},
-    {n:'قضايا النقد العربي ق و ح',c:'crit',ic:ICON.literature,topics:false},
-    {n:'الرياضيات',c:'math2',ic:ICON.math,topics:false},
-    {n:'علم الأحياء',c:'bio',ic:ICON.chem,topics:false},
-    {n:'التربية الإسلامية',c:'islam2',ic:ICON.islam,topics:false},
-    {n:'لسانيات عامة',c:'ling',ic:ICON.rhetoric,topics:false},
-    {n:'اللغة الإنجليزية',c:'eng2',ic:ICON.english,topics:false},
-    {n:'الذكاء الاصطناعي',c:'ai',ic:ICON.ai,topics:false},
-    {n:'تاريخ الفكر',c:'history',ic:ICON.history,topics:false}
+    {n:'النحو العربي',c:'gram2',ic:ICON.grammar,topics:null},
+    {n:'علم النفس',c:'psy',ic:ICON.notes,topics:null},
+    {n:'الصرف',c:'morph2',ic:'<span class="ar">ٱ ب ت</span>',topics:null},
+    {n:'قضايا النقد العربي ق و ح',c:'crit',ic:ICON.literature,topics:null},
+    {n:'الرياضيات',c:'math2',ic:ICON.math,topics:null},
+    {n:'علم الأحياء',c:'bio',ic:ICON.chem,topics:null},
+    {n:'التربية الإسلامية',c:'islam2',ic:ICON.islam,topics:null},
+    {n:'لسانيات عامة',c:'ling',ic:ICON.rhetoric,topics:null},
+    {n:'اللغة الإنجليزية',c:'eng2',ic:ICON.english,topics:null},
+    {n:'الذكاء الاصطناعي',c:'ai',ic:ICON.ai,topics:null},
+    {n:'تاريخ الفكر',c:'history',ic:ICON.history,topics:null}
   ];
 
   var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), back=$('backb');
-  var view='ens', YEAR=1, SUBJ=SUBJECTS1;
+  var view='ens', YEAR=1, SUBJ=SUBJECTS1, noTop=false;
 
   function show(v){
     view=v;
@@ -205,17 +205,12 @@ h1{font-size:30px;margin:6px 0 4px}
     SUBJ.forEach(function(s){
       card(subs,s.n,s.ic,null,function(){
         var pre='ens'+YEAR;
-        /* مادة بدون محاور: تفتح الملخصات والتمارين مباشرة */
-        if(s.topics===false||!s.topics){
-          if(s.topics===null){
-            tops.innerHTML='';
-            card(tops,'قيد الإعداد',ICON.calligraphy,null,function(){say('«'+s.n+'» قيد الإعداد ✨');});
-            show('topics');
-            return;
-          }
+        if(!s.topics){
+          noTop=true;
           showActs(s,pre,s.n);
           return;
         }
+        noTop=false;
         tops.innerHTML='';
         s.topics.forEach(function(t,k){
           card(tops,t,null,String(k+1),function(){
@@ -244,7 +239,7 @@ h1{font-size:30px;margin:6px 0 4px}
   });
 
   back.addEventListener('click',function(e){
-    if(view==='acts'){e.preventDefault();show(YEAR===2?'subs':'topics');return;}
+    if(view==='acts'){e.preventDefault();show(noTop?'subs':'topics');return;}
     if(view==='topics'){e.preventDefault();show('subs');return;}
     if(view==='subs'){e.preventDefault();show('ens');}
   });
