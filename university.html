@@ -453,5 +453,82 @@ h1{font-size:30px;margin:6px 0 4px}
 </script>
 
 <script src="about.js"></script>
+<script>
+/* بطاقة prof_wared تتبدل كل 3 ثوانٍ مع بطاقة ritedj_7 */
+(function(){
+  var tries=0, iv=setInterval(function(){
+    var card=document.getElementById('pw-card');
+    if(card&&!card.getAttribute('data-rot')){clearInterval(iv);build(card);}
+    else if(++tries>30){clearInterval(iv);}
+  },150);
+
+  function build(card){
+    card.setAttribute('data-rot','1');
+    var note=card.querySelector('.pw2-note'), btn=card.querySelector('.pw2-btn'), edge=card.querySelector('.pw2-edge');
+    if(!note||!btn||!edge) return;
+
+    var st=document.createElement('style');
+    st.textContent=''
+    +'#pw-card{padding-bottom:26px!important}'
+    +'.pw-sl{display:grid}'
+    +'.pw-s{grid-area:1/1;opacity:0;transition:opacity .5s;pointer-events:none}'
+    +'.pw-s.on{opacity:1;pointer-events:auto}'
+    +'.pw-d{display:flex;justify-content:center;gap:8px;margin-top:10px}'
+    +'.pw-d button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:rgba(232,62,140,.3);cursor:pointer;transition:transform .3s,background .3s}'
+    +'.pw-d button.on{background:#e83e8c;transform:scale(1.4)}';
+    document.head.appendChild(st);
+
+    /* الشريحة الأولى: بطاقة prof_wared الموجودة */
+    var s1=document.createElement('div');
+    s1.className='pw-s on';
+    s1.appendChild(note);
+    s1.appendChild(btn);
+
+    /* الشريحة الثانية: ritedj_7 */
+    var s2=document.createElement('div');
+    s2.className='pw-s';
+    var n2=document.createElement('p');
+    n2.className='pw2-note';
+    n2.textContent='🚨 مصادر أخرى: تجدون أيضاً الملخصات والتمارين وكيفية دراسة المقاييس عند ritedj_7';
+    var b2=document.createElement('a');
+    b2.className='pw2-btn';
+    b2.href='https://www.instagram.com/rit._.edj_7?xtok=OG90OGY2Y3JhNzk4';
+    b2.target='_blank';
+    b2.rel='noopener';
+    b2.textContent='زر ritedj_7 ←';
+    s2.appendChild(n2);
+    s2.appendChild(b2);
+
+    var wrap=document.createElement('div');
+    wrap.className='pw-sl';
+    wrap.appendChild(s1);
+    wrap.appendChild(s2);
+
+    var dots=document.createElement('div');
+    dots.className='pw-d';
+    dots.innerHTML='<button type="button" class="on" aria-label="prof_wared"></button><button type="button" aria-label="ritedj_7"></button>';
+
+    card.insertBefore(wrap,edge);
+    card.insertBefore(dots,edge);
+
+    var slides=[s1,s2], dl=[].slice.call(dots.children), cur=0, paused=false, timer=null;
+    function go(i){
+      cur=(i+slides.length)%slides.length;
+      slides.forEach(function(s,k){s.classList.toggle('on',k===cur);});
+      dl.forEach(function(d,k){d.classList.toggle('on',k===cur);});
+    }
+    function start(){
+      clearInterval(timer);
+      timer=setInterval(function(){if(!paused) go(cur+1);},3000);
+    }
+    dl.forEach(function(d,k){d.onclick=function(){go(k);start();};});
+    card.addEventListener('mouseenter',function(){paused=true;});
+    card.addEventListener('mouseleave',function(){paused=false;});
+    card.addEventListener('touchstart',function(){paused=true;},{passive:true});
+    card.addEventListener('touchend',function(){setTimeout(function(){paused=false;},1500);},{passive:true});
+    start();
+  }
+})();
+</script>
 </body>
 </html>
