@@ -476,7 +476,7 @@ h1{font-size:30px;margin:6px 0 4px}
     +'.pw-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}'
     +'.pw3-btn{display:inline-block;padding:8px 18px;border-radius:999px;background:'+BROWN+';color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(139,90,43,.32)}'
     +'.pw3-btn:hover,.pw3-btn:focus-visible{background:#744a22}'
-    +'.pw-dots{display:flex;justify-content:center;gap:12px;margin:12px 0 0}'
+    +'#pw-rot .pw-dots{grid-area:2/1;display:flex;justify-content:center;gap:12px;margin:12px 0 0}'
     +'.pw-dots button{width:13px;height:13px;padding:0;border-radius:50%;background:transparent;cursor:pointer;transition:transform .3s,background .3s,box-shadow .3s}'
     +'.pw-dots .d1{border:2px solid #e83e8c}'
     +'.pw-dots .d2{border:2px solid '+BROWN+'}'
@@ -503,11 +503,11 @@ h1{font-size:30px;margin:6px 0 4px}
       +'<div class="pw2-edge"></div>';
     rot.appendChild(c2);
 
-    /* النقطتان: الأولى وردية والثانية بنية */
+    /* النقطتان داخل الحاوية: الأولى وردية والثانية بنية */
     var dots=document.createElement('div');
     dots.className='pw-dots';
     dots.innerHTML='<button type="button" class="d1 on" aria-label="prof_wared"></button><button type="button" class="d2" aria-label="ritedj_7 و la_princess"></button>';
-    rot.parentNode.insertBefore(dots,rot.nextSibling);
+    rot.appendChild(dots);
 
     var cards=[card,c2], dl=[].slice.call(dots.children), cur=0, paused=false, timer=null;
     function go(i){
@@ -527,7 +527,6 @@ h1{font-size:30px;margin:6px 0 4px}
     start();
   }
 })();
-</script>
 </script>
 </body>
 </html>
