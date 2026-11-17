@@ -454,16 +454,16 @@ h1{font-size:30px;margin:6px 0 4px}
 
 <script src="about.js"></script>
 <script>
-/* بطاقة prof_wared تختفي ثم تظهر بطاقة ritedj_7 و la_princess (بنية)، كل 3 ثوانٍ */
+/* prof_wared (وردي) ثم ritedj_7 و la_princess (بني) كل 3 ثوانٍ + نقطتان تدلان على البطاقة الحالية */
 (function(){
   var tries=0, iv=setInterval(function(){
     var card=document.getElementById('pw-card');
-    if(card&&!card.getAttribute('data-rot2')){clearInterval(iv);build(card);}
+    if(card&&!card.getAttribute('data-rot3')){clearInterval(iv);build(card);}
     else if(++tries>30){clearInterval(iv);}
   },150);
 
   function build(card){
-    card.setAttribute('data-rot2','1');
+    card.setAttribute('data-rot3','1');
     var BROWN='#8b5a2b';
 
     var st=document.createElement('style');
@@ -476,9 +476,12 @@ h1{font-size:30px;margin:6px 0 4px}
     +'.pw-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}'
     +'.pw3-btn{display:inline-block;padding:8px 18px;border-radius:999px;background:'+BROWN+';color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(139,90,43,.32)}'
     +'.pw3-btn:hover,.pw3-btn:focus-visible{background:#744a22}'
-    +'.pw-dots{display:flex;justify-content:center;gap:8px;margin-top:10px;--dc:#e83e8c}'
-    +'.pw-dots button{width:8px;height:8px;padding:0;border:0;border-radius:50%;background:rgba(128,128,128,.4);cursor:pointer;transition:transform .3s,background .3s}'
-    +'.pw-dots button.on{background:var(--dc);transform:scale(1.4)}';
+    +'.pw-dots{display:flex;justify-content:center;gap:12px;margin:12px 0 0}'
+    +'.pw-dots button{width:13px;height:13px;padding:0;border-radius:50%;background:transparent;cursor:pointer;transition:transform .3s,background .3s,box-shadow .3s}'
+    +'.pw-dots .d1{border:2px solid #e83e8c}'
+    +'.pw-dots .d2{border:2px solid '+BROWN+'}'
+    +'.pw-dots .d1.on{background:#e83e8c;box-shadow:0 0 10px rgba(232,62,140,.75);transform:scale(1.25)}'
+    +'.pw-dots .d2.on{background:'+BROWN+';box-shadow:0 0 10px rgba(139,90,43,.85);transform:scale(1.25)}';
     document.head.appendChild(st);
 
     /* الحاوية */
@@ -488,7 +491,7 @@ h1{font-size:30px;margin:6px 0 4px}
     rot.appendChild(card);
     card.classList.add('on');
 
-    /* البطاقة الثانية */
+    /* البطاقة الثانية (بنية) */
     var c2=document.createElement('div');
     c2.className='pw2 pw-brown';
     c2.innerHTML=''
@@ -500,10 +503,10 @@ h1{font-size:30px;margin:6px 0 4px}
       +'<div class="pw2-edge"></div>';
     rot.appendChild(c2);
 
-    /* النقاط */
+    /* النقطتان: الأولى وردية والثانية بنية */
     var dots=document.createElement('div');
     dots.className='pw-dots';
-    dots.innerHTML='<button type="button" class="on" aria-label="prof_wared"></button><button type="button" aria-label="ritedj_7 و la_princess"></button>';
+    dots.innerHTML='<button type="button" class="d1 on" aria-label="prof_wared"></button><button type="button" class="d2" aria-label="ritedj_7 و la_princess"></button>';
     rot.parentNode.insertBefore(dots,rot.nextSibling);
 
     var cards=[card,c2], dl=[].slice.call(dots.children), cur=0, paused=false, timer=null;
@@ -511,7 +514,6 @@ h1{font-size:30px;margin:6px 0 4px}
       cur=(i+cards.length)%cards.length;
       cards.forEach(function(c,k){c.classList.toggle('on',k===cur);});
       dl.forEach(function(d,k){d.classList.toggle('on',k===cur);});
-      dots.style.setProperty('--dc',cur===0?'#e83e8c':BROWN);
     }
     function start(){
       clearInterval(timer);
