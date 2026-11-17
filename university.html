@@ -454,17 +454,17 @@ h1{font-size:30px;margin:6px 0 4px}
 
 <script src="about.js"></script>
 <script>
-/* prof_wared (وردي) ثم ritedj_7 و la_princess (بني) كل 3 ثوانٍ + نقطتان تدلان على البطاقة الحالية */
+/* prof_wared (وردي) ثم ritedj_7 و la_princess (بني) ثم prof_nda1 (بنفسجي) كل 3 ثوانٍ + 3 نقاط */
 (function(){
   var tries=0, iv=setInterval(function(){
     var card=document.getElementById('pw-card');
-    if(card&&!card.getAttribute('data-rot3')){clearInterval(iv);build(card);}
+    if(card&&!card.getAttribute('data-rot4')){clearInterval(iv);build(card);}
     else if(++tries>30){clearInterval(iv);}
   },150);
 
   function build(card){
-    card.setAttribute('data-rot3','1');
-    var BROWN='#8b5a2b';
+    card.setAttribute('data-rot4','1');
+    var BROWN='#8b5a2b', PURPLE='#7c3aed';
 
     var st=document.createElement('style');
     st.textContent=''
@@ -473,15 +473,21 @@ h1{font-size:30px;margin:6px 0 4px}
     +'#pw-rot .pw2.on{opacity:1;pointer-events:auto;transition-delay:.4s}'
     +'#pw-rot .pw-brown{border:2px solid '+BROWN+';box-shadow:0 8px 20px rgba(139,90,43,.28)}'
     +'#pw-rot .pw-brown .pw2-edge{background:'+BROWN+'}'
+    +'#pw-rot .pw-purple{border:2px solid '+PURPLE+';box-shadow:0 8px 20px rgba(124,58,237,.28)}'
+    +'#pw-rot .pw-purple .pw2-edge{background:'+PURPLE+'}'
     +'.pw-btns{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:10px}'
     +'.pw3-btn{display:inline-block;padding:8px 18px;border-radius:999px;background:'+BROWN+';color:#fff;font-size:13px;font-weight:800;text-decoration:none;box-shadow:0 6px 14px rgba(139,90,43,.32)}'
     +'.pw3-btn:hover,.pw3-btn:focus-visible{background:#744a22}'
+    +'.pw-purple .pw3-btn{background:'+PURPLE+';box-shadow:0 6px 14px rgba(124,58,237,.32)}'
+    +'.pw-purple .pw3-btn:hover,.pw-purple .pw3-btn:focus-visible{background:#6429c9}'
     +'#pw-rot .pw-dots{grid-area:2/1;display:flex;justify-content:center;gap:12px;margin:12px 0 0}'
     +'.pw-dots button{width:13px;height:13px;padding:0;border-radius:50%;background:transparent;cursor:pointer;transition:transform .3s,background .3s,box-shadow .3s}'
     +'.pw-dots .d1{border:2px solid #e83e8c}'
     +'.pw-dots .d2{border:2px solid '+BROWN+'}'
+    +'.pw-dots .d3{border:2px solid '+PURPLE+'}'
     +'.pw-dots .d1.on{background:#e83e8c;box-shadow:0 0 10px rgba(232,62,140,.75);transform:scale(1.25)}'
-    +'.pw-dots .d2.on{background:'+BROWN+';box-shadow:0 0 10px rgba(139,90,43,.85);transform:scale(1.25)}';
+    +'.pw-dots .d2.on{background:'+BROWN+';box-shadow:0 0 10px rgba(139,90,43,.85);transform:scale(1.25)}'
+    +'.pw-dots .d3.on{background:'+PURPLE+';box-shadow:0 0 10px rgba(124,58,237,.8);transform:scale(1.25)}';
     document.head.appendChild(st);
 
     /* الحاوية */
@@ -495,7 +501,7 @@ h1{font-size:30px;margin:6px 0 4px}
     var c2=document.createElement('div');
     c2.className='pw2 pw-brown';
     c2.innerHTML=''
-      +'<p class="pw2-note"> مصادر أخرى🚨: تجدون أيضاً الملخصات والتمارين وكيفية دراسة المقاييس عند ritedj_7 و la_princess</p>'
+      +'<p class="pw2-note">🚨 مصادر أخرى: تجدون أيضاً الملخصات والتمارين وكيفية دراسة المقاييس عند ritedj_7 و la_princess</p>'
       +'<div class="pw-btns">'
       +'<a class="pw3-btn" href="https://www.instagram.com/rit._.edj_7?xtok=OG90OGY2Y3JhNzk4" target="_blank" rel="noopener">زر ritedj_7 ←</a>'
       +'<a class="pw3-btn" href="https://www.instagram.com/la.princess.es?cplk=MTUyenVkdDNxaXdieg==" target="_blank" rel="noopener">زر la_princess ←</a>'
@@ -503,13 +509,27 @@ h1{font-size:30px;margin:6px 0 4px}
       +'<div class="pw2-edge"></div>';
     rot.appendChild(c2);
 
-    /* النقطتان داخل الحاوية: الأولى وردية والثانية بنية */
+    /* البطاقة الثالثة (بنفسجية) */
+    var c3=document.createElement('div');
+    c3.className='pw2 pw-purple';
+    c3.innerHTML=''
+      +'<p class="pw2-note">مصادر أخرى 🚨: prof_nda1 كل ما يخص المقاييس والمحاضرات على شكل PDF، وكل أيقونة خاصة بمادة، في قنوات تيليجرام منظمة، ولكل سنة قناة خاصة بها (سنة أولى وسنة ثانية)</p>'
+      +'<div class="pw-btns">'
+      +'<a class="pw3-btn" href="https://www.instagram.com/prof_nda1?fqnt=MTJpeDkyY3IwdXR5Yw==" target="_blank" rel="noopener">زر prof_nda1 ←</a>'
+      +'</div>'
+      +'<div class="pw2-edge"></div>';
+    rot.appendChild(c3);
+
+    /* النقاط: وردية، بنية، بنفسجية */
     var dots=document.createElement('div');
     dots.className='pw-dots';
-    dots.innerHTML='<button type="button" class="d1 on" aria-label="prof_wared"></button><button type="button" class="d2" aria-label="ritedj_7 و la_princess"></button>';
+    dots.innerHTML=''
+      +'<button type="button" class="d1 on" aria-label="prof_wared"></button>'
+      +'<button type="button" class="d2" aria-label="ritedj_7 و la_princess"></button>'
+      +'<button type="button" class="d3" aria-label="prof_nda1"></button>';
     rot.appendChild(dots);
 
-    var cards=[card,c2], dl=[].slice.call(dots.children), cur=0, paused=false, timer=null;
+    var cards=[card,c2,c3], dl=[].slice.call(dots.children), cur=0, paused=false, timer=null;
     function go(i){
       cur=(i+cards.length)%cards.length;
       cards.forEach(function(c,k){c.classList.toggle('on',k===cur);});
