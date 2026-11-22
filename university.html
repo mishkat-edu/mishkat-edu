@@ -26,8 +26,20 @@ h1{font-size:30px;margin:6px 0 4px}
 .ens-d{color:var(--muted);font-size:12.5px;line-height:1.7}
 .orange-btn{display:inline-block;margin-top:10px;padding:8px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(255,159,28,.35)}
 
+/* خانة البحث عن مادة */
+.ssw{display:none;max-width:560px;margin:22px auto 0}
+.ssw.show{display:block}
+.sf{display:flex;align-items:center;gap:10px;padding:5px 18px 5px 5px;border-radius:999px;background:var(--card);border:2px solid #ffc233;box-shadow:0 8px 22px rgba(255,194,51,.25)}
+.sf:focus-within{border-color:#ff9f1c}
+.sf input{flex:1;min-width:0;border:0;outline:0;background:transparent;color:var(--ink);font:inherit;font-size:15px;font-weight:600;padding:10px 0;text-align:right}
+.sf input::placeholder{color:var(--muted);font-weight:500}
+.sf button{flex:none;width:44px;height:44px;border-radius:50%;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);display:grid;place-items:center;cursor:pointer;box-shadow:0 6px 14px rgba(255,159,28,.35)}
+.sf button svg{width:22px;height:22px;fill:none;stroke:#4a3000;stroke-width:2.3;stroke-linecap:round;stroke-linejoin:round}
+.nores{grid-column:1/-1;padding:24px 10px;color:var(--muted);font-weight:700}
+
 .subs,.tops,.acts,.rels{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
 .subs.show,.tops.show,.acts.show,.rels.show{display:grid}
+.ssw.show+.subs{margin-top:16px}
 .sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.5;cursor:pointer;transition:transform .2s}
 .sb:hover,.sb:focus-visible{transform:translateY(-4px)}
 .sb-i{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);display:grid;place-items:center;box-shadow:0 10px 20px rgba(10,132,255,.35),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
@@ -69,9 +81,16 @@ h1{font-size:30px;margin:6px 0 4px}
     </div>
   </div>
 
+  <div class="ssw" id="ssw">
+    <div class="sf">
+      <input id="sq" type="search" placeholder="ابحث عن مادة..." autocomplete="off" enterkeyhint="search" aria-label="بحث عن مادة">
+      <button id="sgo" type="button" aria-label="بحث"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button>
+    </div>
+  </div>
+
   <div class="subs" id="subs"></div>
-  <div class="tops" id="tops"></div>
   <div class="acts" id="acts"></div>
+  <div class="tops" id="tops"></div>
   <div class="rels" id="rels"></div>
 
   <div class="bar">
@@ -119,7 +138,7 @@ h1{font-size:30px;margin:6px 0 4px}
     history:V+'<path d="M6 26h20"/><path d="M8 26V12M13 26V12M19 26V12M24 26V12"/><path d="M5 12l11-7 11 7"/></svg>'
   };
 
-  /* السنة الأولى: مواد لها محاور (topics مصفوفة) ومواد بدون محاور (topics:null) تفتح الملخصات والتمارين مباشرة */
+  /* السنة الأولى: topics مصفوفة = أسماء الملخصات (المحاور)، و topics:null = مادة بلا محاور */
   var SUBJECTS1=[
     {n:'الرياضيات',c:'math',ic:ICON.math,topics:['المحور الأول: الاستدلال الرياضي','المحور الثاني: أنشطة عددية','المحور الثالث: أنشطة هندسية']},
     {n:'الفيزياء',c:'phys',ic:ICON.physics,topics:['المحور الأول: المقادير الفيزيائية','المحور الثاني: الأشعة والحساب الشعاعي','المحور الثالث: الحركيات','المحور الرابع: الديناميك','المحور الخامس: العمل والطاقة']},
@@ -160,15 +179,19 @@ h1{font-size:30px;margin:6px 0 4px}
     ['الهندوسية والبوذية والكونفوشيوسية','eastern',ICON.literature]
   ];
 
-  var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), rels=$('rels'), back=$('backb');
-  var view='ens', YEAR=1, SUBJ=SUBJECTS1, noTop=false;
+  /* كلمات إضافية تساعد البحث عن المادة */
+  var ALIAS={math:'رياضيات math',phys:'فيزياء physique',chem:'كيمياء',ict:'tic اعلام اتصال',rhet:'بلاغه',gram:'نحو',morph:'صرف',lit:'ادب',islam:'اسلاميه تربيه',dict:'املاء',eng:'انجليزيه english',calli:'خط',writ:'كتابه تعبير',comp:'اعلام الي حاسوب informatique',gram2:'نحو',psy:'نفس',morph2:'صرف',crit:'نقد',math2:'رياضيات',bio:'احياء بيولوجيا',islam2:'اسلاميه تربيه',ling:'لسانيات',eng2:'انجليزيه english',ai:'ذكاء اصطناعي',history:'تاريخ فكر'};
+
+  var ens=$('ens'), ssw=$('ssw'), sq=$('sq'), subs=$('subs'), acts=$('acts'), tops=$('tops'), rels=$('rels'), back=$('backb');
+  var view='ens', YEAR=1, SUBJ=SUBJECTS1;
 
   function show(v){
     view=v;
     ens.classList.toggle('show',v==='ens');
+    ssw.classList.toggle('show',v==='subs');
     subs.classList.toggle('show',v==='subs');
-    tops.classList.toggle('show',v==='topics');
     acts.classList.toggle('show',v==='acts');
+    tops.classList.toggle('show',v==='topics');
     rels.classList.toggle('show',v==='rels');
     if(v==='ens'){back.textContent='← العودة للرئيسية';back.setAttribute('href','index.html');}
     else{back.textContent='← رجوع';back.setAttribute('href','#');}
@@ -199,73 +222,89 @@ h1{font-size:30px;margin:6px 0 4px}
     })(0);
   }
 
+  function pre(){return 'ens'+YEAR;}
+
   /* الإسلامية، الموضوع الأول: 4 بطاقات، لكل دين ملخصه */
-  function showRels(pre){
+  function showRels(){
     rels.innerHTML='';
     RELS.forEach(function(r){
       card(rels,r[0],r[2],null,function(){
-        openPdf([pre+'-islam-1-'+r[1]+'.pdf'],'ملخص '+r[0],'ملخص «'+r[0]+'» قيد الإعداد ✨');
+        openPdf([pre()+'-islam-1-'+r[1]+'.pdf'],'ملخص '+r[0],'ملخص «'+r[0]+'» قيد الإعداد ✨');
       });
     });
     show('rels');
   }
 
-  /* بطاقتا الملخصات والتمارين لمادة بدون محاور */
-  function showActs(s,pre,title){
+  /* أسماء الملخصات (المحاور) كما هي مذكورة */
+  function showTopics(s){
+    tops.innerHTML='';
+    s.topics.forEach(function(t,k){
+      card(tops,t,null,String(k+1),function(){
+        if(YEAR===1&&s.c==='islam'&&k===0){showRels();return;}
+        openPdf([pre()+'-'+s.c+'-'+(k+1)+'.pdf',pre()+'-'+s.c+'.pdf'],'ملخص '+t,'ملخص «'+t+'» قيد الإعداد ✨');
+      });
+    });
+    show('topics');
+  }
+
+  /* بعد اختيار المادة: بطاقتا الملخصات والتمارين */
+  function openSubject(s){
     acts.innerHTML='';
     card(acts,'الملخصات',ICON.notes,null,function(){
-      openPdf([pre+'-'+s.c+'.pdf'],'ملخص '+title,'ملخصات «'+title+'» قيد الإعداد ✨');
+      if(s.topics){showTopics(s);return;}
+      openPdf([pre()+'-'+s.c+'.pdf'],'ملخص '+s.n,'ملخصات «'+s.n+'» قيد الإعداد ✨');
     });
     card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
-      openPdf([pre+'-ex-'+s.c+'.pdf'],'تمارين '+title,'تمارين «'+title+'» قيد الإعداد ✨');
+      openPdf([pre()+'-ex-'+s.c+'.pdf'],'تمارين '+s.n,'تمارين «'+s.n+'» قيد الإعداد ✨');
     });
     show('acts');
   }
 
-  function buildSubjects(){
-    subs.innerHTML='';
-    SUBJ.forEach(function(s){
-      card(subs,s.n,s.ic,null,function(){
-        var pre='ens'+YEAR;
-        if(!s.topics){
-          noTop=true;
-          showActs(s,pre,s.n);
-          return;
-        }
-        noTop=false;
-        tops.innerHTML='';
-        s.topics.forEach(function(t,k){
-          card(tops,t,null,String(k+1),function(){
-            acts.innerHTML='';
-            card(acts,'الملخصات',ICON.notes,null,function(){
-              /* السنة الأولى، الإسلامية، الموضوع الأول (الأديان): بطاقات الأديان */
-              if(YEAR===1&&s.c==='islam'&&k===0){showRels(pre);return;}
-              openPdf([pre+'-'+s.c+'-'+(k+1)+'.pdf',pre+'-'+s.c+'.pdf'],'ملخص '+t,'ملخصات «'+t+'» قيد الإعداد ✨');
-            });
-            card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
-              openPdf([pre+'-ex-'+s.c+'-'+(k+1)+'.pdf',pre+'-ex-'+s.c+'.pdf'],'تمارين '+t,'تمارين «'+t+'» قيد الإعداد ✨');
-            });
-            show('acts');
-          });
-        });
-        show('topics');
-      });
+  /* البحث عن مادة */
+  function norm(s){return String(s||'').replace(/[\u064B-\u065F\u0670]/g,'').replace(/[أإآ]/g,'ا').replace(/ى/g,'ي').replace(/ة/g,'ه').replace(/\s+/g,' ').trim().toLowerCase();}
+  function matches(s,q){
+    var h=norm(s.n+' '+(ALIAS[s.c]||'')), toks=norm(q).split(' ').filter(Boolean);
+    return toks.every(function(t){
+      var t2=t.replace(/^ال/,'');
+      return h.indexOf(t)>-1||(t2.length>1&&h.indexOf(t2)>-1);
     });
   }
+  function renderSubs(q){
+    subs.innerHTML='';
+    var list=q?SUBJ.filter(function(s){return matches(s,q);}):SUBJ;
+    if(!list.length){
+      var d=document.createElement('div');
+      d.className='nores';
+      d.textContent='لا توجد مادة بهذا الاسم';
+      subs.appendChild(d);
+      return list;
+    }
+    list.forEach(function(s){card(subs,s.n,s.ic,null,function(){openSubject(s);});});
+    return list;
+  }
+  function goSearch(){
+    var q=sq.value.trim();
+    var list=renderSubs(q);
+    if(q&&list.length){sq.blur();openSubject(list[0]);}
+  }
+  sq.addEventListener('input',function(){renderSubs(sq.value.trim());});
+  sq.addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();goSearch();}});
+  $('sgo').onclick=goSearch;
 
   document.querySelectorAll('[data-year]').forEach(function(btn){
     btn.onclick=function(){
       YEAR=parseInt(btn.getAttribute('data-year'),10)||1;
       SUBJ=(YEAR===2)?SUBJECTS2:SUBJECTS1;
-      buildSubjects();
+      sq.value='';
+      renderSubs('');
       show('subs');
     };
   });
 
   back.addEventListener('click',function(e){
-    if(view==='rels'){e.preventDefault();show('acts');return;}
-    if(view==='acts'){e.preventDefault();show(noTop?'subs':'topics');return;}
-    if(view==='topics'){e.preventDefault();show('subs');return;}
+    if(view==='rels'){e.preventDefault();show('topics');return;}
+    if(view==='topics'){e.preventDefault();show('acts');return;}
+    if(view==='acts'){e.preventDefault();show('subs');return;}
     if(view==='subs'){e.preventDefault();show('ens');}
   });
 })();
