@@ -26,8 +26,8 @@ h1{font-size:30px;margin:6px 0 4px}
 .ens-d{color:var(--muted);font-size:12.5px;line-height:1.7}
 .orange-btn{display:inline-block;margin-top:10px;padding:8px 18px;border-radius:999px;border:0;background:linear-gradient(135deg,#ffc233,#ff9f1c);color:#4a3000;font:inherit;font-size:14px;font-weight:800;cursor:pointer;box-shadow:0 8px 16px rgba(255,159,28,.35)}
 
-.subs,.tops,.acts{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
-.subs.show,.tops.show,.acts.show{display:grid}
+.subs,.tops,.acts,.rels{display:none;grid-template-columns:1fr 1fr;gap:14px;margin:26px auto 0;max-width:560px}
+.subs.show,.tops.show,.acts.show,.rels.show{display:grid}
 .sb{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;min-height:150px;padding:20px 14px;border-radius:24px;background:var(--card);border:2px solid #ffc233;box-shadow:0 14px 34px rgba(255,194,51,.28);color:var(--ink);font:inherit;font-size:16px;font-weight:800;line-height:1.5;cursor:pointer;transition:transform .2s}
 .sb:hover,.sb:focus-visible{transform:translateY(-4px)}
 .sb-i{width:56px;height:56px;border-radius:50%;background:linear-gradient(145deg,#4cc3ff,#0a84ff 55%,#1d57d6);display:grid;place-items:center;box-shadow:0 10px 20px rgba(10,132,255,.35),inset 0 1px 0 rgba(255,255,255,.4);color:#fff}
@@ -36,7 +36,8 @@ h1{font-size:30px;margin:6px 0 4px}
 .tops .sb{min-height:118px;font-size:15px;padding:16px 12px;gap:8px}
 .tops .sb-i{width:42px;height:42px}
 .tops .sb-i .ar{font-size:18px}
-.subs .sb:last-child:nth-child(odd),.tops .sb:last-child:nth-child(odd),.acts .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
+.rels .sb{min-height:130px;font-size:15px;padding:16px 12px}
+.subs .sb:last-child:nth-child(odd),.tops .sb:last-child:nth-child(odd),.acts .sb:last-child:nth-child(odd),.rels .sb:last-child:nth-child(odd){grid-column:1/-1;justify-self:center;width:calc(50% - 7px)}
 
 .bar{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:30px}
 .back,.mode{display:inline-block;padding:8px 20px;border:1.5px solid var(--blue);border-radius:999px;background:var(--card);color:var(--blue);font:inherit;font-size:14px;font-weight:700;cursor:pointer;text-decoration:none}
@@ -71,6 +72,7 @@ h1{font-size:30px;margin:6px 0 4px}
   <div class="subs" id="subs"></div>
   <div class="tops" id="tops"></div>
   <div class="acts" id="acts"></div>
+  <div class="rels" id="rels"></div>
 
   <div class="bar">
     <a class="back" id="backb" href="index.html">← العودة للرئيسية</a>
@@ -150,7 +152,15 @@ h1{font-size:30px;margin:6px 0 4px}
     {n:'تاريخ الفكر',c:'history',ic:ICON.history,topics:null}
   ];
 
-  var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), back=$('backb');
+  /* بطاقات ملخصات الموضوع الأول من الإسلامية (الأديان) */
+  var RELS=[
+    ['الإسلام','islam',ICON.islam],
+    ['اليهودية','judaism',ICON.literature],
+    ['النصرانية','christianity',ICON.literature],
+    ['الهندوسية والبوذية والكونفوشيوسية','eastern',ICON.literature]
+  ];
+
+  var ens=$('ens'), subs=$('subs'), tops=$('tops'), acts=$('acts'), rels=$('rels'), back=$('backb');
   var view='ens', YEAR=1, SUBJ=SUBJECTS1, noTop=false;
 
   function show(v){
@@ -159,6 +169,7 @@ h1{font-size:30px;margin:6px 0 4px}
     subs.classList.toggle('show',v==='subs');
     tops.classList.toggle('show',v==='topics');
     acts.classList.toggle('show',v==='acts');
+    rels.classList.toggle('show',v==='rels');
     if(v==='ens'){back.textContent='← العودة للرئيسية';back.setAttribute('href','index.html');}
     else{back.textContent='← رجوع';back.setAttribute('href','#');}
   }
@@ -186,6 +197,17 @@ h1{font-size:30px;margin:6px 0 4px}
         else{next(k+1);}
       }).catch(function(){next(k+1);});
     })(0);
+  }
+
+  /* الإسلامية، الموضوع الأول: 4 بطاقات، لكل دين ملخصه */
+  function showRels(pre){
+    rels.innerHTML='';
+    RELS.forEach(function(r){
+      card(rels,r[0],r[2],null,function(){
+        openPdf([pre+'-islam-1-'+r[1]+'.pdf'],'ملخص '+r[0],'ملخص «'+r[0]+'» قيد الإعداد ✨');
+      });
+    });
+    show('rels');
   }
 
   /* بطاقتا الملخصات والتمارين لمادة بدون محاور */
@@ -216,6 +238,8 @@ h1{font-size:30px;margin:6px 0 4px}
           card(tops,t,null,String(k+1),function(){
             acts.innerHTML='';
             card(acts,'الملخصات',ICON.notes,null,function(){
+              /* السنة الأولى، الإسلامية، الموضوع الأول (الأديان): بطاقات الأديان */
+              if(YEAR===1&&s.c==='islam'&&k===0){showRels(pre);return;}
               openPdf([pre+'-'+s.c+'-'+(k+1)+'.pdf',pre+'-'+s.c+'.pdf'],'ملخص '+t,'ملخصات «'+t+'» قيد الإعداد ✨');
             });
             card(acts,'التمارين والتصحيح (الاختبارات)',ICON.exam,null,function(){
@@ -239,6 +263,7 @@ h1{font-size:30px;margin:6px 0 4px}
   });
 
   back.addEventListener('click',function(e){
+    if(view==='rels'){e.preventDefault();show('acts');return;}
     if(view==='acts'){e.preventDefault();show(noTop?'subs':'topics');return;}
     if(view==='topics'){e.preventDefault();show('subs');return;}
     if(view==='subs'){e.preventDefault();show('ens');}
@@ -501,7 +526,7 @@ h1{font-size:30px;margin:6px 0 4px}
     var c2=document.createElement('div');
     c2.className='pw2 pw-brown';
     c2.innerHTML=''
-      +'<p class="pw2-note">مصادر أخرى🚨: تجدون أيضاً الملخصات والتمارين وكيفية دراسة المقاييس عند ritedj_7 و la_princess</p>'
+      +'<p class="pw2-note">🚨 مصادر أخرى: تجدون أيضاً الملخصات والتمارين وكيفية دراسة المقاييس عند ritedj_7 و la_princess</p>'
       +'<div class="pw-btns">'
       +'<a class="pw3-btn" href="https://www.instagram.com/rit._.edj_7?xtok=OG90OGY2Y3JhNzk4" target="_blank" rel="noopener">زر ritedj_7 ←</a>'
       +'<a class="pw3-btn" href="https://www.instagram.com/la.princess.es?cplk=MTUyenVkdDNxaXdieg==" target="_blank" rel="noopener">زر la_princess ←</a>'
